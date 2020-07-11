@@ -22,14 +22,14 @@ func (s *usersrvc) Add(ctx context.Context,
 	p *user.AddPayload) (err error) {
 	s.logger.Print("user.add started")
 	newUser := user.UserManagement{
-		        UserEmailID: p.UserEmailID,
-				UserName: p.UserName,
+		MobieNumber: p.MobieNumber,
+		UserName:    p.UserName,
 	}
 	err = CreateUser(&newUser)
 	if err != nil {
-				s.logger.Print("An error occurred...")
-				s.logger.Print(err)
-				return
+		s.logger.Print("An error occurred...")
+		s.logger.Print(err)
+		return
 	}
 	s.logger.Print("user.add completed")
 	return
@@ -39,11 +39,11 @@ func (s *usersrvc) Add(ctx context.Context,
 func (s *usersrvc) Get(ctx context.Context,
 	p *user.GetPayload) (res *user.UserManagement, err error) {
 	s.logger.Print("user.get started")
-	result, err := GetUser(p.UserEmailID)
+	result, err := GetUser(p.MobieNumber)
 	if err != nil {
-				s.logger.Print("An error occurred...")
-				s.logger.Print(err)
-				return
+		s.logger.Print("An error occurred...")
+		s.logger.Print(err)
+		return
 	}
 	s.logger.Print("user.get completed")
 	return &result, err
@@ -55,9 +55,9 @@ func (s *usersrvc) Show(ctx context.Context) (res user.UserManagementCollection,
 	s.logger.Print("user.show started")
 	res, err = ListUsers()
 	if err != nil {
-				s.logger.Print("An error occurred...")
-				s.logger.Print(err)
-				return
+		s.logger.Print("An error occurred...")
+		s.logger.Print(err)
+		return
 	}
 	s.logger.Print("user.show completed")
 	return

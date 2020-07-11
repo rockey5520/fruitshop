@@ -23,16 +23,16 @@ import (
 // to call the "user" service "add" endpoint
 func (c *Client) BuildAddRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		userEmailID string
+		mobieNumber string
 	)
 	{
 		p, ok := v.(*user.AddPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("user", "add", "*user.AddPayload", v)
 		}
-		userEmailID = p.UserEmailID
+		mobieNumber = p.MobieNumber
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddUserPath(userEmailID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddUserPath(mobieNumber)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("user", "add", u.String(), err)
@@ -90,16 +90,16 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // to call the "user" service "get" endpoint
 func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		userEmailID string
+		mobieNumber string
 	)
 	{
 		p, ok := v.(*user.GetPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("user", "get", "*user.GetPayload", v)
 		}
-		userEmailID = p.UserEmailID
+		mobieNumber = p.MobieNumber
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetUserPath(userEmailID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetUserPath(mobieNumber)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("user", "get", u.String(), err)
@@ -215,7 +215,7 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 // *UserManagementResponse.
 func unmarshalUserManagementResponseToUserviewsUserManagementView(v *UserManagementResponse) *userviews.UserManagementView {
 	res := &userviews.UserManagementView{
-		UserEmailID: v.UserEmailID,
+		MobieNumber: v.MobieNumber,
 		UserName:    v.UserName,
 	}
 

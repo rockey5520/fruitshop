@@ -31,7 +31,7 @@ func UsageCommands() string {
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
       "UserName": "Vero nostrum voluptas."
-   }' --user-email-id "Minus corporis repudiandae laudantium eum velit."` + "\n" +
+   }' --mobie-number "Minus corporis repudiandae laudantium eum velit."` + "\n" +
 		""
 }
 
@@ -49,10 +49,10 @@ func ParseEndpoint(
 
 		userAddFlags           = flag.NewFlagSet("add", flag.ExitOnError)
 		userAddBodyFlag        = userAddFlags.String("body", "REQUIRED", "")
-		userAddUserEmailIDFlag = userAddFlags.String("user-email-id", "REQUIRED", "UserEmailID")
+		userAddMobieNumberFlag = userAddFlags.String("mobie-number", "REQUIRED", "MobieNumber")
 
 		userGetFlags           = flag.NewFlagSet("get", flag.ExitOnError)
-		userGetUserEmailIDFlag = userGetFlags.String("user-email-id", "REQUIRED", "UserEmailID")
+		userGetMobieNumberFlag = userGetFlags.String("mobie-number", "REQUIRED", "MobieNumber")
 
 		userShowFlags = flag.NewFlagSet("show", flag.ExitOnError)
 	)
@@ -131,10 +131,10 @@ func ParseEndpoint(
 			switch epn {
 			case "add":
 				endpoint = c.Add()
-				data, err = userc.BuildAddPayload(*userAddBodyFlag, *userAddUserEmailIDFlag)
+				data, err = userc.BuildAddPayload(*userAddBodyFlag, *userAddMobieNumberFlag)
 			case "get":
 				endpoint = c.Get()
-				data, err = userc.BuildGetPayload(*userGetUserEmailIDFlag)
+				data, err = userc.BuildGetPayload(*userGetMobieNumberFlag)
 			case "show":
 				endpoint = c.Show()
 				data = nil
@@ -164,27 +164,27 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func userAddUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user add -body JSON -user-email-id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] user add -body JSON -mobie-number STRING
 
 Add implements add.
     -body JSON: 
-    -user-email-id STRING: UserEmailID
+    -mobie-number STRING: MobieNumber
 
 Example:
     `+os.Args[0]+` user add --body '{
       "UserName": "Vero nostrum voluptas."
-   }' --user-email-id "Minus corporis repudiandae laudantium eum velit."
+   }' --mobie-number "Minus corporis repudiandae laudantium eum velit."
 `, os.Args[0])
 }
 
 func userGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user get -user-email-id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] user get -mobie-number STRING
 
 Get implements get.
-    -user-email-id STRING: UserEmailID
+    -mobie-number STRING: MobieNumber
 
 Example:
-    `+os.Args[0]+` user get --user-email-id "Sunt quisquam adipisci blanditiis recusandae est."
+    `+os.Args[0]+` user get --mobie-number "Sunt quisquam adipisci blanditiis recusandae est."
 `, os.Args[0])
 }
 

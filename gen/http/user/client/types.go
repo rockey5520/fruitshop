@@ -24,8 +24,8 @@ type AddRequestBody struct {
 // GetResponseBody is the type of the "user" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
-	// Email ID is the unique id of the User.
-	UserEmailID *string `form:"UserEmailID,omitempty" json:"UserEmailID,omitempty" xml:"UserEmailID,omitempty"`
+	// MobieNumber is the unique id of the User.
+	MobieNumber *string `form:"MobieNumber,omitempty" json:"MobieNumber,omitempty" xml:"MobieNumber,omitempty"`
 	// Name of the User
 	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 }
@@ -36,8 +36,8 @@ type ShowResponseBody []*UserManagementResponse
 
 // UserManagementResponse is used to define fields on response body types.
 type UserManagementResponse struct {
-	// Email ID is the unique id of the User.
-	UserEmailID *string `form:"UserEmailID,omitempty" json:"UserEmailID,omitempty" xml:"UserEmailID,omitempty"`
+	// MobieNumber is the unique id of the User.
+	MobieNumber *string `form:"MobieNumber,omitempty" json:"MobieNumber,omitempty" xml:"MobieNumber,omitempty"`
 	// Name of the User
 	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 }
@@ -55,7 +55,7 @@ func NewAddRequestBody(p *user.AddPayload) *AddRequestBody {
 // HTTP "OK" response.
 func NewGetUserManagementOK(body *GetResponseBody) *userviews.UserManagementView {
 	v := &userviews.UserManagementView{
-		UserEmailID: body.UserEmailID,
+		MobieNumber: body.MobieNumber,
 		UserName:    body.UserName,
 	}
 
@@ -75,8 +75,8 @@ func NewShowUserManagementCollectionOK(body ShowResponseBody) userviews.UserMana
 // ValidateUserManagementResponse runs the validations defined on
 // UserManagementResponse
 func ValidateUserManagementResponse(body *UserManagementResponse) (err error) {
-	if body.UserEmailID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("UserEmailID", "body"))
+	if body.MobieNumber == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("MobieNumber", "body"))
 	}
 	if body.UserName == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "body"))

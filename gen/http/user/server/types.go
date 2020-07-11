@@ -24,8 +24,8 @@ type AddRequestBody struct {
 // GetResponseBody is the type of the "user" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
-	// Email ID is the unique id of the User.
-	UserEmailID string `form:"UserEmailID" json:"UserEmailID" xml:"UserEmailID"`
+	// MobieNumber is the unique id of the User.
+	MobieNumber string `form:"MobieNumber" json:"MobieNumber" xml:"MobieNumber"`
 	// Name of the User
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
 }
@@ -36,8 +36,8 @@ type UserManagementResponseCollection []*UserManagementResponse
 
 // UserManagementResponse is used to define fields on response body types.
 type UserManagementResponse struct {
-	// Email ID is the unique id of the User.
-	UserEmailID string `form:"UserEmailID" json:"UserEmailID" xml:"UserEmailID"`
+	// MobieNumber is the unique id of the User.
+	MobieNumber string `form:"MobieNumber" json:"MobieNumber" xml:"MobieNumber"`
 	// Name of the User
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
 }
@@ -46,7 +46,7 @@ type UserManagementResponse struct {
 // "get" endpoint of the "user" service.
 func NewGetResponseBody(res *userviews.UserManagementView) *GetResponseBody {
 	body := &GetResponseBody{
-		UserEmailID: *res.UserEmailID,
+		MobieNumber: *res.MobieNumber,
 		UserName:    *res.UserName,
 	}
 	return body
@@ -63,19 +63,19 @@ func NewUserManagementResponseCollection(res userviews.UserManagementCollectionV
 }
 
 // NewAddPayload builds a user service add endpoint payload.
-func NewAddPayload(body *AddRequestBody, userEmailID string) *user.AddPayload {
+func NewAddPayload(body *AddRequestBody, mobieNumber string) *user.AddPayload {
 	v := &user.AddPayload{
 		UserName: *body.UserName,
 	}
-	v.UserEmailID = userEmailID
+	v.MobieNumber = mobieNumber
 
 	return v
 }
 
 // NewGetPayload builds a user service get endpoint payload.
-func NewGetPayload(userEmailID string) *user.GetPayload {
+func NewGetPayload(mobieNumber string) *user.GetPayload {
 	v := &user.GetPayload{}
-	v.UserEmailID = userEmailID
+	v.MobieNumber = mobieNumber
 
 	return v
 }

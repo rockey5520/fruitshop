@@ -47,12 +47,12 @@ func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 		}
 
 		var (
-			mobieNumber string
+			id string
 
 			params = mux.Vars(r)
 		)
-		mobieNumber = params["MobieNumber"]
-		payload := NewAddPayload(&body, mobieNumber)
+		id = params["ID"]
+		payload := NewAddPayload(&body, id)
 
 		return payload, nil
 	}
@@ -75,12 +75,12 @@ func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahtt
 func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			mobieNumber string
+			id string
 
 			params = mux.Vars(r)
 		)
-		mobieNumber = params["MobieNumber"]
-		payload := NewGetPayload(mobieNumber)
+		id = params["ID"]
+		payload := NewGetPayload(id)
 
 		return payload, nil
 	}
@@ -103,8 +103,8 @@ func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goaht
 // *userviews.UserManagementView.
 func marshalUserviewsUserManagementViewToUserManagementResponse(v *userviews.UserManagementView) *UserManagementResponse {
 	res := &UserManagementResponse{
-		MobieNumber: *v.MobieNumber,
-		UserName:    *v.UserName,
+		ID:       *v.ID,
+		UserName: *v.UserName,
 	}
 
 	return res

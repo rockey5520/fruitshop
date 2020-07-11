@@ -24,8 +24,8 @@ type AddRequestBody struct {
 // GetResponseBody is the type of the "user" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
-	// MobieNumber is the unique id of the User.
-	MobieNumber string `form:"MobieNumber" json:"MobieNumber" xml:"MobieNumber"`
+	// ID is the unique id of the User.
+	ID string `form:"ID" json:"ID" xml:"ID"`
 	// Name of the User
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
 }
@@ -36,8 +36,8 @@ type UserManagementResponseCollection []*UserManagementResponse
 
 // UserManagementResponse is used to define fields on response body types.
 type UserManagementResponse struct {
-	// MobieNumber is the unique id of the User.
-	MobieNumber string `form:"MobieNumber" json:"MobieNumber" xml:"MobieNumber"`
+	// ID is the unique id of the User.
+	ID string `form:"ID" json:"ID" xml:"ID"`
 	// Name of the User
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
 }
@@ -46,8 +46,8 @@ type UserManagementResponse struct {
 // "get" endpoint of the "user" service.
 func NewGetResponseBody(res *userviews.UserManagementView) *GetResponseBody {
 	body := &GetResponseBody{
-		MobieNumber: *res.MobieNumber,
-		UserName:    *res.UserName,
+		ID:       *res.ID,
+		UserName: *res.UserName,
 	}
 	return body
 }
@@ -63,19 +63,19 @@ func NewUserManagementResponseCollection(res userviews.UserManagementCollectionV
 }
 
 // NewAddPayload builds a user service add endpoint payload.
-func NewAddPayload(body *AddRequestBody, mobieNumber string) *user.AddPayload {
+func NewAddPayload(body *AddRequestBody, id string) *user.AddPayload {
 	v := &user.AddPayload{
 		UserName: *body.UserName,
 	}
-	v.MobieNumber = mobieNumber
+	v.ID = id
 
 	return v
 }
 
 // NewGetPayload builds a user service get endpoint payload.
-func NewGetPayload(mobieNumber string) *user.GetPayload {
+func NewGetPayload(id string) *user.GetPayload {
 	v := &user.GetPayload{}
-	v.MobieNumber = mobieNumber
+	v.ID = id
 
 	return v
 }

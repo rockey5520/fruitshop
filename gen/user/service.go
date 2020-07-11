@@ -34,22 +34,22 @@ var MethodNames = [3]string{"add", "get", "show"}
 
 // AddPayload is the payload type of the user service add method.
 type AddPayload struct {
-	// MobieNumber
-	MobieNumber string
+	// ID
+	ID string
 	// User Name
 	UserName string
 }
 
 // GetPayload is the payload type of the user service get method.
 type GetPayload struct {
-	// MobieNumber
-	MobieNumber string
+	// ID
+	ID string
 }
 
 // UserManagement is the result type of the user service get method.
 type UserManagement struct {
-	// MobieNumber is the unique id of the User.
-	MobieNumber string
+	// ID is the unique id of the User.
+	ID string
 	// Name of the User
 	UserName string
 }
@@ -106,8 +106,8 @@ func NewViewedUserManagementCollection(res UserManagementCollection, view string
 // UserManagement.
 func newUserManagement(vres *userviews.UserManagementView) *UserManagement {
 	res := &UserManagement{}
-	if vres.MobieNumber != nil {
-		res.MobieNumber = *vres.MobieNumber
+	if vres.ID != nil {
+		res.ID = *vres.ID
 	}
 	if vres.UserName != nil {
 		res.UserName = *vres.UserName
@@ -119,8 +119,8 @@ func newUserManagement(vres *userviews.UserManagementView) *UserManagement {
 // UserManagementView using the "default" view.
 func newUserManagementView(res *UserManagement) *userviews.UserManagementView {
 	vres := &userviews.UserManagementView{
-		MobieNumber: &res.MobieNumber,
-		UserName:    &res.UserName,
+		ID:       &res.ID,
+		UserName: &res.UserName,
 	}
 	return vres
 }

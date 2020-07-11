@@ -12,13 +12,13 @@ import (
 )
 
 // AddUserPath returns the URL path to the user service add HTTP endpoint.
-func AddUserPath(mobieNumber string) string {
-	return fmt.Sprintf("/api/v1/user/%v", mobieNumber)
+func AddUserPath(id string) string {
+	return fmt.Sprintf("/api/v1/user/%v", id)
 }
 
 // GetUserPath returns the URL path to the user service get HTTP endpoint.
-func GetUserPath(mobieNumber string) string {
-	return fmt.Sprintf("/api/v1/user/%v", mobieNumber)
+func GetUserPath(id string) string {
+	return fmt.Sprintf("/api/v1/user/%v", id)
 }
 
 // ShowUserPath returns the URL path to the user service show HTTP endpoint.

@@ -14,7 +14,7 @@ import (
 )
 
 // BuildAddPayload builds the payload for the user add endpoint from CLI flags.
-func BuildAddPayload(userAddBody string, userAddMobieNumber string) (*user.AddPayload, error) {
+func BuildAddPayload(userAddBody string, userAddID string) (*user.AddPayload, error) {
 	var err error
 	var body AddRequestBody
 	{
@@ -23,26 +23,26 @@ func BuildAddPayload(userAddBody string, userAddMobieNumber string) (*user.AddPa
 			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"UserName\": \"Vero nostrum voluptas.\"\n   }'")
 		}
 	}
-	var mobieNumber string
+	var id string
 	{
-		mobieNumber = userAddMobieNumber
+		id = userAddID
 	}
 	v := &user.AddPayload{
 		UserName: body.UserName,
 	}
-	v.MobieNumber = mobieNumber
+	v.ID = id
 
 	return v, nil
 }
 
 // BuildGetPayload builds the payload for the user get endpoint from CLI flags.
-func BuildGetPayload(userGetMobieNumber string) (*user.GetPayload, error) {
-	var mobieNumber string
+func BuildGetPayload(userGetID string) (*user.GetPayload, error) {
+	var id string
 	{
-		mobieNumber = userGetMobieNumber
+		id = userGetID
 	}
 	v := &user.GetPayload{}
-	v.MobieNumber = mobieNumber
+	v.ID = id
 
 	return v, nil
 }

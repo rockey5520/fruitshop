@@ -24,8 +24,8 @@ type AddRequestBody struct {
 // GetResponseBody is the type of the "user" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
-	// MobieNumber is the unique id of the User.
-	MobieNumber *string `form:"MobieNumber,omitempty" json:"MobieNumber,omitempty" xml:"MobieNumber,omitempty"`
+	// ID is the unique id of the User.
+	ID *string `form:"ID,omitempty" json:"ID,omitempty" xml:"ID,omitempty"`
 	// Name of the User
 	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 }
@@ -36,8 +36,8 @@ type ShowResponseBody []*UserManagementResponse
 
 // UserManagementResponse is used to define fields on response body types.
 type UserManagementResponse struct {
-	// MobieNumber is the unique id of the User.
-	MobieNumber *string `form:"MobieNumber,omitempty" json:"MobieNumber,omitempty" xml:"MobieNumber,omitempty"`
+	// ID is the unique id of the User.
+	ID *string `form:"ID,omitempty" json:"ID,omitempty" xml:"ID,omitempty"`
 	// Name of the User
 	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 }
@@ -55,8 +55,8 @@ func NewAddRequestBody(p *user.AddPayload) *AddRequestBody {
 // HTTP "OK" response.
 func NewGetUserManagementOK(body *GetResponseBody) *userviews.UserManagementView {
 	v := &userviews.UserManagementView{
-		MobieNumber: body.MobieNumber,
-		UserName:    body.UserName,
+		ID:       body.ID,
+		UserName: body.UserName,
 	}
 
 	return v
@@ -75,8 +75,8 @@ func NewShowUserManagementCollectionOK(body ShowResponseBody) userviews.UserMana
 // ValidateUserManagementResponse runs the validations defined on
 // UserManagementResponse
 func ValidateUserManagementResponse(body *UserManagementResponse) (err error) {
-	if body.MobieNumber == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("MobieNumber", "body"))
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("ID", "body"))
 	}
 	if body.UserName == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "body"))

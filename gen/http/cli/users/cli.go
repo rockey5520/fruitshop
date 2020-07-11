@@ -31,7 +31,7 @@ func UsageCommands() string {
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
       "UserName": "Vero nostrum voluptas."
-   }' --mobie-number "Minus corporis repudiandae laudantium eum velit."` + "\n" +
+   }' --id "Minus corporis repudiandae laudantium eum velit."` + "\n" +
 		""
 }
 
@@ -47,12 +47,12 @@ func ParseEndpoint(
 	var (
 		userFlags = flag.NewFlagSet("user", flag.ContinueOnError)
 
-		userAddFlags           = flag.NewFlagSet("add", flag.ExitOnError)
-		userAddBodyFlag        = userAddFlags.String("body", "REQUIRED", "")
-		userAddMobieNumberFlag = userAddFlags.String("mobie-number", "REQUIRED", "MobieNumber")
+		userAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
+		userAddBodyFlag = userAddFlags.String("body", "REQUIRED", "")
+		userAddIDFlag   = userAddFlags.String("id", "REQUIRED", "ID")
 
-		userGetFlags           = flag.NewFlagSet("get", flag.ExitOnError)
-		userGetMobieNumberFlag = userGetFlags.String("mobie-number", "REQUIRED", "MobieNumber")
+		userGetFlags  = flag.NewFlagSet("get", flag.ExitOnError)
+		userGetIDFlag = userGetFlags.String("id", "REQUIRED", "ID")
 
 		userShowFlags = flag.NewFlagSet("show", flag.ExitOnError)
 	)
@@ -131,10 +131,10 @@ func ParseEndpoint(
 			switch epn {
 			case "add":
 				endpoint = c.Add()
-				data, err = userc.BuildAddPayload(*userAddBodyFlag, *userAddMobieNumberFlag)
+				data, err = userc.BuildAddPayload(*userAddBodyFlag, *userAddIDFlag)
 			case "get":
 				endpoint = c.Get()
-				data, err = userc.BuildGetPayload(*userGetMobieNumberFlag)
+				data, err = userc.BuildGetPayload(*userGetIDFlag)
 			case "show":
 				endpoint = c.Show()
 				data = nil
@@ -164,27 +164,27 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func userAddUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user add -body JSON -mobie-number STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] user add -body JSON -id STRING
 
 Add implements add.
     -body JSON: 
-    -mobie-number STRING: MobieNumber
+    -id STRING: ID
 
 Example:
     `+os.Args[0]+` user add --body '{
       "UserName": "Vero nostrum voluptas."
-   }' --mobie-number "Minus corporis repudiandae laudantium eum velit."
+   }' --id "Minus corporis repudiandae laudantium eum velit."
 `, os.Args[0])
 }
 
 func userGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user get -mobie-number STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] user get -id STRING
 
 Get implements get.
-    -mobie-number STRING: MobieNumber
+    -id STRING: ID
 
 Example:
-    `+os.Args[0]+` user get --mobie-number "Sunt quisquam adipisci blanditiis recusandae est."
+    `+os.Args[0]+` user get --id "Sunt quisquam adipisci blanditiis recusandae est."
 `, os.Args[0])
 }
 

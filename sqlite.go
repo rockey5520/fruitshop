@@ -35,13 +35,12 @@ func InitDB() *gorm.DB {
 }
 
 // GetClient retrieves one client by its ID
-func GetUser(MobieNumber string) (user.UserManagement, error) {
+func GetUser(ID string) (user.UserManagement, error) {
 	db := InitDB()
 	defer db.Close()
 
 	var users user.UserManagement
-	//db.Take(&users)
-	db.Where("Mobie_Number = ?", MobieNumber).First(&users)
+	db.Where("ID = ?", ID).First(&users)
 
 	return users, err
 }

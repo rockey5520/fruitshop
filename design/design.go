@@ -23,27 +23,27 @@ var _ = Service("user", func() {
 	Description("The user service allows access to user members")
 	Method("add", func() {
 		Payload(func() {
-			Field(1, "MobieNumber", String, "MobieNumber")
+			Field(1, "ID", String, "ID")
 			Field(2, "UserName", String, "User Name")
-			Required("MobieNumber", "UserName")
+			Required("ID", "UserName")
 		})
 		Result(Empty)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			POST("/api/v1/user/{MobieNumber}")
+			POST("/api/v1/user/{ID}")
 			Response(StatusCreated)
 		})
 	})
 
 	Method("get", func() {
 		Payload(func() {
-			Field(1, "MobieNumber", String, "MobieNumber")
-			Required("MobieNumber")
+			Field(1, "ID", String, "ID")
+			Required("ID")
 		})
 		Result(UserManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			GET("/api/v1/user/{MobieNumber}")
+			GET("/api/v1/user/{ID}")
 			Response(StatusOK)
 		})
 	})
@@ -65,30 +65,30 @@ var UserManagement = ResultType("application/vnd.user", func() {
 	TypeName("UserManagement")
 
 	Attributes(func() {
-		Attribute("MobieNumber", String, "MobieNumber is the unique id of the User.", func() {
-			Example("rockey5520@gmail.com")
+		Attribute("ID", String, "ID is the unique id of the User.", func() {
+			Example("1")
 		})
 		Field(2, "UserName")
 	})
 
 	View("default", func() {
-		Attribute("MobieNumber")
+		Attribute("ID")
 		Attribute("UserName")
 	})
 
-	Required("MobieNumber")
+	Required("ID")
 })
 
 // User is the custom type for Users in our database
 var User = Type("User", func() {
 	Description("User describes a customer of store.")
-	Attribute("MobieNumber", String, "MobieNumber is the unique id of the User.", func() {
+	Attribute("ID", String, "ID is the unique id of the User.", func() {
 		Example("1")
 	})
 	Attribute("UserName", String, "Name of the User", func() {
 		Example("Rakesh Mothukuri")
 	})
-	Required("MobieNumber", "UserName")
+	Required("ID", "UserName")
 })
 
 // NotFound is a custom type where we add the queried field in the response

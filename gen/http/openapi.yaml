@@ -26,16 +26,16 @@ paths:
             $ref: '#/definitions/UserUserManagementResponseCollection'
       schemes:
       - http
-  /api/v1/user/{MobieNumber}:
+  /api/v1/user/{ID}:
     get:
       tags:
       - user
       summary: get user
       operationId: user#get
       parameters:
-      - name: MobieNumber
+      - name: ID
         in: path
-        description: MobieNumber
+        description: ID
         required: true
         type: string
       responses:
@@ -51,9 +51,9 @@ paths:
       summary: add user
       operationId: user#add
       parameters:
-      - name: MobieNumber
+      - name: ID
         in: path
-        description: MobieNumber
+        description: ID
         required: true
         type: string
       - name: AddRequestBody
@@ -98,39 +98,39 @@ definitions:
     title: 'Mediatype identifier: application/vnd.user; view=default'
     type: object
     properties:
-      MobieNumber:
+      ID:
         type: string
-        description: MobieNumber is the unique id of the User.
-        example: rockey5520@gmail.com
+        description: ID is the unique id of the User.
+        example: "1"
       UserName:
         type: string
         description: Name of the User
         example: Rakesh Mothukuri
     description: GetResponseBody result type (default view)
     example:
-      MobieNumber: rockey5520@gmail.com
+      ID: "1"
       UserName: Rakesh Mothukuri
     required:
-    - MobieNumber
+    - ID
     - UserName
   UserManagementResponse:
     title: 'Mediatype identifier: application/vnd.user; view=default'
     type: object
     properties:
-      MobieNumber:
+      ID:
         type: string
-        description: MobieNumber is the unique id of the User.
-        example: rockey5520@gmail.com
+        description: ID is the unique id of the User.
+        example: "1"
       UserName:
         type: string
         description: Name of the User
         example: Rakesh Mothukuri
     description: A UserManagement type describes a User of e-store. (default view)
     example:
-      MobieNumber: rockey5520@gmail.com
+      ID: "1"
       UserName: Rakesh Mothukuri
     required:
-    - MobieNumber
+    - ID
     - UserName
   UserUserManagementResponseCollection:
     title: 'Mediatype identifier: application/vnd.user; type=collection; view=default'
@@ -139,7 +139,7 @@ definitions:
       $ref: '#/definitions/UserManagementResponse'
     description: ShowResponseBody is the result type for an array of UserManagementResponse (default view)
     example:
-    - MobieNumber: rockey5520@gmail.com
+    - ID: "1"
       UserName: Rakesh Mothukuri
-    - MobieNumber: rockey5520@gmail.com
+    - ID: "1"
       UserName: Rakesh Mothukuri

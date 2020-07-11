@@ -22,8 +22,8 @@ func (s *usersrvc) Add(ctx context.Context,
 	p *user.AddPayload) (err error) {
 	s.logger.Print("user.add started")
 	newUser := user.UserManagement{
-		MobieNumber: p.MobieNumber,
-		UserName:    p.UserName,
+		ID:       p.ID,
+		UserName: p.UserName,
 	}
 	err = CreateUser(&newUser)
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *usersrvc) Add(ctx context.Context,
 func (s *usersrvc) Get(ctx context.Context,
 	p *user.GetPayload) (res *user.UserManagement, err error) {
 	s.logger.Print("user.get started")
-	result, err := GetUser(p.MobieNumber)
+	result, err := GetUser(p.ID)
 	if err != nil {
 		s.logger.Print("An error occurred...")
 		s.logger.Print(err)

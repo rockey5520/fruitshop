@@ -1,6 +1,7 @@
-package users
+package fruitshop
 
 import (
+	fruit "fruitshop/gen/fruit"
 	"fruitshop/gen/user"
 
 	"github.com/jinzhu/gorm"
@@ -11,6 +12,7 @@ var db *gorm.DB
 var err error
 
 type User *user.UserManagement
+type Fruit *fruit.FruitManagement
 
 // InitDB is the function that starts a database file and table structures
 // if not created then returns db object for next functions
@@ -24,11 +26,17 @@ func InitDB() *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
-	// Creating the table if it doesn't exist
+	// Creating the user table if it doesn't exist
 	var TableStruct = user.UserManagement{}
 	if !db.HasTable(TableStruct) {
 		db.CreateTable(TableStruct)
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(TableStruct)
+	}
+	// Creating fruit table if it doesn't exist
+	var FruitTableStruct = fruit.FruitManagement{}
+	if !db.HasTable(FruitTableStruct) {
+		db.CreateTable(FruitTableStruct)
+		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(FruitTableStruct)
 	}
 
 	return db
@@ -60,4 +68,52 @@ func ListUsers() (user.UserManagementCollection, error) {
 	var users user.UserManagementCollection
 	err := db.Find(&users).Error
 	return users, err
+}
+
+// CreateClient created a fruit row in DB
+func CreateFruit(fruit Fruit) error {
+	db := InitDB()
+	defer db.Close()
+	err := db.Create(&fruit).Error
+	return err
+}
+
+func initialize() {
+	db := InitDB()
+	defer db.Close()
+	apple := fruit.FruitManagement{
+		Name: "Apple",
+	}
+	banana := fruit.FruitManagement{
+		Name: "Banana",
+	}
+	pear := fruit.FruitManagement{
+		Name: "Pear",
+	}
+	orange := fruit.FruitManagement{
+		Name: "Orange",
+	}
+	db.NewRecord(apple)
+	db.Create(&apple)
+	db.NewRecord(banana)
+	db.Create(&banana)
+	db.NewRecord(pear)
+	db.Create(&pear)
+	db.NewRecord(orange)
+	db.Create(&orange)
+}
+
+// ListClients retrieves the fruits stored in Database
+var counter = 0
+
+func ListFruits() (fruit.FruitManagementCollection, error) {
+	db := InitDB()
+	defer db.Close()
+	if counter == 0 {
+		initialize()
+	}
+	counter++
+	var fruits fruit.FruitManagementCollection
+	err := db.Find(&fruits).Error
+	return fruits, err
 }

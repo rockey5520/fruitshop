@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  title: An api for users
-  description: This api manages users with CRUD operations
+  title: An api for fruit shop online purchases
+  description: This api manages online fruit shop with CRUD operations
   version: ""
 host: localhost:8080
 consumes:
@@ -13,6 +13,38 @@ produces:
 - application/xml
 - application/gob
 paths:
+  /api/v1/fruit:
+    get:
+      tags:
+      - fruit
+      summary: show fruit
+      operationId: fruit#show
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/FruitFruitManagementResponseCollection'
+      schemes:
+      - http
+  /api/v1/fruit/{Name}:
+    get:
+      tags:
+      - fruit
+      summary: get fruit
+      operationId: fruit#get
+      parameters:
+      - name: Name
+        in: path
+        description: Name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/FruitGetResponseBody'
+      schemes:
+      - http
   /api/v1/user:
     get:
       tags:
@@ -82,6 +114,41 @@ paths:
       schemes:
       - http
 definitions:
+  FruitFruitManagementResponseCollection:
+    title: 'Mediatype identifier: application/vnd.fruit; type=collection; view=default'
+    type: array
+    items:
+      $ref: '#/definitions/FruitManagementResponse'
+    description: ShowResponseBody is the result type for an array of FruitManagementResponse (default view)
+    example:
+    - Name: Apple
+    - Name: Apple
+  FruitGetResponseBody:
+    title: 'Mediatype identifier: application/vnd.fruit; view=default'
+    type: object
+    properties:
+      Name:
+        type: string
+        description: Name is the unique Name of the Fruit.
+        example: Apple
+    description: GetResponseBody result type (default view)
+    example:
+      Name: Apple
+    required:
+    - Name
+  FruitManagementResponse:
+    title: 'Mediatype identifier: application/vnd.fruit; view=default'
+    type: object
+    properties:
+      Name:
+        type: string
+        description: Name is the unique Name of the Fruit.
+        example: Apple
+    description: A FruitManagement type describes a Fruit of e-store. (default view)
+    example:
+      Name: Apple
+    required:
+    - Name
   UserAddRequestBody:
     title: UserAddRequestBody
     type: object
@@ -89,9 +156,9 @@ definitions:
       UserName:
         type: string
         description: User Name
-        example: Molestiae ex.
+        example: Est aperiam labore dicta illum ut doloremque.
     example:
-      UserName: Nemo esse minus rem.
+      UserName: Natus nemo nisi voluptate sint voluptas.
     required:
     - UserName
   UserGetResponseBody:
@@ -139,6 +206,8 @@ definitions:
       $ref: '#/definitions/UserManagementResponse'
     description: ShowResponseBody is the result type for an array of UserManagementResponse (default view)
     example:
+    - ID: "1"
+      UserName: Rakesh Mothukuri
     - ID: "1"
       UserName: Rakesh Mothukuri
     - ID: "1"

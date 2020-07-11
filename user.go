@@ -1,4 +1,4 @@
-package users
+package fruitshop
 
 import (
 	"context"

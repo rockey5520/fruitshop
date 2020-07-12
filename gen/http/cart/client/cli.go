@@ -20,7 +20,7 @@ func BuildAddPayload(cartAddBody string, cartAddCartID string) (*cart.AddPayload
 	{
 		err = json.Unmarshal([]byte(cartAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"CostPerItem\": 0.6841849788435609,\n      \"Count\": 5435616827963961871,\n      \"Name\": \"Alias est nemo iusto ab enim eos.\",\n      \"TotalCost\": 0.08266273984781566\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"CostPerItem\": 0.33994622176216194,\n      \"Count\": 202853836429068892,\n      \"Name\": \"Corporis suscipit quidem.\",\n      \"TotalCost\": 0.7147563283988613\n   }'")
 		}
 	}
 	var cartID string

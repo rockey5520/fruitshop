@@ -6,6 +6,7 @@ Useful commands :
 
 export GOBIN=$PWD/bin
 export PATH=$GOBIN:$PATH
+export PATH=$PATH:/usr/local/go/bin
 sudo apt install sqlite
 chmod +x /home/wendel/.vscode/extensions/alexcvzz.vscode-sqlite-0.8.2/bin/sqlite-v3.26.0-linux-x64
 

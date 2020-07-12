@@ -6,7 +6,9 @@ import (
 	fruit "fruitshop/gen/fruit"
 	cartsvr "fruitshop/gen/http/cart/server"
 	fruitsvr "fruitshop/gen/http/fruit/server"
+	paymentsvr "fruitshop/gen/http/payment/server"
 	usersvr "fruitshop/gen/http/user/server"
+	payment "fruitshop/gen/payment"
 	user "fruitshop/gen/user"
 	"log"
 	"net/http"
@@ -22,7 +24,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, fruitEndpoints *fruit.Endpoints, cartEndpoints *cart.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, fruitEndpoints *fruit.Endpoints, cartEndpoints *cart.Endpoints, paymentEndpoints *payment.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -53,20 +55,23 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		userServer  *usersvr.Server
-		fruitServer *fruitsvr.Server
-		cartServer  *cartsvr.Server
+		userServer    *usersvr.Server
+		fruitServer   *fruitsvr.Server
+		cartServer    *cartsvr.Server
+		paymentServer *paymentsvr.Server
 	)
 	{
 		eh := errorHandler(logger)
 		userServer = usersvr.New(userEndpoints, mux, dec, enc, eh, nil)
 		fruitServer = fruitsvr.New(fruitEndpoints, mux, dec, enc, eh, nil)
 		cartServer = cartsvr.New(cartEndpoints, mux, dec, enc, eh, nil)
+		paymentServer = paymentsvr.New(paymentEndpoints, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
 				userServer,
 				fruitServer,
 				cartServer,
+				paymentServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
@@ -75,6 +80,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 	usersvr.Mount(mux, userServer)
 	fruitsvr.Mount(mux, fruitServer)
 	cartsvr.Mount(mux, cartServer)
+	paymentsvr.Mount(mux, paymentServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -94,6 +100,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range cartServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range paymentServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 

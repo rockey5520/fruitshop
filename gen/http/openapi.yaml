@@ -95,6 +95,57 @@ paths:
             $ref: '#/definitions/FruitGetResponseBody'
       schemes:
       - http
+  /api/v1/payment/{ID}/{cartId}:
+    get:
+      tags:
+      - payment
+      summary: get payment
+      operationId: payment#get
+      parameters:
+      - name: ID
+        in: path
+        description: cartId
+        required: true
+        type: string
+      - name: cartId
+        in: path
+        description: cartId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/PaymentGetResponseBody'
+      schemes:
+      - http
+  /api/v1/payment/pay/{ID}:
+    post:
+      tags:
+      - payment
+      summary: add payment
+      operationId: payment#add
+      parameters:
+      - name: ID
+        in: path
+        description: ID of the user
+        required: true
+        type: string
+      - name: AddRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/PaymentAddRequestBody'
+          required:
+          - cartId
+          - Amount
+      responses:
+        "202":
+          description: Accepted response.
+          schema:
+            $ref: '#/definitions/PaymentAddResponseBody'
+      schemes:
+      - http
   /api/v1/user:
     get:
       tags:
@@ -171,27 +222,27 @@ definitions:
       CostPerItem:
         type: number
         description: Cost of fruits
-        example: 0.2652887021007104
+        example: 0.11918360553101845
         format: double
       Count:
         type: integer
         description: Number of fruits
-        example: 4705100036719592444
+        example: 8792741417222834879
         format: int64
       Name:
         type: string
         description: Name of the fruit
-        example: In fugiat aperiam.
+        example: Eligendi quidem velit.
       TotalCost:
         type: number
         description: Total cost for the item
-        example: 0.3092978466491313
+        example: 0.6095730362976958
         format: double
     example:
-      CostPerItem: 0.5903683109416032
-      Count: 652298858263881118
-      Name: Dolor rem voluptatem dolor voluptatem.
-      TotalCost: 0.4994343749322024
+      CostPerItem: 0.15667625256200768
+      Count: 2288432844349867782
+      Name: Temporibus voluptate reprehenderit et aspernatur consequatur quaerat.
+      TotalCost: 0.18975432001337
     required:
     - Name
     - Count
@@ -275,8 +326,6 @@ definitions:
       Name: Apple
     - Cost: 1
       Name: Apple
-    - Cost: 1
-      Name: Apple
   FruitGetRequestBody:
     title: FruitGetRequestBody
     type: object
@@ -284,10 +333,10 @@ definitions:
       Cost:
         type: number
         description: Cost
-        example: 0.13577958339601065
+        example: 0.30382650101586955
         format: double
     example:
-      Cost: 0.4703888278036248
+      Cost: 0.4560256033373545
     required:
     - Cost
   FruitGetResponseBody:
@@ -330,6 +379,83 @@ definitions:
     required:
     - Name
     - Cost
+  PaymentAddRequestBody:
+    title: PaymentAddRequestBody
+    type: object
+    properties:
+      Amount:
+        type: number
+        description: Total cost of the cart
+        example: 0.4030854047326235
+        format: double
+      cartId:
+        type: string
+        description: cartId of the user
+        example: Earum quod mollitia quae eos fugit.
+    example:
+      Amount: 0.8065909072399275
+      cartId: Nesciunt cumque et provident eaque.
+    required:
+    - cartId
+    - Amount
+  PaymentAddResponseBody:
+    title: 'Mediatype identifier: application/vnd.payment; view=default'
+    type: object
+    properties:
+      Amount:
+        type: number
+        description: Amount to be paid for the purchase
+        example: 50
+        format: double
+      ID:
+        type: string
+        description: cartId is the unique cart id of the User.
+        example: "1"
+      PaymentStatus:
+        type: string
+        description: Payment status
+        example: Success
+      cartId:
+        type: string
+        description: cartId is the unique cart id of the User.
+        example: "1"
+    description: AddResponseBody result type (default view)
+    example:
+      Amount: 50
+      ID: "1"
+      PaymentStatus: Success
+      cartId: "1"
+    required:
+    - cartId
+  PaymentGetResponseBody:
+    title: 'Mediatype identifier: application/vnd.payment; view=default'
+    type: object
+    properties:
+      Amount:
+        type: number
+        description: Amount to be paid for the purchase
+        example: 50
+        format: double
+      ID:
+        type: string
+        description: cartId is the unique cart id of the User.
+        example: "1"
+      PaymentStatus:
+        type: string
+        description: Payment status
+        example: Success
+      cartId:
+        type: string
+        description: cartId is the unique cart id of the User.
+        example: "1"
+    description: GetResponseBody result type (default view)
+    example:
+      Amount: 50
+      ID: "1"
+      PaymentStatus: Success
+      cartId: "1"
+    required:
+    - cartId
   UserAddRequestBody:
     title: UserAddRequestBody
     type: object
@@ -337,9 +463,9 @@ definitions:
       UserName:
         type: string
         description: User Name
-        example: Doloremque corrupti quo et.
+        example: Veniam ea laboriosam.
     example:
-      UserName: Saepe eligendi sint vitae officiis officiis et.
+      UserName: Autem id.
     required:
     - UserName
   UserGetResponseBody:

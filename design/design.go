@@ -120,6 +120,39 @@ var _ = Service("cart", func() {
 
 })
 
+var _ = Service("payment", func() {
+	Description("The cart service allows to manage the state of the cart")
+	Method("add", func() {
+		Payload(func() {
+			Field(1, "ID", String, "ID of the user")
+			Field(2, "cartId", String, "cartId of the user")
+			Field(2, "Amount", Float64, "Total cost of the cart")
+			Required("ID", "cartId", "Amount")
+		})
+		Result(PaymentManagement)
+		Error("not_found", NotFound, "Fruit not found")
+		HTTP(func() {
+			POST("/api/v1/payment/pay/{ID}")
+			Response(StatusAccepted)
+		})
+	})
+
+	Method("get", func() {
+		Payload(func() {
+			Field(1, "ID", String, "cartId")
+			Field(1, "cartId", String, "cartId")
+			Required("ID", "cartId")
+		})
+		Result(PaymentManagement)
+		Error("not_found", NotFound, "User not found")
+		HTTP(func() {
+			GET("/api/v1/payment/{ID}/{cartId}")
+			Response(StatusOK)
+		})
+	})
+
+})
+
 // UserManagement is a custom ResultType used to configure views for our custom type
 var UserManagement = ResultType("application/vnd.user", func() {
 	Description("A UserManagement type describes a User of e-store.")
@@ -196,6 +229,33 @@ var CartManagement = ResultType("application/vnd.cart", func() {
 	Required("TotalCost")
 })
 
+// UserManagement is a custom ResultType used to configure views for our custom type
+var PaymentManagement = ResultType("application/vnd.payment", func() {
+	Description("A PaymentManagement type for the payment for the fruits purchased")
+	Reference(Payment)
+	TypeName("PaymentManagement")
+
+	Attributes(func() {
+		Attribute("ID", String, "cartId is the unique cart id of the User.", func() {
+			Example("1")
+		})
+		Attribute("cartId", String, "cartId is the unique cart id of the User.", func() {
+			Example("1")
+		})
+		Field(2, "Amount")
+		Field(3, "PaymentStatus")
+	})
+
+	View("default", func() {
+		Attribute("ID")
+		Attribute("cartId")
+		Attribute("Amount")
+		Attribute("PaymentStatus")
+	})
+
+	Required("cartId")
+})
+
 // User is the custom type for Users in our database
 var User = Type("User", func() {
 	Description("User describes a customer of store.")
@@ -240,6 +300,24 @@ var Cart = Type("Cart", func() {
 	})
 
 	Required("cartId", "Name", "Count")
+})
+
+// Payment is the custom type for Payment in our database
+var Payment = Type("Payment", func() {
+	Description("Payment describes payment for the items purchased")
+	Attribute("cartId", String, "cartId is the unique cart id of the User.", func() {
+		Example("1")
+	})
+	Attribute("ID", String, "Payment ID for the cart", func() {
+		Example("30")
+	})
+	Attribute("Amount", Float64, "Amount to be paid for the purchase", func() {
+		Example(50)
+	})
+	Attribute("PaymentStatus", String, "Payment status", func() {
+		Example("Success")
+	})
+	Required("cartId")
 })
 
 // NotFound is a custom type where we add the queried field in the response

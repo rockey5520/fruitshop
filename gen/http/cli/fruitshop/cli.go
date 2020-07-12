@@ -12,6 +12,7 @@ import (
 	"fmt"
 	cartc "fruitshop/gen/http/cart/client"
 	fruitc "fruitshop/gen/http/fruit/client"
+	paymentc "fruitshop/gen/http/payment/client"
 	userc "fruitshop/gen/http/user/client"
 	"net/http"
 	"os"
@@ -28,23 +29,28 @@ func UsageCommands() string {
 	return `user (add|get|show)
 fruit (get|show)
 cart (add|get)
+payment (add|get)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
-      "UserName": "Repellat voluptatem molestias quae placeat saepe."
-   }' --id "Delectus et minima voluptate et vel."` + "\n" +
+      "UserName": "Unde natus nemo nisi voluptate sint."
+   }' --id "Veritatis eos."` + "\n" +
 		os.Args[0] + ` fruit get --body '{
-      "Cost": 0.1969807399668895
-   }' --name "Sint nihil aspernatur."` + "\n" +
+      "Cost": 0.8672823103394148
+   }' --name "Est eligendi vitae."` + "\n" +
 		os.Args[0] + ` cart add --body '{
-      "CostPerItem": 0.6841849788435609,
-      "Count": 5435616827963961871,
-      "Name": "Alias est nemo iusto ab enim eos.",
-      "TotalCost": 0.08266273984781566
-   }' --cart-id "Rerum est eligendi vitae officiis sed sed."` + "\n" +
+      "CostPerItem": 0.33994622176216194,
+      "Count": 202853836429068892,
+      "Name": "Corporis suscipit quidem.",
+      "TotalCost": 0.7147563283988613
+   }' --cart-id "Voluptatibus nobis."` + "\n" +
+		os.Args[0] + ` payment add --body '{
+      "Amount": 0.0707223839239514,
+      "cartId": "Ut nesciunt dolor rem voluptatem dolor voluptatem."
+   }' --id "Delectus voluptatibus."` + "\n" +
 		""
 }
 
@@ -85,6 +91,16 @@ func ParseEndpoint(
 
 		cartGetFlags      = flag.NewFlagSet("get", flag.ExitOnError)
 		cartGetCartIDFlag = cartGetFlags.String("cart-id", "REQUIRED", "cartId")
+
+		paymentFlags = flag.NewFlagSet("payment", flag.ContinueOnError)
+
+		paymentAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
+		paymentAddBodyFlag = paymentAddFlags.String("body", "REQUIRED", "")
+		paymentAddIDFlag   = paymentAddFlags.String("id", "REQUIRED", "ID of the user")
+
+		paymentGetFlags      = flag.NewFlagSet("get", flag.ExitOnError)
+		paymentGetIDFlag     = paymentGetFlags.String("id", "REQUIRED", "cartId")
+		paymentGetCartIDFlag = paymentGetFlags.String("cart-id", "REQUIRED", "cartId")
 	)
 	userFlags.Usage = userUsage
 	userAddFlags.Usage = userAddUsage
@@ -98,6 +114,10 @@ func ParseEndpoint(
 	cartFlags.Usage = cartUsage
 	cartAddFlags.Usage = cartAddUsage
 	cartGetFlags.Usage = cartGetUsage
+
+	paymentFlags.Usage = paymentUsage
+	paymentAddFlags.Usage = paymentAddUsage
+	paymentGetFlags.Usage = paymentGetUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -120,6 +140,8 @@ func ParseEndpoint(
 			svcf = fruitFlags
 		case "cart":
 			svcf = cartFlags
+		case "payment":
+			svcf = paymentFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -165,6 +187,16 @@ func ParseEndpoint(
 
 			case "get":
 				epf = cartGetFlags
+
+			}
+
+		case "payment":
+			switch epn {
+			case "add":
+				epf = paymentAddFlags
+
+			case "get":
+				epf = paymentGetFlags
 
 			}
 
@@ -221,6 +253,16 @@ func ParseEndpoint(
 				endpoint = c.Get()
 				data, err = cartc.BuildGetPayload(*cartGetCartIDFlag)
 			}
+		case "payment":
+			c := paymentc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "add":
+				endpoint = c.Add()
+				data, err = paymentc.BuildAddPayload(*paymentAddBodyFlag, *paymentAddIDFlag)
+			case "get":
+				endpoint = c.Get()
+				data, err = paymentc.BuildGetPayload(*paymentGetIDFlag, *paymentGetCartIDFlag)
+			}
 		}
 	}
 	if err != nil {
@@ -254,8 +296,8 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` user add --body '{
-      "UserName": "Repellat voluptatem molestias quae placeat saepe."
-   }' --id "Delectus et minima voluptate et vel."
+      "UserName": "Unde natus nemo nisi voluptate sint."
+   }' --id "Veritatis eos."
 `, os.Args[0])
 }
 
@@ -266,7 +308,7 @@ Get implements get.
     -id STRING: ID
 
 Example:
-    `+os.Args[0]+` user get --id "Labore dicta illum ut doloremque unde natus."
+    `+os.Args[0]+` user get --id "Harum molestiae non ea alias est nemo."
 `, os.Args[0])
 }
 
@@ -303,8 +345,8 @@ Get implements get.
 
 Example:
     `+os.Args[0]+` fruit get --body '{
-      "Cost": 0.1969807399668895
-   }' --name "Sint nihil aspernatur."
+      "Cost": 0.8672823103394148
+   }' --name "Est eligendi vitae."
 `, os.Args[0])
 }
 
@@ -341,11 +383,11 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` cart add --body '{
-      "CostPerItem": 0.6841849788435609,
-      "Count": 5435616827963961871,
-      "Name": "Alias est nemo iusto ab enim eos.",
-      "TotalCost": 0.08266273984781566
-   }' --cart-id "Rerum est eligendi vitae officiis sed sed."
+      "CostPerItem": 0.33994622176216194,
+      "Count": 202853836429068892,
+      "Name": "Corporis suscipit quidem.",
+      "TotalCost": 0.7147563283988613
+   }' --cart-id "Voluptatibus nobis."
 `, os.Args[0])
 }
 
@@ -356,6 +398,47 @@ Get implements get.
     -cart-id STRING: cartId
 
 Example:
-    `+os.Args[0]+` cart get --cart-id "Vitae sit culpa earum."
+    `+os.Args[0]+` cart get --cart-id "Saepe eligendi sint vitae officiis officiis et."
+`, os.Args[0])
+}
+
+// paymentUsage displays the usage of the payment command and its subcommands.
+func paymentUsage() {
+	fmt.Fprintf(os.Stderr, `The cart service allows to manage the state of the cart
+Usage:
+    %s [globalflags] payment COMMAND [flags]
+
+COMMAND:
+    add: Add implements add.
+    get: Get implements get.
+
+Additional help:
+    %s payment COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func paymentAddUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] payment add -body JSON -id STRING
+
+Add implements add.
+    -body JSON: 
+    -id STRING: ID of the user
+
+Example:
+    `+os.Args[0]+` payment add --body '{
+      "Amount": 0.0707223839239514,
+      "cartId": "Ut nesciunt dolor rem voluptatem dolor voluptatem."
+   }' --id "Delectus voluptatibus."
+`, os.Args[0])
+}
+
+func paymentGetUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] payment get -id STRING -cart-id STRING
+
+Get implements get.
+    -id STRING: cartId
+    -cart-id STRING: cartId
+
+Example:
+    `+os.Args[0]+` payment get --id "Non consequuntur qui laudantium id culpa aut." --cart-id "Labore ratione numquam."
 `, os.Args[0])
 }

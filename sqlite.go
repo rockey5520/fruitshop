@@ -1,8 +1,10 @@
 package fruitshop
 
 import (
+	"fmt"
 	cart "fruitshop/gen/cart"
 	fruit "fruitshop/gen/fruit"
+	payment "fruitshop/gen/payment"
 	"fruitshop/gen/user"
 
 	"github.com/jinzhu/gorm"
@@ -15,6 +17,7 @@ var err error
 type User *user.UserManagement
 type Fruit *fruit.FruitManagement
 type Cart *cart.CartManagement
+type Payment *payment.PaymentManagement
 
 // InitDB is the function that starts a database file and table structures
 // if not created then returns db object for next functions
@@ -46,6 +49,12 @@ func InitDB() *gorm.DB {
 	if !db.HasTable(CartTableStruct) {
 		db.CreateTable(CartTableStruct)
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(CartTableStruct)
+	}
+
+	var PaymentTableStruct = payment.PaymentManagement{}
+	if !db.HasTable(PaymentTableStruct) {
+		db.CreateTable(PaymentTableStruct)
+		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(PaymentTableStruct)
 	}
 
 	return db
@@ -109,6 +118,9 @@ func ListFruits() (fruit.FruitManagementCollection, error) {
 func CreateCart(user User) error {
 	db := InitDB()
 	defer db.Close()
+	paymentID := user.ID + user.ID
+	paymentStatus := "NOTPAID"
+	paymentAmount := float64(0)
 	cartItemApple := cart.CartManagement{
 		CartID:      user.ID,
 		Name:        "Apple",
@@ -137,11 +149,18 @@ func CreateCart(user User) error {
 		CostPerItem: 1,
 		TotalCost:   0,
 	}
+	payment := payment.PaymentManagement{
+		ID:            &paymentID,
+		CartID:        user.ID,
+		PaymentStatus: &paymentStatus,
+		Amount:        &paymentAmount,
+	}
 
 	err := db.Create(&cartItemApple).Error
 	db.Create(&cartItemBanana)
 	db.Create(&cartItemPear)
 	db.Create(&cartItemOrange)
+	db.Create(&payment)
 
 	return err
 }
@@ -158,6 +177,18 @@ func UpdateItemInCart(cart Cart) error {
 		Update("cost_per_item", fruits.Cost).
 		Update("total_cost", fruits.Cost*float64(cart.Count)).
 		Error
+
+	paymentId := cart.CartID + cart.CartID
+	amount := fruits.Cost * float64(cart.Count)
+	var payments payment.PaymentManagement
+	db.Where("ID = ?", paymentId).First(&payments)
+	payment := &payment.PaymentManagement{
+		ID:     &paymentId,
+		CartID: cart.CartID,
+	}
+	var currentTotal float64 = *payments.Amount + amount
+	db.Find(&payment).Update("amount", currentTotal)
+
 	return err
 }
 
@@ -167,6 +198,27 @@ func ListAllItemsInCartForId(CartID string) (cart.CartManagementCollection, erro
 	var carts cart.CartManagementCollection
 	err := db.Find(&carts).Where("CartID = ?", CartID).Error
 	return carts, err
+}
+
+// CreateCartItem creates a cart entry row in DB
+func GetPaymentAmoutFromCart(input Payment) (payment.PaymentManagement, error) {
+	db := InitDB()
+	defer db.Close()
+	var totalAmount float64
+	var cart cart.CartManagementCollection
+	db.Table("cart_managements").Where("cart_id = ?", input.CartID).Find(&cart)
+
+	for _, x := range cart {
+		totalAmount += float64(x.TotalCost)
+	}
+	var payments payment.PaymentManagement
+	db.Model(&payments).Where("ID = ?", input.ID).Update("amout", totalAmount)
+
+	db.Where("ID = ?", input.ID).First(&payments)
+
+	fmt.Println("totalAmount", totalAmount)
+
+	return payments, err
 }
 
 func initialize() {

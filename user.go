@@ -26,6 +26,7 @@ func (s *usersrvc) Add(ctx context.Context,
 		UserName: p.UserName,
 	}
 	err = CreateUser(&newUser)
+	err = CreateCart(&newUser)
 	if err != nil {
 		s.logger.Print("An error occurred...")
 		s.logger.Print(err)

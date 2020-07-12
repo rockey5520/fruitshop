@@ -93,20 +93,56 @@ var counter = 0
 func ListFruits() (fruit.FruitManagementCollection, error) {
 	db := InitDB()
 	defer db.Close()
-	if counter == 0 {
+	var fruits fruit.FruitManagementCollection
+	var count int
+	db.Where("name = ?", "Apple").Find(&fruits).Count(&count)
+	if count == 0 {
 		initialize()
 	}
 	counter++
-	var fruits fruit.FruitManagementCollection
+
 	err := db.Find(&fruits).Error
 	return fruits, err
+}
+
+// CreateClient created a client row in DB
+func CreateCart(user User) error {
+	db := InitDB()
+	defer db.Close()
+	cartItemApple := cart.CartManagement{
+		CartID: user.ID,
+		Name:   "Apple",
+		Count:  0,
+	}
+	cartItemBanana := cart.CartManagement{
+		CartID: user.ID,
+		Name:   "Banana",
+		Count:  0,
+	}
+	cartItemPear := cart.CartManagement{
+		CartID: user.ID,
+		Name:   "Pear",
+		Count:  0,
+	}
+	cartItemOrange := cart.CartManagement{
+		CartID: user.ID,
+		Name:   "Orange",
+		Count:  0,
+	}
+
+	err := db.Create(&cartItemApple).Error
+	db.Create(&cartItemBanana)
+	db.Create(&cartItemPear)
+	db.Create(&cartItemOrange)
+
+	return err
 }
 
 // CreateCartItem creates a cart entry row in DB
 func CreateItemInCart(cart Cart) error {
 	db := InitDB()
 	defer db.Close()
-	err := db.Create(&cart).Error
+	err := db.Model(&cart).Where("name = ?", cart.Name).Update("count", cart.Count).Error
 	return err
 }
 

@@ -32,7 +32,7 @@ func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 		s.logger.Print(err)
 		return
 	}
-	s.logger.Print("user.add completed")
+	s.logger.Print("cart.add completed")
 	return
 }
 

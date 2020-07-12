@@ -8,16 +8,28 @@
 package client
 
 import (
+	"encoding/json"
+	"fmt"
 	fruit "fruitshop/gen/fruit"
 )
 
 // BuildGetPayload builds the payload for the fruit get endpoint from CLI flags.
-func BuildGetPayload(fruitGetName string) (*fruit.GetPayload, error) {
+func BuildGetPayload(fruitGetBody string, fruitGetName string) (*fruit.GetPayload, error) {
+	var err error
+	var body GetRequestBody
+	{
+		err = json.Unmarshal([]byte(fruitGetBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"Cost\": 0.8732234816407924\n   }'")
+		}
+	}
 	var name string
 	{
 		name = fruitGetName
 	}
-	v := &fruit.GetPayload{}
+	v := &fruit.GetPayload{
+		Cost: body.Cost,
+	}
 	v.Name = name
 
 	return v, nil

@@ -57,10 +57,15 @@ func NewClient(
 // server.
 func (c *Client) Get() goa.Endpoint {
 	var (
+		encodeRequest  = EncodeGetRequest(c.encoder)
 		decodeResponse = DecodeGetResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
 		req, err := c.BuildGetRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
 		if err != nil {
 			return nil, err
 		}

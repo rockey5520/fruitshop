@@ -65,7 +65,8 @@ var _ = Service("fruit", func() {
 	Method("get", func() {
 		Payload(func() {
 			Field(1, "Name", String, "Name")
-			Required("Name")
+			Field(2, "Cost", Float64, "Cost")
+			Required("Name", "Cost")
 		})
 		Result(FruitManagement)
 		Error("not_found", NotFound, "Fruit not found")
@@ -149,14 +150,16 @@ var FruitManagement = ResultType("application/vnd.fruit", func() {
 			Example("Apple")
 		})
 		Field(2, "Name")
+		Field(3, "Cost")
 
 	})
 
 	View("default", func() {
 		Attribute("Name")
+		Attribute("Cost")
 	})
 
-	Required("Name")
+	Required("Name", "Cost")
 })
 
 // CartManagement is a custom ResultType used to configure views for our custom type
@@ -203,7 +206,10 @@ var Fruit = Type("Fruit", func() {
 	Attribute("Name", String, "Name is the unique Name of the Fruit.", func() {
 		Example("Apple")
 	})
-	Required("Name")
+	Attribute("Cost", Float64, "Cost of the Fruit.", func() {
+		Example(1.0)
+	})
+	Required("Name", "Cost")
 })
 
 // User is the custom type for Users in our database

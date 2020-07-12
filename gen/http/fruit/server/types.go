@@ -10,13 +10,24 @@ package server
 import (
 	fruit "fruitshop/gen/fruit"
 	fruitviews "fruitshop/gen/fruit/views"
+
+	goa "goa.design/goa/v3/pkg"
 )
+
+// GetRequestBody is the type of the "fruit" service "get" endpoint HTTP
+// request body.
+type GetRequestBody struct {
+	// Cost
+	Cost *float64 `form:"Cost,omitempty" json:"Cost,omitempty" xml:"Cost,omitempty"`
+}
 
 // GetResponseBody is the type of the "fruit" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
 	// Name is the unique Name of the Fruit.
 	Name string `form:"Name" json:"Name" xml:"Name"`
+	// Cost of the Fruit.
+	Cost float64 `form:"Cost" json:"Cost" xml:"Cost"`
 }
 
 // FruitManagementResponseCollection is the type of the "fruit" service "show"
@@ -27,6 +38,8 @@ type FruitManagementResponseCollection []*FruitManagementResponse
 type FruitManagementResponse struct {
 	// Name is the unique Name of the Fruit.
 	Name string `form:"Name" json:"Name" xml:"Name"`
+	// Cost of the Fruit.
+	Cost float64 `form:"Cost" json:"Cost" xml:"Cost"`
 }
 
 // NewGetResponseBody builds the HTTP response body from the result of the
@@ -34,6 +47,7 @@ type FruitManagementResponse struct {
 func NewGetResponseBody(res *fruitviews.FruitManagementView) *GetResponseBody {
 	body := &GetResponseBody{
 		Name: *res.Name,
+		Cost: *res.Cost,
 	}
 	return body
 }
@@ -49,9 +63,19 @@ func NewFruitManagementResponseCollection(res fruitviews.FruitManagementCollecti
 }
 
 // NewGetPayload builds a fruit service get endpoint payload.
-func NewGetPayload(name string) *fruit.GetPayload {
-	v := &fruit.GetPayload{}
+func NewGetPayload(body *GetRequestBody, name string) *fruit.GetPayload {
+	v := &fruit.GetPayload{
+		Cost: *body.Cost,
+	}
 	v.Name = name
 
 	return v
+}
+
+// ValidateGetRequestBody runs the validations defined on GetRequestBody
+func ValidateGetRequestBody(body *GetRequestBody) (err error) {
+	if body.Cost == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("Cost", "body"))
+	}
+	return
 }

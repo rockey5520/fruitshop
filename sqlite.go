@@ -159,15 +159,19 @@ func initialize() {
 	defer db.Close()
 	apple := fruit.FruitManagement{
 		Name: "Apple",
+		Cost: 1.0,
 	}
 	banana := fruit.FruitManagement{
 		Name: "Banana",
+		Cost: 1,
 	}
 	pear := fruit.FruitManagement{
 		Name: "Pear",
+		Cost: 1,
 	}
 	orange := fruit.FruitManagement{
 		Name: "Orange",
+		Cost: 1,
 	}
 	db.NewRecord(apple)
 	db.Create(&apple)

@@ -44,6 +44,22 @@ func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Requ
 	return req, nil
 }
 
+// EncodeGetRequest returns an encoder for requests sent to the fruit get
+// server.
+func EncodeGetRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*fruit.GetPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("fruit", "get", "*fruit.GetPayload", v)
+		}
+		body := NewGetRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("fruit", "get", err)
+		}
+		return nil
+	}
+}
+
 // DecodeGetResponse returns a decoder for responses returned by the fruit get
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
@@ -149,6 +165,7 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 func unmarshalFruitManagementResponseToFruitviewsFruitManagementView(v *FruitManagementResponse) *fruitviews.FruitManagementView {
 	res := &fruitviews.FruitManagementView{
 		Name: v.Name,
+		Cost: v.Cost,
 	}
 
 	return res

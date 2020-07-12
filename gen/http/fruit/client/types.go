@@ -8,16 +8,26 @@
 package client
 
 import (
+	fruit "fruitshop/gen/fruit"
 	fruitviews "fruitshop/gen/fruit/views"
 
 	goa "goa.design/goa/v3/pkg"
 )
+
+// GetRequestBody is the type of the "fruit" service "get" endpoint HTTP
+// request body.
+type GetRequestBody struct {
+	// Cost
+	Cost float64 `form:"Cost" json:"Cost" xml:"Cost"`
+}
 
 // GetResponseBody is the type of the "fruit" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
 	// Name is the unique Name of the Fruit.
 	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
+	// Cost of the Fruit.
+	Cost *float64 `form:"Cost,omitempty" json:"Cost,omitempty" xml:"Cost,omitempty"`
 }
 
 // ShowResponseBody is the type of the "fruit" service "show" endpoint HTTP
@@ -28,6 +38,17 @@ type ShowResponseBody []*FruitManagementResponse
 type FruitManagementResponse struct {
 	// Name is the unique Name of the Fruit.
 	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
+	// Cost of the Fruit.
+	Cost *float64 `form:"Cost,omitempty" json:"Cost,omitempty" xml:"Cost,omitempty"`
+}
+
+// NewGetRequestBody builds the HTTP request body from the payload of the "get"
+// endpoint of the "fruit" service.
+func NewGetRequestBody(p *fruit.GetPayload) *GetRequestBody {
+	body := &GetRequestBody{
+		Cost: p.Cost,
+	}
+	return body
 }
 
 // NewGetFruitManagementOK builds a "fruit" service "get" endpoint result from
@@ -35,6 +56,7 @@ type FruitManagementResponse struct {
 func NewGetFruitManagementOK(body *GetResponseBody) *fruitviews.FruitManagementView {
 	v := &fruitviews.FruitManagementView{
 		Name: body.Name,
+		Cost: body.Cost,
 	}
 
 	return v
@@ -55,6 +77,9 @@ func NewShowFruitManagementCollectionOK(body ShowResponseBody) fruitviews.FruitM
 func ValidateFruitManagementResponse(body *FruitManagementResponse) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "body"))
+	}
+	if body.Cost == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("Cost", "body"))
 	}
 	return
 }

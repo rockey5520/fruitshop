@@ -10,9 +10,11 @@ package server
 import (
 	"context"
 	fruitviews "fruitshop/gen/fruit/views"
+	"io"
 	"net/http"
 
 	goahttp "goa.design/goa/v3/http"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // EncodeGetResponse returns an encoder for responses returned by the fruit get
@@ -32,12 +34,28 @@ func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahtt
 func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
+			body GetRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateGetRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
 			name string
 
 			params = mux.Vars(r)
 		)
 		name = params["Name"]
-		payload := NewGetPayload(name)
+		payload := NewGetPayload(&body, name)
 
 		return payload, nil
 	}
@@ -61,6 +79,7 @@ func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goaht
 func marshalFruitviewsFruitManagementViewToFruitManagementResponse(v *fruitviews.FruitManagementView) *FruitManagementResponse {
 	res := &FruitManagementResponse{
 		Name: *v.Name,
+		Cost: *v.Cost,
 	}
 
 	return res

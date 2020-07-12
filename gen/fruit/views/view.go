@@ -32,6 +32,8 @@ type FruitManagementCollection struct {
 type FruitManagementView struct {
 	// Name is the unique Name of the Fruit.
 	Name *string
+	// Cost of the Fruit.
+	Cost *float64
 }
 
 // FruitManagementCollectionView is a type that runs validations on a projected
@@ -44,6 +46,7 @@ var (
 	FruitManagementMap = map[string][]string{
 		"default": []string{
 			"Name",
+			"Cost",
 		},
 	}
 	// FruitManagementCollectionMap is a map of attribute names in result type
@@ -51,6 +54,7 @@ var (
 	FruitManagementCollectionMap = map[string][]string{
 		"default": []string{
 			"Name",
+			"Cost",
 		},
 	}
 )
@@ -84,6 +88,9 @@ func ValidateFruitManagementCollection(result FruitManagementCollection) (err er
 func ValidateFruitManagementView(result *FruitManagementView) (err error) {
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "result"))
+	}
+	if result.Cost == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("Cost", "result"))
 	}
 	return
 }

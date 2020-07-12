@@ -81,6 +81,13 @@ paths:
         description: Name
         required: true
         type: string
+      - name: GetRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/FruitGetRequestBody'
+          required:
+          - Cost
       responses:
         "200":
           description: OK response.
@@ -164,15 +171,15 @@ definitions:
       Count:
         type: integer
         description: Number of fruits
-        example: 7064755959822964249
+        example: 4039646094160476520
         format: int64
       Name:
         type: string
         description: Name of the fruit
-        example: Doloremque corrupti quo et.
+        example: Quo et tempore.
     example:
-      Count: 7254963938038769827
-      Name: Eligendi sint.
+      Count: 3327328163604553417
+      Name: Sint vitae officiis.
     required:
     - Name
     - Count
@@ -183,6 +190,9 @@ definitions:
       $ref: '#/definitions/CartManagementResponse'
     description: GetResponseBody is the result type for an array of CartManagementResponse (default view)
     example:
+    - Count: 2
+      Name: Apple
+      cartId: "1"
     - Count: 2
       Name: Apple
       cartId: "1"
@@ -222,35 +232,65 @@ definitions:
       $ref: '#/definitions/FruitManagementResponse'
     description: ShowResponseBody is the result type for an array of FruitManagementResponse (default view)
     example:
-    - Name: Apple
-    - Name: Apple
-    - Name: Apple
+    - Cost: 1
+      Name: Apple
+    - Cost: 1
+      Name: Apple
+    - Cost: 1
+      Name: Apple
+  FruitGetRequestBody:
+    title: FruitGetRequestBody
+    type: object
+    properties:
+      Cost:
+        type: number
+        description: Cost
+        example: 0.9509512832245888
+        format: double
+    example:
+      Cost: 0.5448498531255602
+    required:
+    - Cost
   FruitGetResponseBody:
     title: 'Mediatype identifier: application/vnd.fruit; view=default'
     type: object
     properties:
+      Cost:
+        type: number
+        description: Cost of the Fruit.
+        example: 1
+        format: double
       Name:
         type: string
         description: Name is the unique Name of the Fruit.
         example: Apple
     description: GetResponseBody result type (default view)
     example:
+      Cost: 1
       Name: Apple
     required:
     - Name
+    - Cost
   FruitManagementResponse:
     title: 'Mediatype identifier: application/vnd.fruit; view=default'
     type: object
     properties:
+      Cost:
+        type: number
+        description: Cost of the Fruit.
+        example: 1
+        format: double
       Name:
         type: string
         description: Name is the unique Name of the Fruit.
         example: Apple
     description: A FruitManagement type describes a Fruit of e-store. (default view)
     example:
+      Cost: 1
       Name: Apple
     required:
     - Name
+    - Cost
   UserAddRequestBody:
     title: UserAddRequestBody
     type: object
@@ -258,7 +298,7 @@ definitions:
       UserName:
         type: string
         description: User Name
-        example: Officiis sed sed ipsum voluptas ea molestiae.
+        example: Ea molestiae.
     example:
       UserName: Suscipit quidem vitae sit culpa.
     required:

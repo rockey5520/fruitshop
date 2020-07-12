@@ -34,13 +34,15 @@ cart (add|get)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
-      "UserName": "Placeat adipisci optio non."
-   }' --id "Neque esse ut."` + "\n" +
-		os.Args[0] + ` fruit get --name "Natus nemo nisi voluptate sint voluptas."` + "\n" +
+      "UserName": "Molestiae neque."
+   }' --id "Ut sint consequuntur repellat voluptatem molestias."` + "\n" +
+		os.Args[0] + ` fruit get --body '{
+      "Cost": 0.8732234816407924
+   }' --name "Doloremque unde natus nemo nisi voluptate sint."` + "\n" +
 		os.Args[0] + ` cart add --body '{
-      "Count": 4044866562136685344,
-      "Name": "Ullam est harum molestiae non."
-   }' --cart-id "Est nemo."` + "\n" +
+      "Count": 241990082055395209,
+      "Name": "Aspernatur dolores ullam est harum molestiae."
+   }' --cart-id "Alias est nemo iusto ab enim eos."` + "\n" +
 		""
 }
 
@@ -68,6 +70,7 @@ func ParseEndpoint(
 		fruitFlags = flag.NewFlagSet("fruit", flag.ContinueOnError)
 
 		fruitGetFlags    = flag.NewFlagSet("get", flag.ExitOnError)
+		fruitGetBodyFlag = fruitGetFlags.String("body", "REQUIRED", "")
 		fruitGetNameFlag = fruitGetFlags.String("name", "REQUIRED", "Name")
 
 		fruitShowFlags = flag.NewFlagSet("show", flag.ExitOnError)
@@ -201,7 +204,7 @@ func ParseEndpoint(
 			switch epn {
 			case "get":
 				endpoint = c.Get()
-				data, err = fruitc.BuildGetPayload(*fruitGetNameFlag)
+				data, err = fruitc.BuildGetPayload(*fruitGetBodyFlag, *fruitGetNameFlag)
 			case "show":
 				endpoint = c.Show()
 				data = nil
@@ -249,8 +252,8 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` user add --body '{
-      "UserName": "Placeat adipisci optio non."
-   }' --id "Neque esse ut."
+      "UserName": "Molestiae neque."
+   }' --id "Ut sint consequuntur repellat voluptatem molestias."
 `, os.Args[0])
 }
 
@@ -261,7 +264,7 @@ Get implements get.
     -id STRING: ID
 
 Example:
-    `+os.Args[0]+` user get --id "Delectus et minima voluptate et vel."
+    `+os.Args[0]+` user get --id "Minima voluptate."
 `, os.Args[0])
 }
 
@@ -290,13 +293,16 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func fruitGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] fruit get -name STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] fruit get -body JSON -name STRING
 
 Get implements get.
+    -body JSON: 
     -name STRING: Name
 
 Example:
-    `+os.Args[0]+` fruit get --name "Natus nemo nisi voluptate sint voluptas."
+    `+os.Args[0]+` fruit get --body '{
+      "Cost": 0.8732234816407924
+   }' --name "Doloremque unde natus nemo nisi voluptate sint."
 `, os.Args[0])
 }
 
@@ -333,9 +339,9 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` cart add --body '{
-      "Count": 4044866562136685344,
-      "Name": "Ullam est harum molestiae non."
-   }' --cart-id "Est nemo."
+      "Count": 241990082055395209,
+      "Name": "Aspernatur dolores ullam est harum molestiae."
+   }' --cart-id "Alias est nemo iusto ab enim eos."
 `, os.Args[0])
 }
 
@@ -346,6 +352,6 @@ Get implements get.
     -cart-id STRING: cartId
 
 Example:
-    `+os.Args[0]+` cart get --cart-id "Incidunt quae quia officia rerum est."
+    `+os.Args[0]+` cart get --cart-id "Rerum est eligendi vitae officiis sed sed."
 `, os.Args[0])
 }

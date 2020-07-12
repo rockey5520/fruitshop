@@ -34,12 +34,16 @@ var MethodNames = [2]string{"get", "show"}
 type GetPayload struct {
 	// Name
 	Name string
+	// Cost
+	Cost float64
 }
 
 // FruitManagement is the result type of the fruit service get method.
 type FruitManagement struct {
 	// Name is the unique Name of the Fruit.
 	Name string
+	// Cost of the Fruit.
+	Cost float64
 }
 
 // FruitManagementCollection is the result type of the fruit service show
@@ -98,6 +102,9 @@ func newFruitManagement(vres *fruitviews.FruitManagementView) *FruitManagement {
 	if vres.Name != nil {
 		res.Name = *vres.Name
 	}
+	if vres.Cost != nil {
+		res.Cost = *vres.Cost
+	}
 	return res
 }
 
@@ -106,6 +113,7 @@ func newFruitManagement(vres *fruitviews.FruitManagementView) *FruitManagement {
 func newFruitManagementView(res *FruitManagement) *fruitviews.FruitManagementView {
 	vres := &fruitviews.FruitManagementView{
 		Name: &res.Name,
+		Cost: &res.Cost,
 	}
 	return vres
 }

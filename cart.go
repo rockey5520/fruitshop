@@ -3,7 +3,6 @@ package fruitshop
 import (
 	"context"
 	cart "fruitshop/gen/cart"
-
 	"log"
 )
 
@@ -26,7 +25,7 @@ func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 		Name:   p.Name,
 		Count:  p.Count,
 	}
-	err = UpdateItemInCart(&newCart)
+	err = AddItemInCart(&newCart)
 	if err != nil {
 		s.logger.Print("An error occurred...")
 		s.logger.Print(err)
@@ -36,7 +35,25 @@ func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 	return
 }
 
-// Get implements fetching all items from cart.
+// Remove implements remove.
+func (s *cartsrvc) Remove(ctx context.Context, p *cart.RemovePayload) (err error) {
+	s.logger.Print("cart.remove")
+	newCart := cart.CartManagement{
+		CartID: p.CartID,
+		Name:   p.Name,
+		Count:  p.Count,
+	}
+	err = RemoveItemInCart(&newCart)
+	if err != nil {
+		s.logger.Print("An error occurred...")
+		s.logger.Print(err)
+		return
+	}
+	s.logger.Print("cart.remove completed")
+	return
+}
+
+// Get implements get.
 func (s *cartsrvc) Get(ctx context.Context, p *cart.GetPayload) (res cart.CartManagementCollection, err error) {
 	s.logger.Print("cart.get")
 	res, err = ListAllItemsInCartForId(p.CartID)

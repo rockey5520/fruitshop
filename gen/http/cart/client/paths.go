@@ -13,7 +13,12 @@ import (
 
 // AddCartPath returns the URL path to the cart service add HTTP endpoint.
 func AddCartPath(cartID string) string {
-	return fmt.Sprintf("/api/v1/cart/%v", cartID)
+	return fmt.Sprintf("/api/v1/cart/add/%v", cartID)
+}
+
+// RemoveCartPath returns the URL path to the cart service remove HTTP endpoint.
+func RemoveCartPath(cartID string) string {
+	return fmt.Sprintf("/api/v1/cart/remove/%v", cartID)
 }
 
 // GetCartPath returns the URL path to the cart service get HTTP endpoint.

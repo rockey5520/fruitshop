@@ -20,8 +20,20 @@ func NewPayment(logger *log.Logger) payment.Service {
 // Add implements add.
 func (s *paymentsrvc) Add(ctx context.Context, p *payment.AddPayload) (res *payment.PaymentManagement, err error) {
 	res = &payment.PaymentManagement{}
-	s.logger.Print("payment.add")
-	return
+	s.logger.Print("payment.add started")
+	payment := payment.PaymentManagement{
+		CartID: p.CartID,
+		ID:     &p.ID,
+	}
+
+	result, err := PayAmount(&payment)
+	if err != nil {
+		s.logger.Print("An error occurred...")
+		s.logger.Print(err)
+		return
+	}
+	s.logger.Print("payment.get completed")
+	return &result, err
 }
 
 // Get implements get.

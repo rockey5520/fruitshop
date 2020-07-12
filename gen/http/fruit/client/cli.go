@@ -20,7 +20,7 @@ func BuildGetPayload(fruitGetBody string, fruitGetName string) (*fruit.GetPayloa
 	{
 		err = json.Unmarshal([]byte(fruitGetBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"Cost\": 0.8672823103394148\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"Cost\": 0.021993457015341566\n   }'")
 		}
 	}
 	var name string

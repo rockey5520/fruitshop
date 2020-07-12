@@ -6,6 +6,7 @@ import (
 	fruit "fruitshop/gen/fruit"
 	payment "fruitshop/gen/payment"
 	"fruitshop/gen/user"
+	"math"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -165,12 +166,13 @@ func CreateCart(user User) error {
 	return err
 }
 
-// CreateCartItem creates a cart entry row in DB
-func UpdateItemInCart(cart Cart) error {
+// AddItemInCart updated a cart entry row in DB
+func AddItemInCart(cart Cart) error {
 	db := InitDB()
 	defer db.Close()
 	var fruits fruit.FruitManagement
-	db.Table("fruit_managements").Where("name = ?", cart.Name).First(&fruits)
+	db.Where("Name = ?", cart.Name).Find(&fruits)
+	//db.Table("fruit_managements").Where("Name = ?", cart.Name).First(&fruits)
 	err := db.Model(&cart).
 		Where("name = ?", cart.Name).
 		Update("count", cart.Count).
@@ -188,6 +190,51 @@ func UpdateItemInCart(cart Cart) error {
 	}
 	var currentTotal float64 = *payments.Amount + amount
 	db.Find(&payment).Update("amount", currentTotal)
+
+	return err
+}
+
+func getCurrentCost(cart_id string, name string) float64 {
+	db := InitDB()
+	defer db.Close()
+
+	var carts cart.CartManagement
+	db.Where("Name = ?", name).First(&carts)
+	fmt.Println(carts)
+	return carts.TotalCost
+}
+
+// RemoveItemInCart creates a cart entry row in DB
+func RemoveItemInCart(cart Cart) error {
+	db := InitDB()
+	defer db.Close()
+
+	var fruits fruit.FruitManagement
+	db.Table("fruit_managements").Where("name = ?", cart.Name).First(&fruits)
+
+	paymentId := cart.CartID + cart.CartID
+	amount := fruits.Cost * getCurrentCost(cart.CartID, cart.Name)
+
+	var payments payment.PaymentManagement
+	db.Where("ID = ?", paymentId).First(&payments)
+	payment := &payment.PaymentManagement{
+		ID:     &paymentId,
+		CartID: cart.CartID,
+	}
+
+	fmt.Println("*payments.Amount ", *payments.Amount)
+	fmt.Println("amount ", amount)
+	var currentTotal float64 = math.Abs(*payments.Amount - amount)
+	fmt.Println("currentTotal ", currentTotal)
+
+	db.Model((&payment)).
+		Update("amount", currentTotal)
+	err := db.Model(&cart).
+		Where("name = ?", cart.Name).
+		Update("count", cart.Count).
+		Update("cost_per_item", fruits.Cost).
+		Update("total_cost", fruits.Cost*float64(cart.Count)).
+		Error
 
 	return err
 }
@@ -212,12 +259,73 @@ func GetPaymentAmoutFromCart(input Payment) (payment.PaymentManagement, error) {
 		totalAmount += float64(x.TotalCost)
 	}
 	var payments payment.PaymentManagement
-	db.Model(&payments).Where("ID = ?", input.ID).Update("amout", totalAmount)
+	db.Model(&payments).Where("ID = ?", input.ID).Update("amount", totalAmount)
 
 	db.Where("ID = ?", input.ID).First(&payments)
 
 	fmt.Println("totalAmount", totalAmount)
 
+	return payments, err
+}
+
+func PayAmount(input Payment) (payment.PaymentManagement, error) {
+	db := InitDB()
+	defer db.Close()
+
+	var payments payment.PaymentManagement
+	db.Model(&payments).
+		Where("ID = ?", input.ID).
+		Update("amount", 0).
+		Update("PaymentStatus", "PAID")
+
+	user := user.UserManagement{
+		ID: input.CartID,
+	}
+	paymentID := user.ID + user.ID
+	paymentStatus := "NOTPAID"
+	paymentAmount := float64(0)
+	cartItemApple := cart.CartManagement{
+		CartID:      user.ID,
+		Name:        "Apple",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
+	}
+	cartItemBanana := cart.CartManagement{
+		CartID:      user.ID,
+		Name:        "Banana",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
+	}
+	cartItemPear := cart.CartManagement{
+		CartID:      user.ID,
+		Name:        "Pear",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
+	}
+	cartItemOrange := cart.CartManagement{
+		CartID:      user.ID,
+		Name:        "Orange",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
+	}
+	payment := payment.PaymentManagement{
+		ID:            &paymentID,
+		CartID:        user.ID,
+		PaymentStatus: &paymentStatus,
+		Amount:        &paymentAmount,
+	}
+
+	err := db.Create(&cartItemApple).Error
+	db.Create(&cartItemBanana)
+	db.Create(&cartItemPear)
+	db.Create(&cartItemOrange)
+	db.Model(&payment).
+		Update("PaymentStatus", "PAID").
+		Update("Amount", 0)
 	return payments, err
 }
 

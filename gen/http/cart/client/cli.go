@@ -20,7 +20,7 @@ func BuildAddPayload(cartAddBody string, cartAddCartID string) (*cart.AddPayload
 	{
 		err = json.Unmarshal([]byte(cartAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"CostPerItem\": 0.33994622176216194,\n      \"Count\": 202853836429068892,\n      \"Name\": \"Corporis suscipit quidem.\",\n      \"TotalCost\": 0.7147563283988613\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"CostPerItem\": 0.13577958339601065,\n      \"Count\": 6768872129112107149,\n      \"Name\": \"Saepe eligendi sint vitae officiis officiis et.\",\n      \"TotalCost\": 0.4703888278036248\n   }'")
 		}
 	}
 	var cartID string
@@ -28,6 +28,32 @@ func BuildAddPayload(cartAddBody string, cartAddCartID string) (*cart.AddPayload
 		cartID = cartAddCartID
 	}
 	v := &cart.AddPayload{
+		Name:        body.Name,
+		Count:       body.Count,
+		CostPerItem: body.CostPerItem,
+		TotalCost:   body.TotalCost,
+	}
+	v.CartID = cartID
+
+	return v, nil
+}
+
+// BuildRemovePayload builds the payload for the cart remove endpoint from CLI
+// flags.
+func BuildRemovePayload(cartRemoveBody string, cartRemoveCartID string) (*cart.RemovePayload, error) {
+	var err error
+	var body RemoveRequestBody
+	{
+		err = json.Unmarshal([]byte(cartRemoveBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"CostPerItem\": 0.31933437727177916,\n      \"Count\": 8317691352667182512,\n      \"Name\": \"Rem voluptatem dolor voluptatem esse perspiciatis delectus.\",\n      \"TotalCost\": 0.9110304979788784\n   }'")
+		}
+	}
+	var cartID string
+	{
+		cartID = cartRemoveCartID
+	}
+	v := &cart.RemovePayload{
 		Name:        body.Name,
 		Count:       body.Count,
 		CostPerItem: body.CostPerItem,

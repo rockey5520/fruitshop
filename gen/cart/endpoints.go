@@ -15,21 +15,24 @@ import (
 
 // Endpoints wraps the "cart" service endpoints.
 type Endpoints struct {
-	Add goa.Endpoint
-	Get goa.Endpoint
+	Add    goa.Endpoint
+	Remove goa.Endpoint
+	Get    goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "cart" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Add: NewAddEndpoint(s),
-		Get: NewGetEndpoint(s),
+		Add:    NewAddEndpoint(s),
+		Remove: NewRemoveEndpoint(s),
+		Get:    NewGetEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "cart" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Add = m(e.Add)
+	e.Remove = m(e.Remove)
 	e.Get = m(e.Get)
 }
 
@@ -39,6 +42,15 @@ func NewAddEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*AddPayload)
 		return nil, s.Add(ctx, p)
+	}
+}
+
+// NewRemoveEndpoint returns an endpoint function that calls the method
+// "remove" of service "cart".
+func NewRemoveEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*RemovePayload)
+		return nil, s.Remove(ctx, p)
 	}
 }
 

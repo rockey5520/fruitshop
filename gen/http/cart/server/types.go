@@ -27,6 +27,19 @@ type AddRequestBody struct {
 	TotalCost *float64 `form:"TotalCost,omitempty" json:"TotalCost,omitempty" xml:"TotalCost,omitempty"`
 }
 
+// RemoveRequestBody is the type of the "cart" service "remove" endpoint HTTP
+// request body.
+type RemoveRequestBody struct {
+	// Name of the fruit
+	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
+	// Number of fruits
+	Count *int `form:"Count,omitempty" json:"Count,omitempty" xml:"Count,omitempty"`
+	// Cost of fruits
+	CostPerItem *float64 `form:"CostPerItem,omitempty" json:"CostPerItem,omitempty" xml:"CostPerItem,omitempty"`
+	// Total cost for the item
+	TotalCost *float64 `form:"TotalCost,omitempty" json:"TotalCost,omitempty" xml:"TotalCost,omitempty"`
+}
+
 // CartManagementResponseCollection is the type of the "cart" service "get"
 // endpoint HTTP response body.
 type CartManagementResponseCollection []*CartManagementResponse
@@ -40,9 +53,9 @@ type CartManagementResponse struct {
 	// Number of fruits
 	Count int `form:"Count" json:"Count" xml:"Count"`
 	// Cost of Each fruit
-	CostPerItem int `form:"CostPerItem" json:"CostPerItem" xml:"CostPerItem"`
+	CostPerItem float64 `form:"CostPerItem" json:"CostPerItem" xml:"CostPerItem"`
 	// Total cost of fruits
-	TotalCost int `form:"TotalCost" json:"TotalCost" xml:"TotalCost"`
+	TotalCost float64 `form:"TotalCost" json:"TotalCost" xml:"TotalCost"`
 }
 
 // NewCartManagementResponseCollection builds the HTTP response body from the
@@ -68,6 +81,19 @@ func NewAddPayload(body *AddRequestBody, cartID string) *cart.AddPayload {
 	return v
 }
 
+// NewRemovePayload builds a cart service remove endpoint payload.
+func NewRemovePayload(body *RemoveRequestBody, cartID string) *cart.RemovePayload {
+	v := &cart.RemovePayload{
+		Name:        *body.Name,
+		Count:       *body.Count,
+		CostPerItem: body.CostPerItem,
+		TotalCost:   body.TotalCost,
+	}
+	v.CartID = cartID
+
+	return v
+}
+
 // NewGetPayload builds a cart service get endpoint payload.
 func NewGetPayload(cartID string) *cart.GetPayload {
 	v := &cart.GetPayload{}
@@ -78,6 +104,17 @@ func NewGetPayload(cartID string) *cart.GetPayload {
 
 // ValidateAddRequestBody runs the validations defined on AddRequestBody
 func ValidateAddRequestBody(body *AddRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "body"))
+	}
+	if body.Count == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("Count", "body"))
+	}
+	return
+}
+
+// ValidateRemoveRequestBody runs the validations defined on RemoveRequestBody
+func ValidateRemoveRequestBody(body *RemoveRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "body"))
 	}

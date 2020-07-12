@@ -33,9 +33,9 @@ type CartManagementView struct {
 	// Number of fruits
 	Count *int
 	// Cost of Each fruit
-	CostPerItem *int
+	CostPerItem *float64
 	// Total cost of fruits
-	TotalCost *int
+	TotalCost *float64
 }
 
 var (

@@ -100,8 +100,25 @@ var _ = Service("cart", func() {
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/cart/{cartId}")
-			Response(StatusCreated)
+			POST("/api/v1/cart/add/{cartId}")
+			Response(StatusAccepted)
+		})
+	})
+
+	Method("remove", func() {
+		Payload(func() {
+			Field(1, "cartId", String, "cartId of the user")
+			Field(2, "Name", String, "Name of the fruit")
+			Field(3, "Count", Int, "Number of fruits")
+			Field(4, "CostPerItem", Float64, "Cost of fruits")
+			Field(5, "TotalCost", Float64, "Total cost for the item")
+			Required("cartId", "Name", "Count")
+		})
+		Result(Empty)
+		Error("not_found", NotFound, "Fruit not found")
+		HTTP(func() {
+			POST("/api/v1/cart/remove/{cartId}")
+			Response(StatusAccepted)
 		})
 	})
 
@@ -292,10 +309,10 @@ var Cart = Type("Cart", func() {
 	Attribute("Count", Int, "Number of fruits", func() {
 		Example(2)
 	})
-	Attribute("CostPerItem", Int, "Cost of Each fruit", func() {
+	Attribute("CostPerItem", Float64, "Cost of Each fruit", func() {
 		Example(2)
 	})
-	Attribute("TotalCost", Int, "Total cost of fruits", func() {
+	Attribute("TotalCost", Float64, "Total cost of fruits", func() {
 		Example(4)
 	})
 

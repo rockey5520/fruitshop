@@ -21,7 +21,7 @@ import (
 // endpoint.
 func EncodeAddResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusAccepted)
 		return nil
 	}
 }
@@ -53,6 +53,47 @@ func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 		)
 		cartID = params["cartId"]
 		payload := NewAddPayload(&body, cartID)
+
+		return payload, nil
+	}
+}
+
+// EncodeRemoveResponse returns an encoder for responses returned by the cart
+// remove endpoint.
+func EncodeRemoveResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		w.WriteHeader(http.StatusAccepted)
+		return nil
+	}
+}
+
+// DecodeRemoveRequest returns a decoder for requests sent to the cart remove
+// endpoint.
+func DecodeRemoveRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body RemoveRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateRemoveRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
+			cartID string
+
+			params = mux.Vars(r)
+		)
+		cartID = params["cartId"]
+		payload := NewRemovePayload(&body, cartID)
 
 		return payload, nil
 	}

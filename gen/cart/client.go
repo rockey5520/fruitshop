@@ -15,15 +15,17 @@ import (
 
 // Client is the "cart" service client.
 type Client struct {
-	AddEndpoint goa.Endpoint
-	GetEndpoint goa.Endpoint
+	AddEndpoint    goa.Endpoint
+	RemoveEndpoint goa.Endpoint
+	GetEndpoint    goa.Endpoint
 }
 
 // NewClient initializes a "cart" service client given the endpoints.
-func NewClient(add, get goa.Endpoint) *Client {
+func NewClient(add, remove, get goa.Endpoint) *Client {
 	return &Client{
-		AddEndpoint: add,
-		GetEndpoint: get,
+		AddEndpoint:    add,
+		RemoveEndpoint: remove,
+		GetEndpoint:    get,
 	}
 }
 
@@ -33,6 +35,15 @@ func NewClient(add, get goa.Endpoint) *Client {
 //	- error: internal error
 func (c *Client) Add(ctx context.Context, p *AddPayload) (err error) {
 	_, err = c.AddEndpoint(ctx, p)
+	return
+}
+
+// Remove calls the "remove" endpoint of the "cart" service.
+// Remove may return the following errors:
+//	- "not_found" (type *NotFound): Fruit not found
+//	- error: internal error
+func (c *Client) Remove(ctx context.Context, p *RemovePayload) (err error) {
+	_, err = c.RemoveEndpoint(ctx, p)
 	return
 }
 

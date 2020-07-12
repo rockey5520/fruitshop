@@ -32,6 +32,7 @@ paths:
             $ref: '#/definitions/CartCartManagementResponseCollection'
       schemes:
       - http
+  /api/v1/cart/add/{cartId}:
     post:
       tags:
       - cart
@@ -52,8 +53,33 @@ paths:
           - Name
           - Count
       responses:
-        "201":
-          description: Created response.
+        "202":
+          description: Accepted response.
+      schemes:
+      - http
+  /api/v1/cart/remove/{cartId}:
+    post:
+      tags:
+      - cart
+      summary: remove cart
+      operationId: cart#remove
+      parameters:
+      - name: cartId
+        in: path
+        description: cartId of the user
+        required: true
+        type: string
+      - name: RemoveRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/CartRemoveRequestBody'
+          required:
+          - Name
+          - Count
+      responses:
+        "202":
+          description: Accepted response.
       schemes:
       - http
   /api/v1/fruit:
@@ -222,27 +248,27 @@ definitions:
       CostPerItem:
         type: number
         description: Cost of fruits
-        example: 0.11918360553101845
+        example: 0.47037292765073974
         format: double
       Count:
         type: integer
         description: Number of fruits
-        example: 8792741417222834879
+        example: 4411944650868754131
         format: int64
       Name:
         type: string
         description: Name of the fruit
-        example: Eligendi quidem velit.
+        example: Nam nemo aliquid ipsa nostrum qui.
       TotalCost:
         type: number
         description: Total cost for the item
-        example: 0.6095730362976958
+        example: 0.9163754415571708
         format: double
     example:
-      CostPerItem: 0.15667625256200768
-      Count: 2288432844349867782
-      Name: Temporibus voluptate reprehenderit et aspernatur consequatur quaerat.
-      TotalCost: 0.18975432001337
+      CostPerItem: 0.2876743323246392
+      Count: 578118207626934877
+      Name: Accusamus eos odio autem quidem voluptatem ratione.
+      TotalCost: 0.40068066636823596
     required:
     - Name
     - Count
@@ -263,25 +289,15 @@ definitions:
       Name: Apple
       TotalCost: 4
       cartId: "1"
-    - CostPerItem: 2
-      Count: 2
-      Name: Apple
-      TotalCost: 4
-      cartId: "1"
-    - CostPerItem: 2
-      Count: 2
-      Name: Apple
-      TotalCost: 4
-      cartId: "1"
   CartManagementResponse:
     title: 'Mediatype identifier: application/vnd.cart; view=default'
     type: object
     properties:
       CostPerItem:
-        type: integer
+        type: number
         description: Cost of Each fruit
         example: 2
-        format: int64
+        format: double
       Count:
         type: integer
         description: Number of fruits
@@ -292,10 +308,10 @@ definitions:
         description: Name of the fruit
         example: Apple
       TotalCost:
-        type: integer
+        type: number
         description: Total cost of fruits
         example: 4
-        format: int64
+        format: double
       cartId:
         type: string
         description: cartId is the unique id of the User.
@@ -313,6 +329,37 @@ definitions:
     - Count
     - CostPerItem
     - TotalCost
+  CartRemoveRequestBody:
+    title: CartRemoveRequestBody
+    type: object
+    properties:
+      CostPerItem:
+        type: number
+        description: Cost of fruits
+        example: 0.04467929195032163
+        format: double
+      Count:
+        type: integer
+        description: Number of fruits
+        example: 4971639452633052563
+        format: int64
+      Name:
+        type: string
+        description: Name of the fruit
+        example: Aut vitae.
+      TotalCost:
+        type: number
+        description: Total cost for the item
+        example: 0.32287398640890763
+        format: double
+    example:
+      CostPerItem: 0.09290485256542964
+      Count: 8072899782453271251
+      Name: Id et veritatis delectus consequatur quasi temporibus.
+      TotalCost: 0.5439296629364719
+    required:
+    - Name
+    - Count
   FruitFruitManagementResponseCollection:
     title: 'Mediatype identifier: application/vnd.fruit; type=collection; view=default'
     type: array
@@ -324,8 +371,6 @@ definitions:
       Name: Apple
     - Cost: 1
       Name: Apple
-    - Cost: 1
-      Name: Apple
   FruitGetRequestBody:
     title: FruitGetRequestBody
     type: object
@@ -333,10 +378,10 @@ definitions:
       Cost:
         type: number
         description: Cost
-        example: 0.30382650101586955
+        example: 0.8515266289951227
         format: double
     example:
-      Cost: 0.4560256033373545
+      Cost: 0.2753206776558638
     required:
     - Cost
   FruitGetResponseBody:
@@ -386,15 +431,15 @@ definitions:
       Amount:
         type: number
         description: Total cost of the cart
-        example: 0.4030854047326235
+        example: 0.48801406869022196
         format: double
       cartId:
         type: string
         description: cartId of the user
-        example: Earum quod mollitia quae eos fugit.
+        example: Architecto eos facilis.
     example:
-      Amount: 0.8065909072399275
-      cartId: Nesciunt cumque et provident eaque.
+      Amount: 0.04155343685935064
+      cartId: Enim consectetur dolor dolor dolorum.
     required:
     - cartId
     - Amount
@@ -463,9 +508,9 @@ definitions:
       UserName:
         type: string
         description: User Name
-        example: Veniam ea laboriosam.
+        example: Sit nesciunt cumque et provident eaque est.
     example:
-      UserName: Autem id.
+      UserName: A iure et autem excepturi.
     required:
     - UserName
   UserGetResponseBody:
@@ -513,6 +558,8 @@ definitions:
       $ref: '#/definitions/UserManagementResponse'
     description: ShowResponseBody is the result type for an array of UserManagementResponse (default view)
     example:
+    - ID: "1"
+      UserName: Rakesh Mothukuri
     - ID: "1"
       UserName: Rakesh Mothukuri
     - ID: "1"

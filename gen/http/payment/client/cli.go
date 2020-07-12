@@ -21,7 +21,7 @@ func BuildAddPayload(paymentAddBody string, paymentAddID string) (*payment.AddPa
 	{
 		err = json.Unmarshal([]byte(paymentAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"Amount\": 0.0707223839239514,\n      \"cartId\": \"Ut nesciunt dolor rem voluptatem dolor voluptatem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"Amount\": 0.6465372050495056,\n      \"cartId\": \"Id earum explicabo tenetur sit.\"\n   }'")
 		}
 	}
 	var id string

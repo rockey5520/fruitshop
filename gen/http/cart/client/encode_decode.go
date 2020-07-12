@@ -77,11 +77,79 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 			defer resp.Body.Close()
 		}
 		switch resp.StatusCode {
-		case http.StatusCreated:
+		case http.StatusAccepted:
 			return nil, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("cart", "add", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildRemoveRequest instantiates a HTTP request object with method and path
+// set to call the "cart" service "remove" endpoint
+func (c *Client) BuildRemoveRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		cartID string
+	)
+	{
+		p, ok := v.(*cart.RemovePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("cart", "remove", "*cart.RemovePayload", v)
+		}
+		cartID = p.CartID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveCartPath(cartID)}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("cart", "remove", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeRemoveRequest returns an encoder for requests sent to the cart remove
+// server.
+func EncodeRemoveRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*cart.RemovePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("cart", "remove", "*cart.RemovePayload", v)
+		}
+		body := NewRemoveRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("cart", "remove", err)
+		}
+		return nil
+	}
+}
+
+// DecodeRemoveResponse returns a decoder for responses returned by the cart
+// remove endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+func DecodeRemoveResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusAccepted:
+			return nil, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("cart", "remove", resp.StatusCode, string(body))
 		}
 	}
 }

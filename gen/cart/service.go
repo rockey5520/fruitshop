@@ -16,6 +16,8 @@ import (
 type Service interface {
 	// Add implements add.
 	Add(context.Context, *AddPayload) (err error)
+	// Remove implements remove.
+	Remove(context.Context, *RemovePayload) (err error)
 	// Get implements get.
 	Get(context.Context, *GetPayload) (res CartManagementCollection, err error)
 }
@@ -28,10 +30,24 @@ const ServiceName = "cart"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"add", "get"}
+var MethodNames = [3]string{"add", "remove", "get"}
 
 // AddPayload is the payload type of the cart service add method.
 type AddPayload struct {
+	// cartId of the user
+	CartID string
+	// Name of the fruit
+	Name string
+	// Number of fruits
+	Count int
+	// Cost of fruits
+	CostPerItem *float64
+	// Total cost for the item
+	TotalCost *float64
+}
+
+// RemovePayload is the payload type of the cart service remove method.
+type RemovePayload struct {
 	// cartId of the user
 	CartID string
 	// Name of the fruit
@@ -62,9 +78,9 @@ type CartManagement struct {
 	// Number of fruits
 	Count int
 	// Cost of Each fruit
-	CostPerItem int
+	CostPerItem float64
 	// Total cost of fruits
-	TotalCost int
+	TotalCost float64
 }
 
 // NotFound is the type returned when the requested data that does not exist.

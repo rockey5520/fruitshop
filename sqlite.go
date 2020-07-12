@@ -189,7 +189,9 @@ func AddItemInCart(cart Cart) error {
 		CartID: cart.CartID,
 	}
 	var currentTotal float64 = *payments.Amount + amount
-	db.Find(&payment).Update("amount", currentTotal)
+	db.Find(&payment).
+		Update("amount", currentTotal).
+		Update("PaymentStatus", "NOTPAID")
 
 	return err
 }
@@ -222,10 +224,12 @@ func RemoveItemInCart(cart Cart) error {
 		CartID: cart.CartID,
 	}
 
-	fmt.Println("*payments.Amount ", *payments.Amount)
-	fmt.Println("amount ", amount)
 	var currentTotal float64 = math.Abs(*payments.Amount - amount)
-	fmt.Println("currentTotal ", currentTotal)
+
+	if currentTotal == 0 {
+		db.Model((&payment)).
+			Update("PaymentStatus", "PAID")
+	}
 
 	db.Model((&payment)).
 		Update("amount", currentTotal)
@@ -285,32 +289,20 @@ func PayAmount(input Payment) (payment.PaymentManagement, error) {
 	paymentStatus := "NOTPAID"
 	paymentAmount := float64(0)
 	cartItemApple := cart.CartManagement{
-		CartID:      user.ID,
-		Name:        "Apple",
-		Count:       0,
-		CostPerItem: 1,
-		TotalCost:   0,
+		CartID: user.ID,
+		Name:   "Apple",
 	}
 	cartItemBanana := cart.CartManagement{
-		CartID:      user.ID,
-		Name:        "Banana",
-		Count:       0,
-		CostPerItem: 1,
-		TotalCost:   0,
+		CartID: user.ID,
+		Name:   "Banana",
 	}
 	cartItemPear := cart.CartManagement{
-		CartID:      user.ID,
-		Name:        "Pear",
-		Count:       0,
-		CostPerItem: 1,
-		TotalCost:   0,
+		CartID: user.ID,
+		Name:   "Pear",
 	}
 	cartItemOrange := cart.CartManagement{
-		CartID:      user.ID,
-		Name:        "Orange",
-		Count:       0,
-		CostPerItem: 1,
-		TotalCost:   0,
+		CartID: user.ID,
+		Name:   "Orange",
 	}
 	payment := payment.PaymentManagement{
 		ID:            &paymentID,
@@ -319,10 +311,14 @@ func PayAmount(input Payment) (payment.PaymentManagement, error) {
 		Amount:        &paymentAmount,
 	}
 
-	err := db.Create(&cartItemApple).Error
-	db.Create(&cartItemBanana)
-	db.Create(&cartItemPear)
-	db.Create(&cartItemOrange)
+	err := db.Model(&cartItemApple).
+		Update("Count", 0).Error
+	db.Model(&cartItemBanana).
+		Update("Count", 0)
+	db.Model(&cartItemPear).
+		Update("Count", 0)
+	db.Model(&cartItemOrange).
+		Update("Count", 0)
 	db.Model(&payment).
 		Update("PaymentStatus", "PAID").
 		Update("Amount", 0)

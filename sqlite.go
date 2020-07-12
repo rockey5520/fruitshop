@@ -1,6 +1,7 @@
 package fruitshop
 
 import (
+	cart "fruitshop/gen/cart"
 	fruit "fruitshop/gen/fruit"
 	"fruitshop/gen/user"
 
@@ -13,11 +14,13 @@ var err error
 
 type User *user.UserManagement
 type Fruit *fruit.FruitManagement
+type Cart *cart.CartManagement
 
 // InitDB is the function that starts a database file and table structures
 // if not created then returns db object for next functions
 func InitDB() *gorm.DB {
 	// Opening file
+
 	db, err := gorm.Open("sqlite3", "./data.db")
 	// Display SQL queries
 	db.LogMode(true)
@@ -37,6 +40,12 @@ func InitDB() *gorm.DB {
 	if !db.HasTable(FruitTableStruct) {
 		db.CreateTable(FruitTableStruct)
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(FruitTableStruct)
+	}
+
+	var CartTableStruct = cart.CartManagement{}
+	if !db.HasTable(CartTableStruct) {
+		db.CreateTable(CartTableStruct)
+		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(CartTableStruct)
 	}
 
 	return db
@@ -78,6 +87,37 @@ func CreateFruit(fruit Fruit) error {
 	return err
 }
 
+// ListClients retrieves the fruits stored in Database
+var counter = 0
+
+func ListFruits() (fruit.FruitManagementCollection, error) {
+	db := InitDB()
+	defer db.Close()
+	if counter == 0 {
+		initialize()
+	}
+	counter++
+	var fruits fruit.FruitManagementCollection
+	err := db.Find(&fruits).Error
+	return fruits, err
+}
+
+// CreateCartItem creates a cart entry row in DB
+func CreateItemInCart(cart Cart) error {
+	db := InitDB()
+	defer db.Close()
+	err := db.Create(&cart).Error
+	return err
+}
+
+func ListAllItemsInCartForId(CartID string) (cart.CartManagementCollection, error) {
+	db := InitDB()
+	defer db.Close()
+	var carts cart.CartManagementCollection
+	err := db.Find(&carts).Where("CartID = ?", CartID).Error
+	return carts, err
+}
+
 func initialize() {
 	db := InitDB()
 	defer db.Close()
@@ -101,19 +141,4 @@ func initialize() {
 	db.Create(&pear)
 	db.NewRecord(orange)
 	db.Create(&orange)
-}
-
-// ListClients retrieves the fruits stored in Database
-var counter = 0
-
-func ListFruits() (fruit.FruitManagementCollection, error) {
-	db := InitDB()
-	defer db.Close()
-	if counter == 0 {
-		initialize()
-	}
-	counter++
-	var fruits fruit.FruitManagementCollection
-	err := db.Find(&fruits).Error
-	return fruits, err
 }

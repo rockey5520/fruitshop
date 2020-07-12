@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	cart "fruitshop/gen/cart"
 	fruit "fruitshop/gen/fruit"
+	cartsvr "fruitshop/gen/http/cart/server"
 	fruitsvr "fruitshop/gen/http/fruit/server"
 	usersvr "fruitshop/gen/http/user/server"
 	user "fruitshop/gen/user"
@@ -20,7 +22,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, fruitEndpoints *fruit.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, fruitEndpoints *fruit.Endpoints, cartEndpoints *cart.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -53,15 +55,18 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 	var (
 		userServer  *usersvr.Server
 		fruitServer *fruitsvr.Server
+		cartServer  *cartsvr.Server
 	)
 	{
 		eh := errorHandler(logger)
 		userServer = usersvr.New(userEndpoints, mux, dec, enc, eh, nil)
 		fruitServer = fruitsvr.New(fruitEndpoints, mux, dec, enc, eh, nil)
+		cartServer = cartsvr.New(cartEndpoints, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
 				userServer,
 				fruitServer,
+				cartServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
@@ -69,6 +74,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 	// Configure the mux.
 	usersvr.Mount(mux, userServer)
 	fruitsvr.Mount(mux, fruitServer)
+	cartsvr.Mount(mux, cartServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -85,6 +91,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range fruitServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range cartServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 

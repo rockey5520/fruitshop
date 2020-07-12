@@ -20,7 +20,7 @@ func BuildAddPayload(userAddBody string, userAddID string) (*user.AddPayload, er
 	{
 		err = json.Unmarshal([]byte(userAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"UserName\": \"Et voluptatem quisquam asperiores iusto doloribus.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"UserName\": \"Placeat adipisci optio non.\"\n   }'")
 		}
 	}
 	var id string

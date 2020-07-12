@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	fruitshop "fruitshop"
+	cart "fruitshop/gen/cart"
 	fruit "fruitshop/gen/fruit"
 	user "fruitshop/gen/user"
 	"log"
@@ -39,10 +40,12 @@ func main() {
 	var (
 		userSvc  user.Service
 		fruitSvc fruit.Service
+		cartSvc  cart.Service
 	)
 	{
 		userSvc = fruitshop.NewUser(logger)
 		fruitSvc = fruitshop.NewFruit(logger)
+		cartSvc = fruitshop.NewCart(logger)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
@@ -50,10 +53,12 @@ func main() {
 	var (
 		userEndpoints  *user.Endpoints
 		fruitEndpoints *fruit.Endpoints
+		cartEndpoints  *cart.Endpoints
 	)
 	{
 		userEndpoints = user.NewEndpoints(userSvc)
 		fruitEndpoints = fruit.NewEndpoints(fruitSvc)
+		cartEndpoints = cart.NewEndpoints(cartSvc)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -93,7 +98,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host += ":80"
 			}
-			handleHTTPServer(ctx, u, userEndpoints, fruitEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, userEndpoints, fruitEndpoints, cartEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:

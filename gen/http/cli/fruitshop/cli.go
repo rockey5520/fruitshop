@@ -10,6 +10,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	cartc "fruitshop/gen/http/cart/client"
 	fruitc "fruitshop/gen/http/fruit/client"
 	userc "fruitshop/gen/http/user/client"
 	"net/http"
@@ -26,15 +27,20 @@ import (
 func UsageCommands() string {
 	return `user (add|get|show)
 fruit (get|show)
+cart (add|get)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
-      "UserName": "Et voluptatem quisquam asperiores iusto doloribus."
-   }' --id "Vero sint cum praesentium in enim."` + "\n" +
-		os.Args[0] + ` fruit get --name "Delectus et minima voluptate et vel."` + "\n" +
+      "UserName": "Placeat adipisci optio non."
+   }' --id "Neque esse ut."` + "\n" +
+		os.Args[0] + ` fruit get --name "Natus nemo nisi voluptate sint voluptas."` + "\n" +
+		os.Args[0] + ` cart add --body '{
+      "Count": 4044866562136685344,
+      "Name": "Ullam est harum molestiae non."
+   }' --cart-id "Est nemo."` + "\n" +
 		""
 }
 
@@ -65,6 +71,15 @@ func ParseEndpoint(
 		fruitGetNameFlag = fruitGetFlags.String("name", "REQUIRED", "Name")
 
 		fruitShowFlags = flag.NewFlagSet("show", flag.ExitOnError)
+
+		cartFlags = flag.NewFlagSet("cart", flag.ContinueOnError)
+
+		cartAddFlags      = flag.NewFlagSet("add", flag.ExitOnError)
+		cartAddBodyFlag   = cartAddFlags.String("body", "REQUIRED", "")
+		cartAddCartIDFlag = cartAddFlags.String("cart-id", "REQUIRED", "cartId of the user")
+
+		cartGetFlags      = flag.NewFlagSet("get", flag.ExitOnError)
+		cartGetCartIDFlag = cartGetFlags.String("cart-id", "REQUIRED", "cartId")
 	)
 	userFlags.Usage = userUsage
 	userAddFlags.Usage = userAddUsage
@@ -74,6 +89,10 @@ func ParseEndpoint(
 	fruitFlags.Usage = fruitUsage
 	fruitGetFlags.Usage = fruitGetUsage
 	fruitShowFlags.Usage = fruitShowUsage
+
+	cartFlags.Usage = cartUsage
+	cartAddFlags.Usage = cartAddUsage
+	cartGetFlags.Usage = cartGetUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -94,6 +113,8 @@ func ParseEndpoint(
 			svcf = userFlags
 		case "fruit":
 			svcf = fruitFlags
+		case "cart":
+			svcf = cartFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -129,6 +150,16 @@ func ParseEndpoint(
 
 			case "show":
 				epf = fruitShowFlags
+
+			}
+
+		case "cart":
+			switch epn {
+			case "add":
+				epf = cartAddFlags
+
+			case "get":
+				epf = cartGetFlags
 
 			}
 
@@ -175,6 +206,16 @@ func ParseEndpoint(
 				endpoint = c.Show()
 				data = nil
 			}
+		case "cart":
+			c := cartc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "add":
+				endpoint = c.Add()
+				data, err = cartc.BuildAddPayload(*cartAddBodyFlag, *cartAddCartIDFlag)
+			case "get":
+				endpoint = c.Get()
+				data, err = cartc.BuildGetPayload(*cartGetCartIDFlag)
+			}
 		}
 	}
 	if err != nil {
@@ -208,8 +249,8 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` user add --body '{
-      "UserName": "Et voluptatem quisquam asperiores iusto doloribus."
-   }' --id "Vero sint cum praesentium in enim."
+      "UserName": "Placeat adipisci optio non."
+   }' --id "Neque esse ut."
 `, os.Args[0])
 }
 
@@ -220,7 +261,7 @@ Get implements get.
     -id STRING: ID
 
 Example:
-    `+os.Args[0]+` user get --id "Neque esse ut."
+    `+os.Args[0]+` user get --id "Delectus et minima voluptate et vel."
 `, os.Args[0])
 }
 
@@ -255,7 +296,7 @@ Get implements get.
     -name STRING: Name
 
 Example:
-    `+os.Args[0]+` fruit get --name "Delectus et minima voluptate et vel."
+    `+os.Args[0]+` fruit get --name "Natus nemo nisi voluptate sint voluptas."
 `, os.Args[0])
 }
 
@@ -266,5 +307,45 @@ Show implements show.
 
 Example:
     `+os.Args[0]+` fruit show
+`, os.Args[0])
+}
+
+// cartUsage displays the usage of the cart command and its subcommands.
+func cartUsage() {
+	fmt.Fprintf(os.Stderr, `The cart service allows to manage the state of the cart
+Usage:
+    %s [globalflags] cart COMMAND [flags]
+
+COMMAND:
+    add: Add implements add.
+    get: Get implements get.
+
+Additional help:
+    %s cart COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func cartAddUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] cart add -body JSON -cart-id STRING
+
+Add implements add.
+    -body JSON: 
+    -cart-id STRING: cartId of the user
+
+Example:
+    `+os.Args[0]+` cart add --body '{
+      "Count": 4044866562136685344,
+      "Name": "Ullam est harum molestiae non."
+   }' --cart-id "Est nemo."
+`, os.Args[0])
+}
+
+func cartGetUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] cart get -cart-id STRING
+
+Get implements get.
+    -cart-id STRING: cartId
+
+Example:
+    `+os.Args[0]+` cart get --cart-id "Incidunt quae quia officia rerum est."
 `, os.Args[0])
 }

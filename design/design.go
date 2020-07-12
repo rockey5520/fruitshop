@@ -89,18 +89,32 @@ var _ = Service("cart", func() {
 	Description("The cart service allows to manage the state of the cart")
 	Method("add", func() {
 		Payload(func() {
-			Field(1, "ID", String, "ID of the user")
+			Field(1, "cartId", String, "cartId of the user")
 			Field(2, "Name", String, "Name of the fruit")
 			Field(3, "Count", Int, "Number of fruits")
-			Required("ID", "Name", "Count")
+			Required("cartId", "Name", "Count")
 		})
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/cart/{ID}")
+			POST("/api/v1/cart/{cartId}")
 			Response(StatusCreated)
 		})
 	})
+
+	Method("get", func() {
+		Payload(func() {
+			Field(1, "cartId", String, "cartId")
+			Required("cartId")
+		})
+		Result(CollectionOf(CartManagement))
+		Error("not_found", NotFound, "User not found")
+		HTTP(func() {
+			GET("/api/v1/cart/{cartId}")
+			Response(StatusOK)
+		})
+	})
+
 })
 
 // UserManagement is a custom ResultType used to configure views for our custom type
@@ -152,7 +166,7 @@ var CartManagement = ResultType("application/vnd.cart", func() {
 	TypeName("CartManagement")
 
 	Attributes(func() {
-		Attribute("ID", String, "ID is the unique id of the User.", func() {
+		Attribute("cartId", String, "cartId is the unique id of the User.", func() {
 			Example("1")
 		})
 
@@ -161,12 +175,12 @@ var CartManagement = ResultType("application/vnd.cart", func() {
 	})
 
 	View("default", func() {
-		Attribute("ID")
+		Attribute("cartId")
 		Attribute("Name")
 		Attribute("Count")
 	})
 
-	Required("ID")
+	Required("cartId")
 	Required("Name")
 	Required("Count")
 })
@@ -195,17 +209,17 @@ var Fruit = Type("Fruit", func() {
 // User is the custom type for Users in our database
 var Cart = Type("Cart", func() {
 	Description("Cart describes a customer cart in the e-store.")
-	Attribute("ID", String, "ID is the unique id of the User.", func() {
+	Attribute("cartId", String, "cartId is the unique id of the User.", func() {
 		Example("1")
 	})
 	Attribute("Name", String, "Name of the fruit", func() {
 		Example("Apple")
 	})
 	Attribute("Count", Int, "Number of fruits", func() {
-		Example("2")
+		Example(2)
 	})
 
-	Required("ID", "Name", "Count")
+	Required("cartId", "Name", "Count")
 })
 
 // NotFound is a custom type where we add the queried field in the response

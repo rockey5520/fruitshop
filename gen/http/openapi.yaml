@@ -13,6 +13,49 @@ produces:
 - application/xml
 - application/gob
 paths:
+  /api/v1/cart/{cartId}:
+    get:
+      tags:
+      - cart
+      summary: get cart
+      operationId: cart#get
+      parameters:
+      - name: cartId
+        in: path
+        description: cartId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/CartCartManagementResponseCollection'
+      schemes:
+      - http
+    post:
+      tags:
+      - cart
+      summary: add cart
+      operationId: cart#add
+      parameters:
+      - name: cartId
+        in: path
+        description: cartId of the user
+        required: true
+        type: string
+      - name: AddRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/CartAddRequestBody'
+          required:
+          - Name
+          - Count
+      responses:
+        "201":
+          description: Created response.
+      schemes:
+      - http
   /api/v1/fruit:
     get:
       tags:
@@ -114,6 +157,64 @@ paths:
       schemes:
       - http
 definitions:
+  CartAddRequestBody:
+    title: CartAddRequestBody
+    type: object
+    properties:
+      Count:
+        type: integer
+        description: Number of fruits
+        example: 7064755959822964249
+        format: int64
+      Name:
+        type: string
+        description: Name of the fruit
+        example: Doloremque corrupti quo et.
+    example:
+      Count: 7254963938038769827
+      Name: Eligendi sint.
+    required:
+    - Name
+    - Count
+  CartCartManagementResponseCollection:
+    title: 'Mediatype identifier: application/vnd.cart; type=collection; view=default'
+    type: array
+    items:
+      $ref: '#/definitions/CartManagementResponse'
+    description: GetResponseBody is the result type for an array of CartManagementResponse (default view)
+    example:
+    - Count: 2
+      Name: Apple
+      cartId: "1"
+    - Count: 2
+      Name: Apple
+      cartId: "1"
+  CartManagementResponse:
+    title: 'Mediatype identifier: application/vnd.cart; view=default'
+    type: object
+    properties:
+      Count:
+        type: integer
+        description: Number of fruits
+        example: 2
+        format: int64
+      Name:
+        type: string
+        description: Name of the fruit
+        example: Apple
+      cartId:
+        type: string
+        description: cartId is the unique id of the User.
+        example: "1"
+    description: A CartManagement type describes users cart state. (default view)
+    example:
+      Count: 2
+      Name: Apple
+      cartId: "1"
+    required:
+    - cartId
+    - Name
+    - Count
   FruitFruitManagementResponseCollection:
     title: 'Mediatype identifier: application/vnd.fruit; type=collection; view=default'
     type: array
@@ -121,6 +222,7 @@ definitions:
       $ref: '#/definitions/FruitManagementResponse'
     description: ShowResponseBody is the result type for an array of FruitManagementResponse (default view)
     example:
+    - Name: Apple
     - Name: Apple
     - Name: Apple
   FruitGetResponseBody:
@@ -156,9 +258,9 @@ definitions:
       UserName:
         type: string
         description: User Name
-        example: Est aperiam labore dicta illum ut doloremque.
+        example: Officiis sed sed ipsum voluptas ea molestiae.
     example:
-      UserName: Natus nemo nisi voluptate sint voluptas.
+      UserName: Suscipit quidem vitae sit culpa.
     required:
     - UserName
   UserGetResponseBody:
@@ -206,8 +308,6 @@ definitions:
       $ref: '#/definitions/UserManagementResponse'
     description: ShowResponseBody is the result type for an array of UserManagementResponse (default view)
     example:
-    - ID: "1"
-      UserName: Rakesh Mothukuri
     - ID: "1"
       UserName: Rakesh Mothukuri
     - ID: "1"

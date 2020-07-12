@@ -91,9 +91,11 @@ func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 // *cartviews.CartManagementView.
 func marshalCartviewsCartManagementViewToCartManagementResponse(v *cartviews.CartManagementView) *CartManagementResponse {
 	res := &CartManagementResponse{
-		CartID: *v.CartID,
-		Name:   *v.Name,
-		Count:  *v.Count,
+		CartID:      *v.CartID,
+		Name:        *v.Name,
+		Count:       *v.Count,
+		CostPerItem: *v.CostPerItem,
+		TotalCost:   *v.TotalCost,
 	}
 
 	return res

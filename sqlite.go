@@ -110,24 +110,32 @@ func CreateCart(user User) error {
 	db := InitDB()
 	defer db.Close()
 	cartItemApple := cart.CartManagement{
-		CartID: user.ID,
-		Name:   "Apple",
-		Count:  0,
+		CartID:      user.ID,
+		Name:        "Apple",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
 	}
 	cartItemBanana := cart.CartManagement{
-		CartID: user.ID,
-		Name:   "Banana",
-		Count:  0,
+		CartID:      user.ID,
+		Name:        "Banana",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
 	}
 	cartItemPear := cart.CartManagement{
-		CartID: user.ID,
-		Name:   "Pear",
-		Count:  0,
+		CartID:      user.ID,
+		Name:        "Pear",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
 	}
 	cartItemOrange := cart.CartManagement{
-		CartID: user.ID,
-		Name:   "Orange",
-		Count:  0,
+		CartID:      user.ID,
+		Name:        "Orange",
+		Count:       0,
+		CostPerItem: 1,
+		TotalCost:   0,
 	}
 
 	err := db.Create(&cartItemApple).Error
@@ -139,10 +147,17 @@ func CreateCart(user User) error {
 }
 
 // CreateCartItem creates a cart entry row in DB
-func CreateItemInCart(cart Cart) error {
+func UpdateItemInCart(cart Cart) error {
 	db := InitDB()
 	defer db.Close()
-	err := db.Model(&cart).Where("name = ?", cart.Name).Update("count", cart.Count).Error
+	var fruits fruit.FruitManagement
+	db.Table("fruit_managements").Where("name = ?", cart.Name).First(&fruits)
+	err := db.Model(&cart).
+		Where("name = ?", cart.Name).
+		Update("count", cart.Count).
+		Update("cost_per_item", fruits.Cost).
+		Update("total_cost", fruits.Cost*float64(cart.Count)).
+		Error
 	return err
 }
 

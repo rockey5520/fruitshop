@@ -21,6 +21,10 @@ type AddRequestBody struct {
 	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
 	// Number of fruits
 	Count *int `form:"Count,omitempty" json:"Count,omitempty" xml:"Count,omitempty"`
+	// Cost of fruits
+	CostPerItem *float64 `form:"CostPerItem,omitempty" json:"CostPerItem,omitempty" xml:"CostPerItem,omitempty"`
+	// Total cost for the item
+	TotalCost *float64 `form:"TotalCost,omitempty" json:"TotalCost,omitempty" xml:"TotalCost,omitempty"`
 }
 
 // CartManagementResponseCollection is the type of the "cart" service "get"
@@ -35,6 +39,10 @@ type CartManagementResponse struct {
 	Name string `form:"Name" json:"Name" xml:"Name"`
 	// Number of fruits
 	Count int `form:"Count" json:"Count" xml:"Count"`
+	// Cost of Each fruit
+	CostPerItem int `form:"CostPerItem" json:"CostPerItem" xml:"CostPerItem"`
+	// Total cost of fruits
+	TotalCost int `form:"TotalCost" json:"TotalCost" xml:"TotalCost"`
 }
 
 // NewCartManagementResponseCollection builds the HTTP response body from the
@@ -50,8 +58,10 @@ func NewCartManagementResponseCollection(res cartviews.CartManagementCollectionV
 // NewAddPayload builds a cart service add endpoint payload.
 func NewAddPayload(body *AddRequestBody, cartID string) *cart.AddPayload {
 	v := &cart.AddPayload{
-		Name:  *body.Name,
-		Count: *body.Count,
+		Name:        *body.Name,
+		Count:       *body.Count,
+		CostPerItem: body.CostPerItem,
+		TotalCost:   body.TotalCost,
 	}
 	v.CartID = cartID
 

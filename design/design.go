@@ -93,6 +93,8 @@ var _ = Service("cart", func() {
 			Field(1, "cartId", String, "cartId of the user")
 			Field(2, "Name", String, "Name of the fruit")
 			Field(3, "Count", Int, "Number of fruits")
+			Field(4, "CostPerItem", Float64, "Cost of fruits")
+			Field(5, "TotalCost", Float64, "Total cost for the item")
 			Required("cartId", "Name", "Count")
 		})
 		Result(Empty)
@@ -175,17 +177,23 @@ var CartManagement = ResultType("application/vnd.cart", func() {
 
 		Field(2, "Name")
 		Field(3, "Count")
+		Field(4, "CostPerItem")
+		Field(5, "TotalCost")
 	})
 
 	View("default", func() {
 		Attribute("cartId")
 		Attribute("Name")
 		Attribute("Count")
+		Attribute("CostPerItem")
+		Attribute("TotalCost")
 	})
 
 	Required("cartId")
 	Required("Name")
 	Required("Count")
+	Required("CostPerItem")
+	Required("TotalCost")
 })
 
 // User is the custom type for Users in our database
@@ -223,6 +231,12 @@ var Cart = Type("Cart", func() {
 	})
 	Attribute("Count", Int, "Number of fruits", func() {
 		Example(2)
+	})
+	Attribute("CostPerItem", Int, "Cost of Each fruit", func() {
+		Example(2)
+	})
+	Attribute("TotalCost", Int, "Total cost of fruits", func() {
+		Example(4)
 	})
 
 	Required("cartId", "Name", "Count")

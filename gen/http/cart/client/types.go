@@ -21,6 +21,10 @@ type AddRequestBody struct {
 	Name string `form:"Name" json:"Name" xml:"Name"`
 	// Number of fruits
 	Count int `form:"Count" json:"Count" xml:"Count"`
+	// Cost of fruits
+	CostPerItem *float64 `form:"CostPerItem,omitempty" json:"CostPerItem,omitempty" xml:"CostPerItem,omitempty"`
+	// Total cost for the item
+	TotalCost *float64 `form:"TotalCost,omitempty" json:"TotalCost,omitempty" xml:"TotalCost,omitempty"`
 }
 
 // GetResponseBody is the type of the "cart" service "get" endpoint HTTP
@@ -35,14 +39,20 @@ type CartManagementResponse struct {
 	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
 	// Number of fruits
 	Count *int `form:"Count,omitempty" json:"Count,omitempty" xml:"Count,omitempty"`
+	// Cost of Each fruit
+	CostPerItem *int `form:"CostPerItem,omitempty" json:"CostPerItem,omitempty" xml:"CostPerItem,omitempty"`
+	// Total cost of fruits
+	TotalCost *int `form:"TotalCost,omitempty" json:"TotalCost,omitempty" xml:"TotalCost,omitempty"`
 }
 
 // NewAddRequestBody builds the HTTP request body from the payload of the "add"
 // endpoint of the "cart" service.
 func NewAddRequestBody(p *cart.AddPayload) *AddRequestBody {
 	body := &AddRequestBody{
-		Name:  p.Name,
-		Count: p.Count,
+		Name:        p.Name,
+		Count:       p.Count,
+		CostPerItem: p.CostPerItem,
+		TotalCost:   p.TotalCost,
 	}
 	return body
 }
@@ -68,6 +78,12 @@ func ValidateCartManagementResponse(body *CartManagementResponse) (err error) {
 	}
 	if body.Count == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("Count", "body"))
+	}
+	if body.CostPerItem == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("CostPerItem", "body"))
+	}
+	if body.TotalCost == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("TotalCost", "body"))
 	}
 	return
 }

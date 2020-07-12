@@ -34,15 +34,17 @@ cart (add|get)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
-      "UserName": "Molestiae neque."
-   }' --id "Ut sint consequuntur repellat voluptatem molestias."` + "\n" +
+      "UserName": "Repellat voluptatem molestias quae placeat saepe."
+   }' --id "Delectus et minima voluptate et vel."` + "\n" +
 		os.Args[0] + ` fruit get --body '{
-      "Cost": 0.8732234816407924
-   }' --name "Doloremque unde natus nemo nisi voluptate sint."` + "\n" +
+      "Cost": 0.1969807399668895
+   }' --name "Sint nihil aspernatur."` + "\n" +
 		os.Args[0] + ` cart add --body '{
-      "Count": 241990082055395209,
-      "Name": "Aspernatur dolores ullam est harum molestiae."
-   }' --cart-id "Alias est nemo iusto ab enim eos."` + "\n" +
+      "CostPerItem": 0.6841849788435609,
+      "Count": 5435616827963961871,
+      "Name": "Alias est nemo iusto ab enim eos.",
+      "TotalCost": 0.08266273984781566
+   }' --cart-id "Rerum est eligendi vitae officiis sed sed."` + "\n" +
 		""
 }
 
@@ -252,8 +254,8 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` user add --body '{
-      "UserName": "Molestiae neque."
-   }' --id "Ut sint consequuntur repellat voluptatem molestias."
+      "UserName": "Repellat voluptatem molestias quae placeat saepe."
+   }' --id "Delectus et minima voluptate et vel."
 `, os.Args[0])
 }
 
@@ -264,7 +266,7 @@ Get implements get.
     -id STRING: ID
 
 Example:
-    `+os.Args[0]+` user get --id "Minima voluptate."
+    `+os.Args[0]+` user get --id "Labore dicta illum ut doloremque unde natus."
 `, os.Args[0])
 }
 
@@ -301,8 +303,8 @@ Get implements get.
 
 Example:
     `+os.Args[0]+` fruit get --body '{
-      "Cost": 0.8732234816407924
-   }' --name "Doloremque unde natus nemo nisi voluptate sint."
+      "Cost": 0.1969807399668895
+   }' --name "Sint nihil aspernatur."
 `, os.Args[0])
 }
 
@@ -339,9 +341,11 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` cart add --body '{
-      "Count": 241990082055395209,
-      "Name": "Aspernatur dolores ullam est harum molestiae."
-   }' --cart-id "Alias est nemo iusto ab enim eos."
+      "CostPerItem": 0.6841849788435609,
+      "Count": 5435616827963961871,
+      "Name": "Alias est nemo iusto ab enim eos.",
+      "TotalCost": 0.08266273984781566
+   }' --cart-id "Rerum est eligendi vitae officiis sed sed."
 `, os.Args[0])
 }
 
@@ -352,6 +356,6 @@ Get implements get.
     -cart-id STRING: cartId
 
 Example:
-    `+os.Args[0]+` cart get --cart-id "Rerum est eligendi vitae officiis sed sed."
+    `+os.Args[0]+` cart get --cart-id "Vitae sit culpa earum."
 `, os.Args[0])
 }

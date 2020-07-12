@@ -38,6 +38,10 @@ type AddPayload struct {
 	Name string
 	// Number of fruits
 	Count int
+	// Cost of fruits
+	CostPerItem *float64
+	// Total cost for the item
+	TotalCost *float64
 }
 
 // GetPayload is the payload type of the cart service get method.
@@ -57,6 +61,10 @@ type CartManagement struct {
 	Name string
 	// Number of fruits
 	Count int
+	// Cost of Each fruit
+	CostPerItem int
+	// Total cost of fruits
+	TotalCost int
 }
 
 // NotFound is the type returned when the requested data that does not exist.
@@ -125,6 +133,12 @@ func newCartManagement(vres *cartviews.CartManagementView) *CartManagement {
 	if vres.Count != nil {
 		res.Count = *vres.Count
 	}
+	if vres.CostPerItem != nil {
+		res.CostPerItem = *vres.CostPerItem
+	}
+	if vres.TotalCost != nil {
+		res.TotalCost = *vres.TotalCost
+	}
 	return res
 }
 
@@ -132,9 +146,11 @@ func newCartManagement(vres *cartviews.CartManagementView) *CartManagement {
 // CartManagementView using the "default" view.
 func newCartManagementView(res *CartManagement) *cartviews.CartManagementView {
 	vres := &cartviews.CartManagementView{
-		CartID: &res.CartID,
-		Name:   &res.Name,
-		Count:  &res.Count,
+		CartID:      &res.CartID,
+		Name:        &res.Name,
+		Count:       &res.Count,
+		CostPerItem: &res.CostPerItem,
+		TotalCost:   &res.TotalCost,
 	}
 	return vres
 }

@@ -26,7 +26,7 @@ func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 		Name:   p.Name,
 		Count:  p.Count,
 	}
-	err = CreateItemInCart(&newCart)
+	err = UpdateItemInCart(&newCart)
 	if err != nil {
 		s.logger.Print("An error occurred...")
 		s.logger.Print(err)

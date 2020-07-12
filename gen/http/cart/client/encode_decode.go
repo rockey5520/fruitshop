@@ -158,9 +158,11 @@ func DecodeGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // *CartManagementResponse.
 func unmarshalCartManagementResponseToCartviewsCartManagementView(v *CartManagementResponse) *cartviews.CartManagementView {
 	res := &cartviews.CartManagementView{
-		CartID: v.CartID,
-		Name:   v.Name,
-		Count:  v.Count,
+		CartID:      v.CartID,
+		Name:        v.Name,
+		Count:       v.Count,
+		CostPerItem: v.CostPerItem,
+		TotalCost:   v.TotalCost,
 	}
 
 	return res

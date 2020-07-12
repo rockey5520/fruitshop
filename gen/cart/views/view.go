@@ -32,6 +32,10 @@ type CartManagementView struct {
 	Name *string
 	// Number of fruits
 	Count *int
+	// Cost of Each fruit
+	CostPerItem *int
+	// Total cost of fruits
+	TotalCost *int
 }
 
 var (
@@ -42,6 +46,8 @@ var (
 			"cartId",
 			"Name",
 			"Count",
+			"CostPerItem",
+			"TotalCost",
 		},
 	}
 	// CartManagementMap is a map of attribute names in result type CartManagement
@@ -51,6 +57,8 @@ var (
 			"cartId",
 			"Name",
 			"Count",
+			"CostPerItem",
+			"TotalCost",
 		},
 	}
 )
@@ -89,6 +97,12 @@ func ValidateCartManagementView(result *CartManagementView) (err error) {
 	}
 	if result.Count == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("Count", "result"))
+	}
+	if result.CostPerItem == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("CostPerItem", "result"))
+	}
+	if result.TotalCost == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("TotalCost", "result"))
 	}
 	return
 }

@@ -49,8 +49,7 @@ type GetPayload struct {
 // UserManagement is the result type of the user service get method.
 type UserManagement struct {
 	// ID is the unique id of the User.
-	ID string
-	// Name of the User
+	ID       string
 	UserName string
 }
 

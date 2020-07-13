@@ -17,17 +17,17 @@ import (
 // GetRequestBody is the type of the "fruit" service "get" endpoint HTTP
 // request body.
 type GetRequestBody struct {
-	// Cost
-	Cost *float64 `form:"Cost,omitempty" json:"Cost,omitempty" xml:"Cost,omitempty"`
+	// cost
+	Cost *float64 `form:"cost,omitempty" json:"cost,omitempty" xml:"cost,omitempty"`
 }
 
 // GetResponseBody is the type of the "fruit" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
 	// Name is the unique Name of the Fruit.
-	Name string `form:"Name" json:"Name" xml:"Name"`
+	Name string `form:"name" json:"name" xml:"name"`
 	// Cost of the Fruit.
-	Cost float64 `form:"Cost" json:"Cost" xml:"Cost"`
+	Cost float64 `form:"cost" json:"cost" xml:"cost"`
 }
 
 // FruitManagementResponseCollection is the type of the "fruit" service "show"
@@ -37,9 +37,9 @@ type FruitManagementResponseCollection []*FruitManagementResponse
 // FruitManagementResponse is used to define fields on response body types.
 type FruitManagementResponse struct {
 	// Name is the unique Name of the Fruit.
-	Name string `form:"Name" json:"Name" xml:"Name"`
+	Name string `form:"name" json:"name" xml:"name"`
 	// Cost of the Fruit.
-	Cost float64 `form:"Cost" json:"Cost" xml:"Cost"`
+	Cost float64 `form:"cost" json:"cost" xml:"cost"`
 }
 
 // NewGetResponseBody builds the HTTP response body from the result of the
@@ -75,7 +75,7 @@ func NewGetPayload(body *GetRequestBody, name string) *fruit.GetPayload {
 // ValidateGetRequestBody runs the validations defined on GetRequestBody
 func ValidateGetRequestBody(body *GetRequestBody) (err error) {
 	if body.Cost == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Cost", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("cost", "body"))
 	}
 	return
 }

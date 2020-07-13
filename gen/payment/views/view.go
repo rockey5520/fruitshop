@@ -39,8 +39,8 @@ var (
 		"default": []string{
 			"ID",
 			"cartId",
-			"Amount",
-			"PaymentStatus",
+			"amount",
+			"paymentStatus",
 		},
 	}
 )

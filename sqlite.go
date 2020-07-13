@@ -172,7 +172,7 @@ func AddItemInCart(cart Cart) error {
 	defer db.Close()
 	var fruits fruit.FruitManagement
 	db.Where("Name = ?", cart.Name).Find(&fruits)
-	//db.Table("fruit_managements").Where("Name = ?", cart.Name).First(&fruits)
+
 	err := db.Model(&cart).
 		Where("name = ?", cart.Name).
 		Update("count", cart.Count).
@@ -204,6 +204,15 @@ func getCurrentCost(cart_id string, name string) float64 {
 	db.Where("Name = ?", name).First(&carts)
 	fmt.Println(carts)
 	return carts.TotalCost
+}
+func getCurrentCount(cart_id string, name string) int {
+	db := InitDB()
+	defer db.Close()
+
+	var carts cart.CartManagement
+	db.Where("Name = ?", name).First(&carts)
+	fmt.Println(carts)
+	return carts.Count
 }
 
 // RemoveItemInCart creates a cart entry row in DB
@@ -312,12 +321,16 @@ func PayAmount(input Payment) (payment.PaymentManagement, error) {
 	}
 
 	err := db.Model(&cartItemApple).
-		Update("Count", 0).Error
+		Update("Count", 0).
+		Update("totalCost", 0).Error
 	db.Model(&cartItemBanana).
+		Update("totalCost", 0).
 		Update("Count", 0)
 	db.Model(&cartItemPear).
+		Update("totalCost", 0).
 		Update("Count", 0)
 	db.Model(&cartItemOrange).
+		Update("totalCost", 0).
 		Update("Count", 0)
 	db.Model(&payment).
 		Update("PaymentStatus", "PAID").

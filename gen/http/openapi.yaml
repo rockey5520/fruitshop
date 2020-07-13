@@ -50,8 +50,8 @@ paths:
         schema:
           $ref: '#/definitions/CartAddRequestBody'
           required:
-          - Name
-          - Count
+          - name
+          - count
       responses:
         "202":
           description: Accepted response.
@@ -75,8 +75,8 @@ paths:
         schema:
           $ref: '#/definitions/CartRemoveRequestBody'
           required:
-          - Name
-          - Count
+          - name
+          - count
       responses:
         "202":
           description: Accepted response.
@@ -95,16 +95,16 @@ paths:
             $ref: '#/definitions/FruitFruitManagementResponseCollection'
       schemes:
       - http
-  /api/v1/fruit/{Name}:
+  /api/v1/fruit/{name}:
     get:
       tags:
       - fruit
       summary: get fruit
       operationId: fruit#get
       parameters:
-      - name: Name
+      - name: name
         in: path
-        description: Name
+        description: name
         required: true
         type: string
       - name: GetRequestBody
@@ -113,7 +113,7 @@ paths:
         schema:
           $ref: '#/definitions/FruitGetRequestBody'
           required:
-          - Cost
+          - cost
       responses:
         "200":
           description: OK response.
@@ -164,7 +164,7 @@ paths:
           $ref: '#/definitions/PaymentAddRequestBody'
           required:
           - cartId
-          - Amount
+          - amount
       responses:
         "202":
           description: Accepted response.
@@ -221,7 +221,7 @@ paths:
         schema:
           $ref: '#/definitions/UserAddRequestBody'
           required:
-          - UserName
+          - userName
       responses:
         "201":
           description: Created response.
@@ -245,33 +245,33 @@ definitions:
     title: CartAddRequestBody
     type: object
     properties:
-      CostPerItem:
+      costPerItem:
         type: number
         description: Cost of fruits
-        example: 0.47037292765073974
+        example: 0.6660285405994938
         format: double
-      Count:
+      count:
         type: integer
         description: Number of fruits
-        example: 4411944650868754131
+        example: 5752745549601684989
         format: int64
-      Name:
+      name:
         type: string
-        description: Name of the fruit
-        example: Nam nemo aliquid ipsa nostrum qui.
-      TotalCost:
+        description: name of the fruit
+        example: Quasi temporibus atque laborum error qui.
+      totalCost:
         type: number
         description: Total cost for the item
-        example: 0.9163754415571708
+        example: 0.9236454720042854
         format: double
     example:
-      CostPerItem: 0.2876743323246392
-      Count: 578118207626934877
-      Name: Accusamus eos odio autem quidem voluptatem ratione.
-      TotalCost: 0.40068066636823596
+      costPerItem: 0.04155343685935064
+      count: 436484704018029382
+      name: Nemo sit enim consectetur dolor dolor.
+      totalCost: 0.8557358304392653
     required:
-    - Name
-    - Count
+    - name
+    - count
   CartCartManagementResponseCollection:
     title: 'Mediatype identifier: application/vnd.cart; type=collection; view=default'
     type: array
@@ -279,87 +279,92 @@ definitions:
       $ref: '#/definitions/CartManagementResponse'
     description: GetResponseBody is the result type for an array of CartManagementResponse (default view)
     example:
-    - CostPerItem: 2
-      Count: 2
-      Name: Apple
-      TotalCost: 4
-      cartId: "1"
-    - CostPerItem: 2
-      Count: 2
-      Name: Apple
-      TotalCost: 4
-      cartId: "1"
+    - cartId: "1"
+      costPerItem: 2
+      count: 2
+      name: Apple
+      totalCost: 4
+    - cartId: "1"
+      costPerItem: 2
+      count: 2
+      name: Apple
+      totalCost: 4
+    - cartId: "1"
+      costPerItem: 2
+      count: 2
+      name: Apple
+      totalCost: 4
   CartManagementResponse:
     title: 'Mediatype identifier: application/vnd.cart; view=default'
     type: object
     properties:
-      CostPerItem:
-        type: number
-        description: Cost of Each fruit
-        example: 2
-        format: double
-      Count:
-        type: integer
-        description: Number of fruits
-        example: 2
-        format: int64
-      Name:
-        type: string
-        description: Name of the fruit
-        example: Apple
-      TotalCost:
-        type: number
-        description: Total cost of fruits
-        example: 4
-        format: double
       cartId:
         type: string
         description: cartId is the unique id of the User.
         example: "1"
+      costPerItem:
+        type: number
+        description: Cost of Each fruit
+        example: 2
+        format: double
+      count:
+        type: integer
+        description: Number of fruits
+        example: 2
+        format: int64
+      name:
+        type: string
+        description: Name of the fruit
+        example: Apple
+      totalCost:
+        type: number
+        description: Total cost of fruits
+        example: 4
+        format: double
     description: A CartManagement type describes users cart state. (default view)
     example:
-      CostPerItem: 2
-      Count: 2
-      Name: Apple
-      TotalCost: 4
       cartId: "1"
+      costPerItem: 2
+      count: 2
+      name: Apple
+      totalCost: 4
     required:
     - cartId
-    - Name
-    - Count
-    - CostPerItem
-    - TotalCost
+    - name
+    - count
+    - costPerItem
+    - totalCost
   CartRemoveRequestBody:
     title: CartRemoveRequestBody
     type: object
     properties:
-      CostPerItem:
+      costPerItem:
         type: number
         description: Cost of fruits
-        example: 0.04467929195032163
+        example: 0.7342387602977567
         format: double
-      Count:
+      count:
         type: integer
         description: Number of fruits
-        example: 4971639452633052563
+        example: 2853381391153328296
         format: int64
-      Name:
+      name:
         type: string
         description: Name of the fruit
-        example: Aut vitae.
-      TotalCost:
+        example: Qui maxime ut qui.
+      totalCost:
         type: number
         description: Total cost for the item
-        example: 0.32287398640890763
+        example: 0.13582808218047165
         format: double
     example:
-      CostPerItem: 0.09290485256542964
-      Count: 8072899782453271251
-      Name: Id et veritatis delectus consequatur quasi temporibus.
-      TotalCost: 0.5439296629364719
+      costPerItem: 0.018358562617249913
+      count: 908490325056018726
+      name: Nisi ut et non impedit laborum possimus.
+      totalCost: 0.5829964674020559
     required:
-    - Name
-    - Count
+    - name
+    - count
   FruitFruitManagementResponseCollection:
     title: 'Mediatype identifier: application/vnd.fruit; type=collection; view=default'
     type: array
@@ -367,152 +372,154 @@ definitions:
       $ref: '#/definitions/FruitManagementResponse'
     description: ShowResponseBody is the result type for an array of FruitManagementResponse (default view)
     example:
-    - Cost: 1
-      Name: Apple
-    - Cost: 1
-      Name: Apple
+    - cost: 1
+      name: Apple
+    - cost: 1
+      name: Apple
+    - cost: 1
+      name: Apple
   FruitGetRequestBody:
     title: FruitGetRequestBody
     type: object
     properties:
-      Cost:
+      cost:
         type: number
-        description: Cost
-        example: 0.8515266289951227
+        description: cost
+        example: 0.4569020290341104
         format: double
     example:
-      Cost: 0.2753206776558638
+      cost: 0.22951621500575964
     required:
-    - Cost
+    - cost
   FruitGetResponseBody:
     title: 'Mediatype identifier: application/vnd.fruit; view=default'
     type: object
     properties:
-      Cost:
+      cost:
         type: number
         description: Cost of the Fruit.
         example: 1
         format: double
-      Name:
+      name:
         type: string
         description: Name is the unique Name of the Fruit.
         example: Apple
     description: GetResponseBody result type (default view)
     example:
-      Cost: 1
-      Name: Apple
+      cost: 1
+      name: Apple
     required:
-    - Name
-    - Cost
+    - name
+    - cost
   FruitManagementResponse:
     title: 'Mediatype identifier: application/vnd.fruit; view=default'
     type: object
     properties:
-      Cost:
+      cost:
         type: number
         description: Cost of the Fruit.
         example: 1
         format: double
-      Name:
+      name:
         type: string
         description: Name is the unique Name of the Fruit.
         example: Apple
     description: A FruitManagement type describes a Fruit of e-store. (default view)
     example:
-      Cost: 1
-      Name: Apple
+      cost: 1
+      name: Apple
     required:
-    - Name
-    - Cost
+    - name
+    - cost
   PaymentAddRequestBody:
     title: PaymentAddRequestBody
     type: object
     properties:
-      Amount:
+      amount:
         type: number
         description: Total cost of the cart
-        example: 0.48801406869022196
+        example: 0.3605727655393531
         format: double
       cartId:
         type: string
         description: cartId of the user
-        example: Architecto eos facilis.
+        example: Eveniet nesciunt hic.
     example:
-      Amount: 0.04155343685935064
-      cartId: Enim consectetur dolor dolor dolorum.
+      amount: 0.29645182929828456
+      cartId: Voluptatum ipsum ut ut ut voluptatem in.
     required:
     - cartId
-    - Amount
+    - amount
   PaymentAddResponseBody:
     title: 'Mediatype identifier: application/vnd.payment; view=default'
     type: object
     properties:
-      Amount:
-        type: number
-        description: Amount to be paid for the purchase
-        example: 50
-        format: double
       ID:
         type: string
         description: cartId is the unique cart id of the User.
         example: "1"
-      PaymentStatus:
-        type: string
-        description: Payment status
-        example: Success
+      amount:
+        type: number
+        description: Amount to be paid for the purchase
+        example: 50
+        format: double
       cartId:
         type: string
         description: cartId is the unique cart id of the User.
         example: "1"
+      paymentStatus:
+        type: string
+        description: Payment status
+        example: Success
     description: AddResponseBody result type (default view)
     example:
-      Amount: 50
       ID: "1"
-      PaymentStatus: Success
+      amount: 50
       cartId: "1"
+      paymentStatus: Success
     required:
     - cartId
   PaymentGetResponseBody:
     title: 'Mediatype identifier: application/vnd.payment; view=default'
     type: object
     properties:
-      Amount:
-        type: number
-        description: Amount to be paid for the purchase
-        example: 50
-        format: double
       ID:
         type: string
         description: cartId is the unique cart id of the User.
         example: "1"
-      PaymentStatus:
-        type: string
-        description: Payment status
-        example: Success
+      amount:
+        type: number
+        description: Amount to be paid for the purchase
+        example: 50
+        format: double
       cartId:
         type: string
         description: cartId is the unique cart id of the User.
         example: "1"
+      paymentStatus:
+        type: string
+        description: Payment status
+        example: Success
     description: GetResponseBody result type (default view)
     example:
-      Amount: 50
       ID: "1"
-      PaymentStatus: Success
+      amount: 50
       cartId: "1"
+      paymentStatus: Success
     required:
     - cartId
   UserAddRequestBody:
     title: UserAddRequestBody
     type: object
     properties:
-      UserName:
+      userName:
         type: string
         description: User Name
-        example: Sit nesciunt cumque et provident eaque est.
+        example: Aliquid ipsa nostrum.
     example:
-      UserName: A iure et autem excepturi.
+      userName: Et deleniti reiciendis.
     required:
-    - UserName
+    - userName
   UserGetResponseBody:
     title: 'Mediatype identifier: application/vnd.user; view=default'
     type: object
@@ -521,17 +528,16 @@ definitions:
         type: string
         description: ID is the unique id of the User.
         example: "1"
-      UserName:
+      userName:
         type: string
-        description: Name of the User
-        example: Rakesh Mothukuri
+        example: Accusamus eos odio autem quidem voluptatem ratione.
     description: GetResponseBody result type (default view)
     example:
       ID: "1"
-      UserName: Rakesh Mothukuri
+      userName: Consequatur nostrum.
     required:
     - ID
-    - UserName
+    - userName
   UserManagementResponse:
     title: 'Mediatype identifier: application/vnd.user; view=default'
     type: object
@@ -540,17 +546,16 @@ definitions:
         type: string
         description: ID is the unique id of the User.
         example: "1"
-      UserName:
+      userName:
         type: string
-        description: Name of the User
-        example: Rakesh Mothukuri
+        example: Aut vitae.
     description: A UserManagement type describes a User of e-store. (default view)
     example:
       ID: "1"
-      UserName: Rakesh Mothukuri
+      userName: Non nulla tempore.
     required:
     - ID
-    - UserName
+    - userName
   UserUserManagementResponseCollection:
     title: 'Mediatype identifier: application/vnd.user; type=collection; view=default'
     type: array
@@ -559,10 +564,6 @@ definitions:
     description: ShowResponseBody is the result type for an array of UserManagementResponse (default view)
     example:
     - ID: "1"
-      UserName: Rakesh Mothukuri
+      userName: Sit culpa earum voluptatibus nobis doloremque corrupti.
     - ID: "1"
-      UserName: Rakesh Mothukuri
-    - ID: "1"
-      UserName: Rakesh Mothukuri
-    - ID: "1"
-      UserName: Rakesh Mothukuri
+      userName: Sit culpa earum voluptatibus nobis doloremque corrupti.

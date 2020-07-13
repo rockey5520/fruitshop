@@ -36,7 +36,7 @@ var MethodNames = [3]string{"add", "remove", "get"}
 type AddPayload struct {
 	// cartId of the user
 	CartID string
-	// Name of the fruit
+	// name of the fruit
 	Name string
 	// Number of fruits
 	Count int

@@ -54,7 +54,7 @@ func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 
 			params = mux.Vars(r)
 		)
-		name = params["Name"]
+		name = params["name"]
 		payload := NewGetPayload(&body, name)
 
 		return payload, nil

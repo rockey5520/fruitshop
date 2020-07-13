@@ -17,17 +17,17 @@ import (
 // GetRequestBody is the type of the "fruit" service "get" endpoint HTTP
 // request body.
 type GetRequestBody struct {
-	// Cost
-	Cost float64 `form:"Cost" json:"Cost" xml:"Cost"`
+	// cost
+	Cost float64 `form:"cost" json:"cost" xml:"cost"`
 }
 
 // GetResponseBody is the type of the "fruit" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
 	// Name is the unique Name of the Fruit.
-	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Cost of the Fruit.
-	Cost *float64 `form:"Cost,omitempty" json:"Cost,omitempty" xml:"Cost,omitempty"`
+	Cost *float64 `form:"cost,omitempty" json:"cost,omitempty" xml:"cost,omitempty"`
 }
 
 // ShowResponseBody is the type of the "fruit" service "show" endpoint HTTP
@@ -37,9 +37,9 @@ type ShowResponseBody []*FruitManagementResponse
 // FruitManagementResponse is used to define fields on response body types.
 type FruitManagementResponse struct {
 	// Name is the unique Name of the Fruit.
-	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Cost of the Fruit.
-	Cost *float64 `form:"Cost,omitempty" json:"Cost,omitempty" xml:"Cost,omitempty"`
+	Cost *float64 `form:"cost,omitempty" json:"cost,omitempty" xml:"cost,omitempty"`
 }
 
 // NewGetRequestBody builds the HTTP request body from the payload of the "get"
@@ -76,10 +76,10 @@ func NewShowFruitManagementCollectionOK(body ShowResponseBody) fruitviews.FruitM
 // FruitManagementResponse
 func ValidateFruitManagementResponse(body *FruitManagementResponse) (err error) {
 	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	if body.Cost == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Cost", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("cost", "body"))
 	}
 	return
 }

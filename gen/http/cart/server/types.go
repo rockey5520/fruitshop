@@ -17,27 +17,27 @@ import (
 // AddRequestBody is the type of the "cart" service "add" endpoint HTTP request
 // body.
 type AddRequestBody struct {
-	// Name of the fruit
-	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
+	// name of the fruit
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Number of fruits
-	Count *int `form:"Count,omitempty" json:"Count,omitempty" xml:"Count,omitempty"`
+	Count *int `form:"count,omitempty" json:"count,omitempty" xml:"count,omitempty"`
 	// Cost of fruits
-	CostPerItem *float64 `form:"CostPerItem,omitempty" json:"CostPerItem,omitempty" xml:"CostPerItem,omitempty"`
+	CostPerItem *float64 `form:"costPerItem,omitempty" json:"costPerItem,omitempty" xml:"costPerItem,omitempty"`
 	// Total cost for the item
-	TotalCost *float64 `form:"TotalCost,omitempty" json:"TotalCost,omitempty" xml:"TotalCost,omitempty"`
+	TotalCost *float64 `form:"totalCost,omitempty" json:"totalCost,omitempty" xml:"totalCost,omitempty"`
 }
 
 // RemoveRequestBody is the type of the "cart" service "remove" endpoint HTTP
 // request body.
 type RemoveRequestBody struct {
 	// Name of the fruit
-	Name *string `form:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Number of fruits
-	Count *int `form:"Count,omitempty" json:"Count,omitempty" xml:"Count,omitempty"`
+	Count *int `form:"count,omitempty" json:"count,omitempty" xml:"count,omitempty"`
 	// Cost of fruits
-	CostPerItem *float64 `form:"CostPerItem,omitempty" json:"CostPerItem,omitempty" xml:"CostPerItem,omitempty"`
+	CostPerItem *float64 `form:"costPerItem,omitempty" json:"costPerItem,omitempty" xml:"costPerItem,omitempty"`
 	// Total cost for the item
-	TotalCost *float64 `form:"TotalCost,omitempty" json:"TotalCost,omitempty" xml:"TotalCost,omitempty"`
+	TotalCost *float64 `form:"totalCost,omitempty" json:"totalCost,omitempty" xml:"totalCost,omitempty"`
 }
 
 // CartManagementResponseCollection is the type of the "cart" service "get"
@@ -49,13 +49,13 @@ type CartManagementResponse struct {
 	// cartId is the unique id of the User.
 	CartID string `form:"cartId" json:"cartId" xml:"cartId"`
 	// Name of the fruit
-	Name string `form:"Name" json:"Name" xml:"Name"`
+	Name string `form:"name" json:"name" xml:"name"`
 	// Number of fruits
-	Count int `form:"Count" json:"Count" xml:"Count"`
+	Count int `form:"count" json:"count" xml:"count"`
 	// Cost of Each fruit
-	CostPerItem float64 `form:"CostPerItem" json:"CostPerItem" xml:"CostPerItem"`
+	CostPerItem float64 `form:"costPerItem" json:"costPerItem" xml:"costPerItem"`
 	// Total cost of fruits
-	TotalCost float64 `form:"TotalCost" json:"TotalCost" xml:"TotalCost"`
+	TotalCost float64 `form:"totalCost" json:"totalCost" xml:"totalCost"`
 }
 
 // NewCartManagementResponseCollection builds the HTTP response body from the
@@ -105,10 +105,10 @@ func NewGetPayload(cartID string) *cart.GetPayload {
 // ValidateAddRequestBody runs the validations defined on AddRequestBody
 func ValidateAddRequestBody(body *AddRequestBody) (err error) {
 	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	if body.Count == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Count", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("count", "body"))
 	}
 	return
 }
@@ -116,10 +116,10 @@ func ValidateAddRequestBody(body *AddRequestBody) (err error) {
 // ValidateRemoveRequestBody runs the validations defined on RemoveRequestBody
 func ValidateRemoveRequestBody(body *RemoveRequestBody) (err error) {
 	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	if body.Count == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Count", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("count", "body"))
 	}
 	return
 }

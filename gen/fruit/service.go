@@ -32,9 +32,9 @@ var MethodNames = [2]string{"get", "show"}
 
 // GetPayload is the payload type of the fruit service get method.
 type GetPayload struct {
-	// Name
+	// name
 	Name string
-	// Cost
+	// cost
 	Cost float64
 }
 

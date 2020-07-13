@@ -36,21 +36,21 @@ payment (add|get)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
-      "UserName": "Harum molestiae non ea alias est nemo."
-   }' --id "Ab enim."` + "\n" +
+      "userName": "Ab enim."
+   }' --id "Incidunt quae quia officia rerum est."` + "\n" +
 		os.Args[0] + ` fruit get --body '{
-      "Cost": 0.021993457015341566
-   }' --name "Culpa earum."` + "\n" +
+      "cost": 0.4703888278036248
+   }' --name "Eveniet in fugiat."` + "\n" +
 		os.Args[0] + ` cart add --body '{
-      "CostPerItem": 0.13577958339601065,
-      "Count": 6768872129112107149,
-      "Name": "Saepe eligendi sint vitae officiis officiis et.",
-      "TotalCost": 0.4703888278036248
-   }' --cart-id "Eveniet in fugiat."` + "\n" +
+      "costPerItem": 0.31933437727177916,
+      "count": 8317691352667182512,
+      "name": "Voluptatem esse perspiciatis delectus.",
+      "totalCost": 0.9110304979788784
+   }' --cart-id "Molestias beatae aperiam."` + "\n" +
 		os.Args[0] + ` payment add --body '{
-      "Amount": 0.6465372050495056,
-      "cartId": "Id earum explicabo tenetur sit."
-   }' --id "Quidem velit quidem."` + "\n" +
+      "amount": 0.2481123861431309,
+      "cartId": "Temporibus voluptate reprehenderit et aspernatur consequatur quaerat."
+   }' --id "Nostrum sed."` + "\n" +
 		""
 }
 
@@ -79,7 +79,7 @@ func ParseEndpoint(
 
 		fruitGetFlags    = flag.NewFlagSet("get", flag.ExitOnError)
 		fruitGetBodyFlag = fruitGetFlags.String("body", "REQUIRED", "")
-		fruitGetNameFlag = fruitGetFlags.String("name", "REQUIRED", "Name")
+		fruitGetNameFlag = fruitGetFlags.String("name", "REQUIRED", "name")
 
 		fruitShowFlags = flag.NewFlagSet("show", flag.ExitOnError)
 
@@ -307,8 +307,8 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` user add --body '{
-      "UserName": "Harum molestiae non ea alias est nemo."
-   }' --id "Ab enim."
+      "userName": "Ab enim."
+   }' --id "Incidunt quae quia officia rerum est."
 `, os.Args[0])
 }
 
@@ -319,7 +319,7 @@ Get implements get.
     -id STRING: ID
 
 Example:
-    `+os.Args[0]+` user get --id "Vitae officiis sed sed ipsum voluptas."
+    `+os.Args[0]+` user get --id "Molestiae corporis suscipit quidem."
 `, os.Args[0])
 }
 
@@ -352,12 +352,12 @@ func fruitGetUsage() {
 
 Get implements get.
     -body JSON: 
-    -name STRING: Name
+    -name STRING: name
 
 Example:
     `+os.Args[0]+` fruit get --body '{
-      "Cost": 0.021993457015341566
-   }' --name "Culpa earum."
+      "cost": 0.4703888278036248
+   }' --name "Eveniet in fugiat."
 `, os.Args[0])
 }
 
@@ -395,11 +395,11 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` cart add --body '{
-      "CostPerItem": 0.13577958339601065,
-      "Count": 6768872129112107149,
-      "Name": "Saepe eligendi sint vitae officiis officiis et.",
-      "TotalCost": 0.4703888278036248
-   }' --cart-id "Eveniet in fugiat."
+      "costPerItem": 0.31933437727177916,
+      "count": 8317691352667182512,
+      "name": "Voluptatem esse perspiciatis delectus.",
+      "totalCost": 0.9110304979788784
+   }' --cart-id "Molestias beatae aperiam."
 `, os.Args[0])
 }
 
@@ -412,11 +412,11 @@ Remove implements remove.
 
 Example:
     `+os.Args[0]+` cart remove --body '{
-      "CostPerItem": 0.31933437727177916,
-      "Count": 8317691352667182512,
-      "Name": "Rem voluptatem dolor voluptatem esse perspiciatis delectus.",
-      "TotalCost": 0.9110304979788784
-   }' --cart-id "Molestias beatae aperiam."
+      "costPerItem": 0.8360423006618124,
+      "count": 4445129785425122174,
+      "name": "Non consequuntur qui laudantium id culpa aut.",
+      "totalCost": 0.18706090858816168
+   }' --cart-id "Fugit veniam ea laboriosam."
 `, os.Args[0])
 }
 
@@ -427,7 +427,7 @@ Get implements get.
     -cart-id STRING: cartId
 
 Example:
-    `+os.Args[0]+` cart get --cart-id "Non consequuntur qui laudantium id culpa aut."
+    `+os.Args[0]+` cart get --cart-id "Explicabo tenetur sit consequatur eligendi."
 `, os.Args[0])
 }
 
@@ -454,9 +454,9 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` payment add --body '{
-      "Amount": 0.6465372050495056,
-      "cartId": "Id earum explicabo tenetur sit."
-   }' --id "Quidem velit quidem."
+      "amount": 0.2481123861431309,
+      "cartId": "Temporibus voluptate reprehenderit et aspernatur consequatur quaerat."
+   }' --id "Nostrum sed."
 `, os.Args[0])
 }
 
@@ -468,6 +468,6 @@ Get implements get.
     -cart-id STRING: cartId
 
 Example:
-    `+os.Args[0]+` payment get --id "Nostrum sed." --cart-id "Earum quod mollitia quae eos fugit."
+    `+os.Args[0]+` payment get --id "A iure et autem excepturi." --cart-id "Dolor omnis consequatur ipsa nam."
 `, os.Args[0])
 }

@@ -44,10 +44,10 @@ var (
 	CartManagementCollectionMap = map[string][]string{
 		"default": []string{
 			"cartId",
-			"Name",
-			"Count",
-			"CostPerItem",
-			"TotalCost",
+			"name",
+			"count",
+			"costPerItem",
+			"totalCost",
 		},
 	}
 	// CartManagementMap is a map of attribute names in result type CartManagement
@@ -55,10 +55,10 @@ var (
 	CartManagementMap = map[string][]string{
 		"default": []string{
 			"cartId",
-			"Name",
-			"Count",
-			"CostPerItem",
-			"TotalCost",
+			"name",
+			"count",
+			"costPerItem",
+			"totalCost",
 		},
 	}
 )
@@ -93,16 +93,16 @@ func ValidateCartManagementView(result *CartManagementView) (err error) {
 		err = goa.MergeErrors(err, goa.MissingFieldError("cartId", "result"))
 	}
 	if result.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "result"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
 	if result.Count == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Count", "result"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("count", "result"))
 	}
 	if result.CostPerItem == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("CostPerItem", "result"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("costPerItem", "result"))
 	}
 	if result.TotalCost == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("TotalCost", "result"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("totalCost", "result"))
 	}
 	return
 }

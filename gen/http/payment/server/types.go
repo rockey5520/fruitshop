@@ -20,7 +20,7 @@ type AddRequestBody struct {
 	// cartId of the user
 	CartID *string `form:"cartId,omitempty" json:"cartId,omitempty" xml:"cartId,omitempty"`
 	// Total cost of the cart
-	Amount *float64 `form:"Amount,omitempty" json:"Amount,omitempty" xml:"Amount,omitempty"`
+	Amount *float64 `form:"amount,omitempty" json:"amount,omitempty" xml:"amount,omitempty"`
 }
 
 // AddResponseBody is the type of the "payment" service "add" endpoint HTTP
@@ -31,9 +31,9 @@ type AddResponseBody struct {
 	// cartId is the unique cart id of the User.
 	CartID string `form:"cartId" json:"cartId" xml:"cartId"`
 	// Amount to be paid for the purchase
-	Amount *float64 `form:"Amount,omitempty" json:"Amount,omitempty" xml:"Amount,omitempty"`
+	Amount *float64 `form:"amount,omitempty" json:"amount,omitempty" xml:"amount,omitempty"`
 	// Payment status
-	PaymentStatus *string `form:"PaymentStatus,omitempty" json:"PaymentStatus,omitempty" xml:"PaymentStatus,omitempty"`
+	PaymentStatus *string `form:"paymentStatus,omitempty" json:"paymentStatus,omitempty" xml:"paymentStatus,omitempty"`
 }
 
 // GetResponseBody is the type of the "payment" service "get" endpoint HTTP
@@ -44,9 +44,9 @@ type GetResponseBody struct {
 	// cartId is the unique cart id of the User.
 	CartID string `form:"cartId" json:"cartId" xml:"cartId"`
 	// Amount to be paid for the purchase
-	Amount *float64 `form:"Amount,omitempty" json:"Amount,omitempty" xml:"Amount,omitempty"`
+	Amount *float64 `form:"amount,omitempty" json:"amount,omitempty" xml:"amount,omitempty"`
 	// Payment status
-	PaymentStatus *string `form:"PaymentStatus,omitempty" json:"PaymentStatus,omitempty" xml:"PaymentStatus,omitempty"`
+	PaymentStatus *string `form:"paymentStatus,omitempty" json:"paymentStatus,omitempty" xml:"paymentStatus,omitempty"`
 }
 
 // NewAddResponseBody builds the HTTP response body from the result of the
@@ -99,7 +99,7 @@ func ValidateAddRequestBody(body *AddRequestBody) (err error) {
 		err = goa.MergeErrors(err, goa.MissingFieldError("cartId", "body"))
 	}
 	if body.Amount == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Amount", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("amount", "body"))
 	}
 	return
 }

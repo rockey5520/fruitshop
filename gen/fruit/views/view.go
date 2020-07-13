@@ -45,16 +45,16 @@ var (
 	// FruitManagement indexed by view name.
 	FruitManagementMap = map[string][]string{
 		"default": []string{
-			"Name",
-			"Cost",
+			"name",
+			"cost",
 		},
 	}
 	// FruitManagementCollectionMap is a map of attribute names in result type
 	// FruitManagementCollection indexed by view name.
 	FruitManagementCollectionMap = map[string][]string{
 		"default": []string{
-			"Name",
-			"Cost",
+			"name",
+			"cost",
 		},
 	}
 )
@@ -87,10 +87,10 @@ func ValidateFruitManagementCollection(result FruitManagementCollection) (err er
 // FruitManagementView using the "default" view.
 func ValidateFruitManagementView(result *FruitManagementView) (err error) {
 	if result.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Name", "result"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
 	if result.Cost == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("Cost", "result"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("cost", "result"))
 	}
 	return
 }

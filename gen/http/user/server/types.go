@@ -18,16 +18,15 @@ import (
 // body.
 type AddRequestBody struct {
 	// User Name
-	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
+	UserName *string `form:"userName,omitempty" json:"userName,omitempty" xml:"userName,omitempty"`
 }
 
 // GetResponseBody is the type of the "user" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
 	// ID is the unique id of the User.
-	ID string `form:"ID" json:"ID" xml:"ID"`
-	// Name of the User
-	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
+	ID       string `form:"ID" json:"ID" xml:"ID"`
+	UserName string `form:"userName" json:"userName" xml:"userName"`
 }
 
 // UserManagementResponseCollection is the type of the "user" service "show"
@@ -37,9 +36,8 @@ type UserManagementResponseCollection []*UserManagementResponse
 // UserManagementResponse is used to define fields on response body types.
 type UserManagementResponse struct {
 	// ID is the unique id of the User.
-	ID string `form:"ID" json:"ID" xml:"ID"`
-	// Name of the User
-	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
+	ID       string `form:"ID" json:"ID" xml:"ID"`
+	UserName string `form:"userName" json:"userName" xml:"userName"`
 }
 
 // NewGetResponseBody builds the HTTP response body from the result of the
@@ -83,7 +81,7 @@ func NewGetPayload(id string) *user.GetPayload {
 // ValidateAddRequestBody runs the validations defined on AddRequestBody
 func ValidateAddRequestBody(body *AddRequestBody) (err error) {
 	if body.UserName == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "body"))
+		err = goa.MergeErrors(err, goa.MissingFieldError("userName", "body"))
 	}
 	return
 }

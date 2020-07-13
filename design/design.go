@@ -24,8 +24,8 @@ var _ = Service("user", func() {
 	Method("add", func() {
 		Payload(func() {
 			Field(1, "ID", String, "ID")
-			Field(2, "UserName", String, "User Name")
-			Required("ID", "UserName")
+			Field(2, "userName", String, "User Name")
+			Required("ID", "userName")
 		})
 		Result(Empty)
 		Error("not_found", NotFound, "User not found")
@@ -64,14 +64,14 @@ var _ = Service("fruit", func() {
 
 	Method("get", func() {
 		Payload(func() {
-			Field(1, "Name", String, "Name")
-			Field(2, "Cost", Float64, "Cost")
-			Required("Name", "Cost")
+			Field(1, "name", String, "name")
+			Field(2, "cost", Float64, "cost")
+			Required("name", "cost")
 		})
 		Result(FruitManagement)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			GET("/api/v1/fruit/{Name}")
+			GET("/api/v1/fruit/{name}")
 			Response(StatusOK)
 		})
 	})
@@ -91,11 +91,11 @@ var _ = Service("cart", func() {
 	Method("add", func() {
 		Payload(func() {
 			Field(1, "cartId", String, "cartId of the user")
-			Field(2, "Name", String, "Name of the fruit")
-			Field(3, "Count", Int, "Number of fruits")
-			Field(4, "CostPerItem", Float64, "Cost of fruits")
-			Field(5, "TotalCost", Float64, "Total cost for the item")
-			Required("cartId", "Name", "Count")
+			Field(2, "name", String, "name of the fruit")
+			Field(3, "count", Int, "Number of fruits")
+			Field(4, "costPerItem", Float64, "Cost of fruits")
+			Field(5, "totalCost", Float64, "Total cost for the item")
+			Required("cartId", "name", "count")
 		})
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
@@ -108,11 +108,11 @@ var _ = Service("cart", func() {
 	Method("remove", func() {
 		Payload(func() {
 			Field(1, "cartId", String, "cartId of the user")
-			Field(2, "Name", String, "Name of the fruit")
-			Field(3, "Count", Int, "Number of fruits")
-			Field(4, "CostPerItem", Float64, "Cost of fruits")
-			Field(5, "TotalCost", Float64, "Total cost for the item")
-			Required("cartId", "Name", "Count")
+			Field(2, "name", String, "Name of the fruit")
+			Field(3, "count", Int, "Number of fruits")
+			Field(4, "costPerItem", Float64, "Cost of fruits")
+			Field(5, "totalCost", Float64, "Total cost for the item")
+			Required("cartId", "name", "count")
 		})
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
@@ -143,8 +143,8 @@ var _ = Service("payment", func() {
 		Payload(func() {
 			Field(1, "ID", String, "ID of the user")
 			Field(2, "cartId", String, "cartId of the user")
-			Field(2, "Amount", Float64, "Total cost of the cart")
-			Required("ID", "cartId", "Amount")
+			Field(2, "amount", Float64, "Total cost of the cart")
+			Required("ID", "cartId", "amount")
 		})
 		Result(PaymentManagement)
 		Error("not_found", NotFound, "Fruit not found")
@@ -180,12 +180,12 @@ var UserManagement = ResultType("application/vnd.user", func() {
 		Attribute("ID", String, "ID is the unique id of the User.", func() {
 			Example("1")
 		})
-		Field(2, "UserName")
+		Field(2, "userName")
 	})
 
 	View("default", func() {
 		Attribute("ID")
-		Attribute("UserName")
+		Attribute("userName")
 	})
 
 	Required("ID")
@@ -198,20 +198,20 @@ var FruitManagement = ResultType("application/vnd.fruit", func() {
 	TypeName("FruitManagement")
 
 	Attributes(func() {
-		Attribute("Name", String, "Name is the unique Name of the Fruit.", func() {
+		Attribute("name", String, "Name is the unique Name of the Fruit.", func() {
 			Example("Apple")
 		})
-		Field(2, "Name")
-		Field(3, "Cost")
+		Field(2, "name")
+		Field(3, "cost")
 
 	})
 
 	View("default", func() {
-		Attribute("Name")
-		Attribute("Cost")
+		Attribute("name")
+		Attribute("cost")
 	})
 
-	Required("Name", "Cost")
+	Required("name", "cost")
 })
 
 // CartManagement is a custom ResultType used to configure views for our custom type
@@ -225,25 +225,25 @@ var CartManagement = ResultType("application/vnd.cart", func() {
 			Example("1")
 		})
 
-		Field(2, "Name")
-		Field(3, "Count")
-		Field(4, "CostPerItem")
-		Field(5, "TotalCost")
+		Field(2, "name")
+		Field(3, "count")
+		Field(4, "costPerItem")
+		Field(5, "totalCost")
 	})
 
 	View("default", func() {
 		Attribute("cartId")
-		Attribute("Name")
-		Attribute("Count")
-		Attribute("CostPerItem")
-		Attribute("TotalCost")
+		Attribute("name")
+		Attribute("count")
+		Attribute("costPerItem")
+		Attribute("totalCost")
 	})
 
 	Required("cartId")
-	Required("Name")
-	Required("Count")
-	Required("CostPerItem")
-	Required("TotalCost")
+	Required("name")
+	Required("count")
+	Required("costPerItem")
+	Required("totalCost")
 })
 
 // UserManagement is a custom ResultType used to configure views for our custom type
@@ -259,15 +259,15 @@ var PaymentManagement = ResultType("application/vnd.payment", func() {
 		Attribute("cartId", String, "cartId is the unique cart id of the User.", func() {
 			Example("1")
 		})
-		Field(2, "Amount")
-		Field(3, "PaymentStatus")
+		Field(2, "amount")
+		Field(3, "paymentStatus")
 	})
 
 	View("default", func() {
 		Attribute("ID")
 		Attribute("cartId")
-		Attribute("Amount")
-		Attribute("PaymentStatus")
+		Attribute("amount")
+		Attribute("paymentStatus")
 	})
 
 	Required("cartId")
@@ -279,22 +279,22 @@ var User = Type("User", func() {
 	Attribute("ID", String, "ID is the unique id of the User.", func() {
 		Example("1")
 	})
-	Attribute("UserName", String, "Name of the User", func() {
+	Attribute("UuerName", String, "Name of the User", func() {
 		Example("Rakesh Mothukuri")
 	})
-	Required("ID", "UserName")
+	Required("ID", "userName")
 })
 
 // User is the custom type for Users in our database
 var Fruit = Type("Fruit", func() {
 	Description("Fruit describes a fruit of store.")
-	Attribute("Name", String, "Name is the unique Name of the Fruit.", func() {
+	Attribute("name", String, "Name is the unique Name of the Fruit.", func() {
 		Example("Apple")
 	})
-	Attribute("Cost", Float64, "Cost of the Fruit.", func() {
+	Attribute("cost", Float64, "Cost of the Fruit.", func() {
 		Example(1.0)
 	})
-	Required("Name", "Cost")
+	Required("name", "cost")
 })
 
 // User is the custom type for Users in our database
@@ -303,20 +303,20 @@ var Cart = Type("Cart", func() {
 	Attribute("cartId", String, "cartId is the unique id of the User.", func() {
 		Example("1")
 	})
-	Attribute("Name", String, "Name of the fruit", func() {
+	Attribute("name", String, "Name of the fruit", func() {
 		Example("Apple")
 	})
-	Attribute("Count", Int, "Number of fruits", func() {
+	Attribute("count", Int, "Number of fruits", func() {
 		Example(2)
 	})
-	Attribute("CostPerItem", Float64, "Cost of Each fruit", func() {
+	Attribute("costPerItem", Float64, "Cost of Each fruit", func() {
 		Example(2)
 	})
-	Attribute("TotalCost", Float64, "Total cost of fruits", func() {
+	Attribute("totalCost", Float64, "Total cost of fruits", func() {
 		Example(4)
 	})
 
-	Required("cartId", "Name", "Count")
+	Required("cartId", "name", "count")
 })
 
 // Payment is the custom type for Payment in our database
@@ -328,10 +328,10 @@ var Payment = Type("Payment", func() {
 	Attribute("ID", String, "Payment ID for the cart", func() {
 		Example("30")
 	})
-	Attribute("Amount", Float64, "Amount to be paid for the purchase", func() {
+	Attribute("amount", Float64, "Amount to be paid for the purchase", func() {
 		Example(50)
 	})
-	Attribute("PaymentStatus", String, "Payment status", func() {
+	Attribute("paymentStatus", String, "Payment status", func() {
 		Example("Success")
 	})
 	Required("cartId")

@@ -16,6 +16,7 @@ var _ = API("fruitshop", func() {
 			URI("http://localhost:8080/api/v1")
 		})
 	})
+
 })
 
 // User Service declaration with two methods and Swagger API specification file
@@ -24,26 +25,26 @@ var _ = Service("user", func() {
 	Method("add", func() {
 		Payload(func() {
 			Field(1, "ID", String, "ID")
-			Field(2, "userName", String, "User Name")
-			Required("ID", "userName")
+			Field(2, "userId", String, "userId")
+			Required("userId")
 		})
-		Result(Empty)
+		Result(UserManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			POST("/api/v1/user/{ID}")
+			POST("/api/v1/user/{userId}")
 			Response(StatusCreated)
 		})
 	})
 
 	Method("get", func() {
 		Payload(func() {
-			Field(1, "ID", String, "ID")
-			Required("ID")
+			Field(1, "userId", String, "userId")
+			Required("userId")
 		})
 		Result(UserManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			GET("/api/v1/user/{ID}")
+			GET("/api/v1/user/{userId}")
 			Response(StatusOK)
 		})
 	})
@@ -90,47 +91,49 @@ var _ = Service("cart", func() {
 	Description("The cart service allows to manage the state of the cart")
 	Method("add", func() {
 		Payload(func() {
-			Field(1, "cartId", String, "cartId of the user")
+
+			Field(1, "userId", String, "ID of the user")
 			Field(2, "name", String, "name of the fruit")
 			Field(3, "count", Int, "Number of fruits")
 			Field(4, "costPerItem", Float64, "Cost of fruits")
 			Field(5, "totalCost", Float64, "Total cost for the item")
-			Required("cartId", "name", "count")
+			Required("userId", "name", "count")
 		})
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/cart/add/{cartId}")
+			POST("/api/v1/cart/add/{userId}")
 			Response(StatusAccepted)
 		})
 	})
 
 	Method("remove", func() {
 		Payload(func() {
-			Field(1, "cartId", String, "cartId of the user")
+
+			Field(1, "userId", String, "ID of the user")
 			Field(2, "name", String, "Name of the fruit")
 			Field(3, "count", Int, "Number of fruits")
 			Field(4, "costPerItem", Float64, "Cost of fruits")
 			Field(5, "totalCost", Float64, "Total cost for the item")
-			Required("cartId", "name", "count")
+			Required("userId", "name", "count")
 		})
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/cart/remove/{cartId}")
+			POST("/api/v1/cart/remove/{userId}")
 			Response(StatusAccepted)
 		})
 	})
 
 	Method("get", func() {
 		Payload(func() {
-			Field(1, "cartId", String, "cartId")
-			Required("cartId")
+			Field(1, "userId", String, "ID")
+			Required("userId")
 		})
 		Result(CollectionOf(CartManagement))
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			GET("/api/v1/cart/{cartId}")
+			GET("/api/v1/cart/{userId}")
 			Response(StatusOK)
 		})
 	})
@@ -142,14 +145,14 @@ var _ = Service("payment", func() {
 	Method("add", func() {
 		Payload(func() {
 			Field(1, "ID", String, "ID of the user")
-			Field(2, "cartId", String, "cartId of the user")
+			Field(2, "userId", String, "userId of the user")
 			Field(2, "amount", Float64, "Total cost of the cart")
-			Required("ID", "cartId", "amount")
+			Required("userId", "amount")
 		})
 		Result(PaymentManagement)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/payment/pay/{ID}")
+			POST("/api/v1/payment/pay/{userId}")
 			Response(StatusAccepted)
 		})
 	})
@@ -157,17 +160,36 @@ var _ = Service("payment", func() {
 	Method("get", func() {
 		Payload(func() {
 			Field(1, "ID", String, "cartId")
-			Field(1, "cartId", String, "cartId")
-			Required("ID", "cartId")
+			Field(1, "userId", String, "userId")
+			Required("userId")
 		})
 		Result(PaymentManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			GET("/api/v1/payment/{ID}/{cartId}")
+			GET("/api/v1/payment/{userId}")
 			Response(StatusOK)
 		})
 	})
 
+})
+
+// Discount Service declaration with get method and Swagger API specification file
+var _ = Service("discount", func() {
+	Description("Discounts applied on the cart")
+
+	Method("show", func() {
+		Payload(func() {
+			Field(1, "userId", String, "userId")
+			Required("userId")
+		})
+		Result(CollectionOf(DiscountManagement))
+		Error("not_found", NotFound, "Fruit not found")
+		HTTP(func() {
+			GET("/api/v1/discount/{userId}")
+			Response(StatusOK)
+		})
+	})
+	//Files("/openapi.json", "./gen/http/openapi.json")
 })
 
 // UserManagement is a custom ResultType used to configure views for our custom type
@@ -180,12 +202,11 @@ var UserManagement = ResultType("application/vnd.user", func() {
 		Attribute("ID", String, "ID is the unique id of the User.", func() {
 			Example("1")
 		})
-		Field(2, "userName")
+		Field(2, "userId")
 	})
 
 	View("default", func() {
-		Attribute("ID")
-		Attribute("userName")
+		Attribute("userId")
 	})
 
 	Required("ID")
@@ -221,7 +242,7 @@ var CartManagement = ResultType("application/vnd.cart", func() {
 	TypeName("CartManagement")
 
 	Attributes(func() {
-		Attribute("cartId", String, "cartId is the unique id of the User.", func() {
+		Attribute("userId", String, "userId is the unique id of the Cart.", func() {
 			Example("1")
 		})
 
@@ -232,14 +253,14 @@ var CartManagement = ResultType("application/vnd.cart", func() {
 	})
 
 	View("default", func() {
-		Attribute("cartId")
+		Attribute("userId")
 		Attribute("name")
 		Attribute("count")
 		Attribute("costPerItem")
 		Attribute("totalCost")
 	})
 
-	Required("cartId")
+	Required("userId")
 	Required("name")
 	Required("count")
 	Required("costPerItem")
@@ -256,7 +277,7 @@ var PaymentManagement = ResultType("application/vnd.payment", func() {
 		Attribute("ID", String, "cartId is the unique cart id of the User.", func() {
 			Example("1")
 		})
-		Attribute("cartId", String, "cartId is the unique cart id of the User.", func() {
+		Attribute("userId", String, "userId is the unique id of the User.", func() {
 			Example("1")
 		})
 		Field(2, "amount")
@@ -264,13 +285,55 @@ var PaymentManagement = ResultType("application/vnd.payment", func() {
 	})
 
 	View("default", func() {
-		Attribute("ID")
-		Attribute("cartId")
+		Attribute("userId")
 		Attribute("amount")
 		Attribute("paymentStatus")
 	})
 
-	Required("cartId")
+	Required("userId")
+})
+
+// DiscountManagement is a custom ResultType used to configure views for our custom type
+var DiscountManagement = ResultType("application/vnd.discount", func() {
+	Description("A DiscountManagement type describes the discounts applied on the cart")
+	Reference(Discount)
+	TypeName("DiscountManagement")
+
+	Attributes(func() {
+		Attribute("userId", String, "userId for the customer", func() {
+			Example("1")
+		})
+		Attribute("name", String, "Name of the discount", func() {
+			Example("Apple10")
+		})
+		Attribute("status", String, "Status of the discount", func() {
+			Example("APPLIED")
+		})
+
+	})
+
+	View("default", func() {
+		Attribute("userId")
+		Attribute("name")
+		Attribute("status")
+	})
+
+	Required("userId")
+})
+
+// User is the custom type for Users in our database
+var Discount = Type("Discount", func() {
+	Description("Discounts applied on the cart")
+	Attribute("userId", String, "userId for the customer", func() {
+		Example("1")
+	})
+	Attribute("name", String, "Name of the discount", func() {
+		Example("Apple10")
+	})
+	Attribute("status", String, "Status of the discount", func() {
+		Example("APPLIED")
+	})
+	Required("userId")
 })
 
 // User is the custom type for Users in our database
@@ -279,10 +342,10 @@ var User = Type("User", func() {
 	Attribute("ID", String, "ID is the unique id of the User.", func() {
 		Example("1")
 	})
-	Attribute("UuerName", String, "Name of the User", func() {
-		Example("Rakesh Mothukuri")
+	Attribute("userId", String, "userId", func() {
+		Example("123")
 	})
-	Required("ID", "userName")
+	Required("userId")
 })
 
 // User is the custom type for Users in our database
@@ -300,7 +363,7 @@ var Fruit = Type("Fruit", func() {
 // User is the custom type for Users in our database
 var Cart = Type("Cart", func() {
 	Description("Cart describes a customer cart in the e-store.")
-	Attribute("cartId", String, "cartId is the unique id of the User.", func() {
+	Attribute("userId", String, "userId is the unique id of the User.", func() {
 		Example("1")
 	})
 	Attribute("name", String, "Name of the fruit", func() {
@@ -316,13 +379,13 @@ var Cart = Type("Cart", func() {
 		Example(4)
 	})
 
-	Required("cartId", "name", "count")
+	Required("userId", "name", "count")
 })
 
 // Payment is the custom type for Payment in our database
 var Payment = Type("Payment", func() {
 	Description("Payment describes payment for the items purchased")
-	Attribute("cartId", String, "cartId is the unique cart id of the User.", func() {
+	Attribute("userId", String, "cartId is the unique cart id of the User.", func() {
 		Example("1")
 	})
 	Attribute("ID", String, "Payment ID for the cart", func() {
@@ -334,7 +397,7 @@ var Payment = Type("Payment", func() {
 	Attribute("paymentStatus", String, "Payment status", func() {
 		Example("Success")
 	})
-	Required("cartId")
+	Required("userId")
 })
 
 // NotFound is a custom type where we add the queried field in the response

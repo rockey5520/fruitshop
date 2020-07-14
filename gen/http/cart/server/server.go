@@ -57,9 +57,9 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Add", "POST", "/api/v1/cart/add/{cartId}"},
-			{"Remove", "POST", "/api/v1/cart/remove/{cartId}"},
-			{"Get", "GET", "/api/v1/cart/{cartId}"},
+			{"Add", "POST", "/api/v1/cart/add/{userId}"},
+			{"Remove", "POST", "/api/v1/cart/remove/{userId}"},
+			{"Get", "GET", "/api/v1/cart/{userId}"},
 		},
 		Add:    NewAddHandler(e.Add, mux, decoder, encoder, errhandler, formatter),
 		Remove: NewRemoveHandler(e.Remove, mux, decoder, encoder, errhandler, formatter),
@@ -93,7 +93,7 @@ func MountAddHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/api/v1/cart/add/{cartId}", f)
+	mux.Handle("POST", "/api/v1/cart/add/{userId}", f)
 }
 
 // NewAddHandler creates a HTTP handler which loads the HTTP request and calls
@@ -144,7 +144,7 @@ func MountRemoveHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/api/v1/cart/remove/{cartId}", f)
+	mux.Handle("POST", "/api/v1/cart/remove/{userId}", f)
 }
 
 // NewRemoveHandler creates a HTTP handler which loads the HTTP request and
@@ -195,7 +195,7 @@ func MountGetHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/api/v1/cart/{cartId}", f)
+	mux.Handle("GET", "/api/v1/cart/{userId}", f)
 }
 
 // NewGetHandler creates a HTTP handler which loads the HTTP request and calls

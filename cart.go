@@ -3,6 +3,7 @@ package fruitshop
 import (
 	"context"
 	cart "fruitshop/gen/cart"
+	"fruitshop/gen/user"
 	"log"
 )
 
@@ -21,7 +22,7 @@ func NewCart(logger *log.Logger) cart.Service {
 func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 	s.logger.Print("cart.add")
 	newCart := cart.CartManagement{
-		CartID: p.CartID,
+		UserID: p.UserID,
 		Name:   p.Name,
 		Count:  p.Count,
 	}
@@ -39,9 +40,8 @@ func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 func (s *cartsrvc) Remove(ctx context.Context, p *cart.RemovePayload) (err error) {
 	s.logger.Print("cart.remove")
 	newCart := cart.CartManagement{
-		CartID: p.CartID,
-		Name:   p.Name,
-		Count:  p.Count,
+		Name:  p.Name,
+		Count: p.Count,
 	}
 	err = RemoveItemInCart(&newCart)
 	if err != nil {
@@ -56,7 +56,10 @@ func (s *cartsrvc) Remove(ctx context.Context, p *cart.RemovePayload) (err error
 // Get implements get.
 func (s *cartsrvc) Get(ctx context.Context, p *cart.GetPayload) (res cart.CartManagementCollection, err error) {
 	s.logger.Print("cart.get")
-	res, err = ListAllItemsInCartForId(p.CartID)
+	user := user.UserManagement{
+		UserID: p.UserID,
+	}
+	res, err = ListAllItemsInCartForId(&user)
 	if err != nil {
 		s.logger.Print("An error occurred...")
 		s.logger.Print(err)

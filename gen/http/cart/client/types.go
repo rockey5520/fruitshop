@@ -46,8 +46,8 @@ type GetResponseBody []*CartManagementResponse
 
 // CartManagementResponse is used to define fields on response body types.
 type CartManagementResponse struct {
-	// cartId is the unique id of the User.
-	CartID *string `form:"cartId,omitempty" json:"cartId,omitempty" xml:"cartId,omitempty"`
+	// userId is the unique id of the Cart.
+	UserID *string `form:"userId,omitempty" json:"userId,omitempty" xml:"userId,omitempty"`
 	// Name of the fruit
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Number of fruits
@@ -95,8 +95,8 @@ func NewGetCartManagementCollectionOK(body GetResponseBody) cartviews.CartManage
 // ValidateCartManagementResponse runs the validations defined on
 // CartManagementResponse
 func ValidateCartManagementResponse(body *CartManagementResponse) (err error) {
-	if body.CartID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("cartId", "body"))
+	if body.UserID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("userId", "body"))
 	}
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))

@@ -31,8 +31,9 @@ type UserManagementCollection struct {
 // UserManagementView is a type that runs validations on a projected type.
 type UserManagementView struct {
 	// ID is the unique id of the User.
-	ID       *string
-	UserName *string
+	ID *string
+	// userId
+	UserID *string
 }
 
 // UserManagementCollectionView is a type that runs validations on a projected
@@ -44,16 +45,14 @@ var (
 	// indexed by view name.
 	UserManagementMap = map[string][]string{
 		"default": []string{
-			"ID",
-			"userName",
+			"userId",
 		},
 	}
 	// UserManagementCollectionMap is a map of attribute names in result type
 	// UserManagementCollection indexed by view name.
 	UserManagementCollectionMap = map[string][]string{
 		"default": []string{
-			"ID",
-			"userName",
+			"userId",
 		},
 	}
 )
@@ -85,11 +84,8 @@ func ValidateUserManagementCollection(result UserManagementCollection) (err erro
 // ValidateUserManagementView runs the validations defined on
 // UserManagementView using the "default" view.
 func ValidateUserManagementView(result *UserManagementView) (err error) {
-	if result.ID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("ID", "result"))
-	}
-	if result.UserName == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("userName", "result"))
+	if result.UserID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("userId", "result"))
 	}
 	return
 }

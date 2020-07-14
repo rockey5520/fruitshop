@@ -34,8 +34,8 @@ var MethodNames = [3]string{"add", "remove", "get"}
 
 // AddPayload is the payload type of the cart service add method.
 type AddPayload struct {
-	// cartId of the user
-	CartID string
+	// ID of the user
+	UserID string
 	// name of the fruit
 	Name string
 	// Number of fruits
@@ -48,8 +48,8 @@ type AddPayload struct {
 
 // RemovePayload is the payload type of the cart service remove method.
 type RemovePayload struct {
-	// cartId of the user
-	CartID string
+	// ID of the user
+	UserID string
 	// Name of the fruit
 	Name string
 	// Number of fruits
@@ -62,8 +62,8 @@ type RemovePayload struct {
 
 // GetPayload is the payload type of the cart service get method.
 type GetPayload struct {
-	// cartId
-	CartID string
+	// ID
+	UserID string
 }
 
 // CartManagementCollection is the result type of the cart service get method.
@@ -71,8 +71,8 @@ type CartManagementCollection []*CartManagement
 
 // A CartManagement type describes users cart state.
 type CartManagement struct {
-	// cartId is the unique id of the User.
-	CartID string
+	// userId is the unique id of the Cart.
+	UserID string
 	// Name of the fruit
 	Name string
 	// Number of fruits
@@ -140,8 +140,8 @@ func newCartManagementCollectionView(res CartManagementCollection) cartviews.Car
 // CartManagement.
 func newCartManagement(vres *cartviews.CartManagementView) *CartManagement {
 	res := &CartManagement{}
-	if vres.CartID != nil {
-		res.CartID = *vres.CartID
+	if vres.UserID != nil {
+		res.UserID = *vres.UserID
 	}
 	if vres.Name != nil {
 		res.Name = *vres.Name
@@ -162,7 +162,7 @@ func newCartManagement(vres *cartviews.CartManagementView) *CartManagement {
 // CartManagementView using the "default" view.
 func newCartManagementView(res *CartManagement) *cartviews.CartManagementView {
 	vres := &cartviews.CartManagementView{
-		CartID:      &res.CartID,
+		UserID:      &res.UserID,
 		Name:        &res.Name,
 		Count:       &res.Count,
 		CostPerItem: &res.CostPerItem,

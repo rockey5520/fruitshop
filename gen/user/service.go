@@ -15,7 +15,7 @@ import (
 // The user service allows access to user members
 type Service interface {
 	// Add implements add.
-	Add(context.Context, *AddPayload) (err error)
+	Add(context.Context, *AddPayload) (res *UserManagement, err error)
 	// Get implements get.
 	Get(context.Context, *GetPayload) (res *UserManagement, err error)
 	// Show implements show.
@@ -35,22 +35,23 @@ var MethodNames = [3]string{"add", "get", "show"}
 // AddPayload is the payload type of the user service add method.
 type AddPayload struct {
 	// ID
+	ID *string
+	// userId
+	UserID string
+}
+
+// UserManagement is the result type of the user service add method.
+type UserManagement struct {
+	// ID is the unique id of the User.
 	ID string
-	// User Name
-	UserName string
+	// userId
+	UserID string
 }
 
 // GetPayload is the payload type of the user service get method.
 type GetPayload struct {
-	// ID
-	ID string
-}
-
-// UserManagement is the result type of the user service get method.
-type UserManagement struct {
-	// ID is the unique id of the User.
-	ID       string
-	UserName string
+	// userId
+	UserID string
 }
 
 // UserManagementCollection is the result type of the user service show method.
@@ -105,11 +106,8 @@ func NewViewedUserManagementCollection(res UserManagementCollection, view string
 // UserManagement.
 func newUserManagement(vres *userviews.UserManagementView) *UserManagement {
 	res := &UserManagement{}
-	if vres.ID != nil {
-		res.ID = *vres.ID
-	}
-	if vres.UserName != nil {
-		res.UserName = *vres.UserName
+	if vres.UserID != nil {
+		res.UserID = *vres.UserID
 	}
 	return res
 }
@@ -118,8 +116,7 @@ func newUserManagement(vres *userviews.UserManagementView) *UserManagement {
 // UserManagementView using the "default" view.
 func newUserManagementView(res *UserManagement) *userviews.UserManagementView {
 	vres := &userviews.UserManagementView{
-		ID:       &res.ID,
-		UserName: &res.UserName,
+		UserID: &res.UserID,
 	}
 	return vres
 }

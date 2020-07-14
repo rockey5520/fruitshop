@@ -10,23 +10,27 @@ package server
 import (
 	user "fruitshop/gen/user"
 	userviews "fruitshop/gen/user/views"
-
-	goa "goa.design/goa/v3/pkg"
 )
 
 // AddRequestBody is the type of the "user" service "add" endpoint HTTP request
 // body.
 type AddRequestBody struct {
-	// User Name
-	UserName *string `form:"userName,omitempty" json:"userName,omitempty" xml:"userName,omitempty"`
+	// ID
+	ID *string `form:"ID,omitempty" json:"ID,omitempty" xml:"ID,omitempty"`
+}
+
+// AddResponseBody is the type of the "user" service "add" endpoint HTTP
+// response body.
+type AddResponseBody struct {
+	// userId
+	UserID string `form:"userId" json:"userId" xml:"userId"`
 }
 
 // GetResponseBody is the type of the "user" service "get" endpoint HTTP
 // response body.
 type GetResponseBody struct {
-	// ID is the unique id of the User.
-	ID       string `form:"ID" json:"ID" xml:"ID"`
-	UserName string `form:"userName" json:"userName" xml:"userName"`
+	// userId
+	UserID string `form:"userId" json:"userId" xml:"userId"`
 }
 
 // UserManagementResponseCollection is the type of the "user" service "show"
@@ -35,17 +39,24 @@ type UserManagementResponseCollection []*UserManagementResponse
 
 // UserManagementResponse is used to define fields on response body types.
 type UserManagementResponse struct {
-	// ID is the unique id of the User.
-	ID       string `form:"ID" json:"ID" xml:"ID"`
-	UserName string `form:"userName" json:"userName" xml:"userName"`
+	// userId
+	UserID string `form:"userId" json:"userId" xml:"userId"`
+}
+
+// NewAddResponseBody builds the HTTP response body from the result of the
+// "add" endpoint of the "user" service.
+func NewAddResponseBody(res *userviews.UserManagementView) *AddResponseBody {
+	body := &AddResponseBody{
+		UserID: *res.UserID,
+	}
+	return body
 }
 
 // NewGetResponseBody builds the HTTP response body from the result of the
 // "get" endpoint of the "user" service.
 func NewGetResponseBody(res *userviews.UserManagementView) *GetResponseBody {
 	body := &GetResponseBody{
-		ID:       *res.ID,
-		UserName: *res.UserName,
+		UserID: *res.UserID,
 	}
 	return body
 }
@@ -61,27 +72,19 @@ func NewUserManagementResponseCollection(res userviews.UserManagementCollectionV
 }
 
 // NewAddPayload builds a user service add endpoint payload.
-func NewAddPayload(body *AddRequestBody, id string) *user.AddPayload {
+func NewAddPayload(body *AddRequestBody, userID string) *user.AddPayload {
 	v := &user.AddPayload{
-		UserName: *body.UserName,
+		ID: body.ID,
 	}
-	v.ID = id
+	v.UserID = userID
 
 	return v
 }
 
 // NewGetPayload builds a user service get endpoint payload.
-func NewGetPayload(id string) *user.GetPayload {
+func NewGetPayload(userID string) *user.GetPayload {
 	v := &user.GetPayload{}
-	v.ID = id
+	v.UserID = userID
 
 	return v
-}
-
-// ValidateAddRequestBody runs the validations defined on AddRequestBody
-func ValidateAddRequestBody(body *AddRequestBody) (err error) {
-	if body.UserName == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("userName", "body"))
-	}
-	return
 }

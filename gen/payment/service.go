@@ -33,9 +33,9 @@ var MethodNames = [2]string{"add", "get"}
 // AddPayload is the payload type of the payment service add method.
 type AddPayload struct {
 	// ID of the user
-	ID string
-	// cartId of the user
-	CartID string
+	ID *string
+	// userId of the user
+	UserID string
 	// Total cost of the cart
 	Amount float64
 }
@@ -44,8 +44,8 @@ type AddPayload struct {
 type PaymentManagement struct {
 	// cartId is the unique cart id of the User.
 	ID *string
-	// cartId is the unique cart id of the User.
-	CartID string
+	// userId is the unique id of the User.
+	UserID string
 	// Amount to be paid for the purchase
 	Amount *float64
 	// Payment status
@@ -55,9 +55,9 @@ type PaymentManagement struct {
 // GetPayload is the payload type of the payment service get method.
 type GetPayload struct {
 	// cartId
-	ID string
-	// cartId
-	CartID string
+	ID *string
+	// userId
+	UserID string
 }
 
 // NotFound is the type returned when the requested data that does not exist.
@@ -95,12 +95,11 @@ func NewViewedPaymentManagement(res *PaymentManagement, view string) *paymentvie
 // type PaymentManagement.
 func newPaymentManagement(vres *paymentviews.PaymentManagementView) *PaymentManagement {
 	res := &PaymentManagement{
-		ID:            vres.ID,
 		Amount:        vres.Amount,
 		PaymentStatus: vres.PaymentStatus,
 	}
-	if vres.CartID != nil {
-		res.CartID = *vres.CartID
+	if vres.UserID != nil {
+		res.UserID = *vres.UserID
 	}
 	return res
 }
@@ -109,8 +108,7 @@ func newPaymentManagement(vres *paymentviews.PaymentManagementView) *PaymentMana
 // type PaymentManagementView using the "default" view.
 func newPaymentManagementView(res *PaymentManagement) *paymentviews.PaymentManagementView {
 	vres := &paymentviews.PaymentManagementView{
-		ID:            res.ID,
-		CartID:        &res.CartID,
+		UserID:        &res.UserID,
 		Amount:        res.Amount,
 		PaymentStatus: res.PaymentStatus,
 	}

@@ -12,16 +12,16 @@ import (
 )
 
 // AddCartPath returns the URL path to the cart service add HTTP endpoint.
-func AddCartPath(cartID string) string {
-	return fmt.Sprintf("/api/v1/cart/add/%v", cartID)
+func AddCartPath(userID string) string {
+	return fmt.Sprintf("/api/v1/cart/add/%v", userID)
 }
 
 // RemoveCartPath returns the URL path to the cart service remove HTTP endpoint.
-func RemoveCartPath(cartID string) string {
-	return fmt.Sprintf("/api/v1/cart/remove/%v", cartID)
+func RemoveCartPath(userID string) string {
+	return fmt.Sprintf("/api/v1/cart/remove/%v", userID)
 }
 
 // GetCartPath returns the URL path to the cart service get HTTP endpoint.
-func GetCartPath(cartID string) string {
-	return fmt.Sprintf("/api/v1/cart/%v", cartID)
+func GetCartPath(userID string) string {
+	return fmt.Sprintf("/api/v1/cart/%v", userID)
 }

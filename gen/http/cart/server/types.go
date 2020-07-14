@@ -46,8 +46,8 @@ type CartManagementResponseCollection []*CartManagementResponse
 
 // CartManagementResponse is used to define fields on response body types.
 type CartManagementResponse struct {
-	// cartId is the unique id of the User.
-	CartID string `form:"cartId" json:"cartId" xml:"cartId"`
+	// userId is the unique id of the Cart.
+	UserID string `form:"userId" json:"userId" xml:"userId"`
 	// Name of the fruit
 	Name string `form:"name" json:"name" xml:"name"`
 	// Number of fruits
@@ -69,35 +69,35 @@ func NewCartManagementResponseCollection(res cartviews.CartManagementCollectionV
 }
 
 // NewAddPayload builds a cart service add endpoint payload.
-func NewAddPayload(body *AddRequestBody, cartID string) *cart.AddPayload {
+func NewAddPayload(body *AddRequestBody, userID string) *cart.AddPayload {
 	v := &cart.AddPayload{
 		Name:        *body.Name,
 		Count:       *body.Count,
 		CostPerItem: body.CostPerItem,
 		TotalCost:   body.TotalCost,
 	}
-	v.CartID = cartID
+	v.UserID = userID
 
 	return v
 }
 
 // NewRemovePayload builds a cart service remove endpoint payload.
-func NewRemovePayload(body *RemoveRequestBody, cartID string) *cart.RemovePayload {
+func NewRemovePayload(body *RemoveRequestBody, userID string) *cart.RemovePayload {
 	v := &cart.RemovePayload{
 		Name:        *body.Name,
 		Count:       *body.Count,
 		CostPerItem: body.CostPerItem,
 		TotalCost:   body.TotalCost,
 	}
-	v.CartID = cartID
+	v.UserID = userID
 
 	return v
 }
 
 // NewGetPayload builds a cart service get endpoint payload.
-func NewGetPayload(cartID string) *cart.GetPayload {
+func NewGetPayload(userID string) *cart.GetPayload {
 	v := &cart.GetPayload{}
-	v.CartID = cartID
+	v.UserID = userID
 
 	return v
 }

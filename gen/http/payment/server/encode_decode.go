@@ -50,12 +50,12 @@ func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 		}
 
 		var (
-			id string
+			userID string
 
 			params = mux.Vars(r)
 		)
-		id = params["ID"]
-		payload := NewAddPayload(&body, id)
+		userID = params["userId"]
+		payload := NewAddPayload(&body, userID)
 
 		return payload, nil
 	}
@@ -78,14 +78,24 @@ func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahtt
 func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			id     string
-			cartID string
+			body GetRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+
+		var (
+			userID string
 
 			params = mux.Vars(r)
 		)
-		id = params["ID"]
-		cartID = params["cartId"]
-		payload := NewGetPayload(id, cartID)
+		userID = params["userId"]
+		payload := NewGetPayload(&body, userID)
 
 		return payload, nil
 	}

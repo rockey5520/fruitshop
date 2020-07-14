@@ -26,8 +26,8 @@ type CartManagementCollectionView []*CartManagementView
 
 // CartManagementView is a type that runs validations on a projected type.
 type CartManagementView struct {
-	// cartId is the unique id of the User.
-	CartID *string
+	// userId is the unique id of the Cart.
+	UserID *string
 	// Name of the fruit
 	Name *string
 	// Number of fruits
@@ -43,7 +43,7 @@ var (
 	// CartManagementCollection indexed by view name.
 	CartManagementCollectionMap = map[string][]string{
 		"default": []string{
-			"cartId",
+			"userId",
 			"name",
 			"count",
 			"costPerItem",
@@ -54,7 +54,7 @@ var (
 	// indexed by view name.
 	CartManagementMap = map[string][]string{
 		"default": []string{
-			"cartId",
+			"userId",
 			"name",
 			"count",
 			"costPerItem",
@@ -89,8 +89,8 @@ func ValidateCartManagementCollectionView(result CartManagementCollectionView) (
 // ValidateCartManagementView runs the validations defined on
 // CartManagementView using the "default" view.
 func ValidateCartManagementView(result *CartManagementView) (err error) {
-	if result.CartID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("cartId", "result"))
+	if result.UserID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("userId", "result"))
 	}
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))

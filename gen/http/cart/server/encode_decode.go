@@ -47,12 +47,12 @@ func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 		}
 
 		var (
-			cartID string
+			userID string
 
 			params = mux.Vars(r)
 		)
-		cartID = params["cartId"]
-		payload := NewAddPayload(&body, cartID)
+		userID = params["userId"]
+		payload := NewAddPayload(&body, userID)
 
 		return payload, nil
 	}
@@ -88,12 +88,12 @@ func DecodeRemoveRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 		}
 
 		var (
-			cartID string
+			userID string
 
 			params = mux.Vars(r)
 		)
-		cartID = params["cartId"]
-		payload := NewRemovePayload(&body, cartID)
+		userID = params["userId"]
+		payload := NewRemovePayload(&body, userID)
 
 		return payload, nil
 	}
@@ -116,12 +116,12 @@ func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahtt
 func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			cartID string
+			userID string
 
 			params = mux.Vars(r)
 		)
-		cartID = params["cartId"]
-		payload := NewGetPayload(cartID)
+		userID = params["userId"]
+		payload := NewGetPayload(userID)
 
 		return payload, nil
 	}
@@ -132,7 +132,7 @@ func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 // *cartviews.CartManagementView.
 func marshalCartviewsCartManagementViewToCartManagementResponse(v *cartviews.CartManagementView) *CartManagementResponse {
 	res := &CartManagementResponse{
-		CartID:      *v.CartID,
+		UserID:      *v.UserID,
 		Name:        *v.Name,
 		Count:       *v.Count,
 		CostPerItem: *v.CostPerItem,

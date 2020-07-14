@@ -15,10 +15,17 @@ import (
 // AddRequestBody is the type of the "payment" service "add" endpoint HTTP
 // request body.
 type AddRequestBody struct {
-	// cartId of the user
-	CartID string `form:"cartId" json:"cartId" xml:"cartId"`
+	// ID of the user
+	ID *string `form:"ID,omitempty" json:"ID,omitempty" xml:"ID,omitempty"`
 	// Total cost of the cart
 	Amount float64 `form:"amount" json:"amount" xml:"amount"`
+}
+
+// GetRequestBody is the type of the "payment" service "get" endpoint HTTP
+// request body.
+type GetRequestBody struct {
+	// cartId
+	ID *string `form:"ID,omitempty" json:"ID,omitempty" xml:"ID,omitempty"`
 }
 
 // AddResponseBody is the type of the "payment" service "add" endpoint HTTP
@@ -26,8 +33,8 @@ type AddRequestBody struct {
 type AddResponseBody struct {
 	// cartId is the unique cart id of the User.
 	ID *string `form:"ID,omitempty" json:"ID,omitempty" xml:"ID,omitempty"`
-	// cartId is the unique cart id of the User.
-	CartID *string `form:"cartId,omitempty" json:"cartId,omitempty" xml:"cartId,omitempty"`
+	// userId is the unique id of the User.
+	UserID *string `form:"userId,omitempty" json:"userId,omitempty" xml:"userId,omitempty"`
 	// Amount to be paid for the purchase
 	Amount *float64 `form:"amount,omitempty" json:"amount,omitempty" xml:"amount,omitempty"`
 	// Payment status
@@ -39,8 +46,8 @@ type AddResponseBody struct {
 type GetResponseBody struct {
 	// cartId is the unique cart id of the User.
 	ID *string `form:"ID,omitempty" json:"ID,omitempty" xml:"ID,omitempty"`
-	// cartId is the unique cart id of the User.
-	CartID *string `form:"cartId,omitempty" json:"cartId,omitempty" xml:"cartId,omitempty"`
+	// userId is the unique id of the User.
+	UserID *string `form:"userId,omitempty" json:"userId,omitempty" xml:"userId,omitempty"`
 	// Amount to be paid for the purchase
 	Amount *float64 `form:"amount,omitempty" json:"amount,omitempty" xml:"amount,omitempty"`
 	// Payment status
@@ -51,8 +58,17 @@ type GetResponseBody struct {
 // endpoint of the "payment" service.
 func NewAddRequestBody(p *payment.AddPayload) *AddRequestBody {
 	body := &AddRequestBody{
-		CartID: p.CartID,
+		ID:     p.ID,
 		Amount: p.Amount,
+	}
+	return body
+}
+
+// NewGetRequestBody builds the HTTP request body from the payload of the "get"
+// endpoint of the "payment" service.
+func NewGetRequestBody(p *payment.GetPayload) *GetRequestBody {
+	body := &GetRequestBody{
+		ID: p.ID,
 	}
 	return body
 }
@@ -62,7 +78,7 @@ func NewAddRequestBody(p *payment.AddPayload) *AddRequestBody {
 func NewAddPaymentManagementAccepted(body *AddResponseBody) *paymentviews.PaymentManagementView {
 	v := &paymentviews.PaymentManagementView{
 		ID:            body.ID,
-		CartID:        body.CartID,
+		UserID:        body.UserID,
 		Amount:        body.Amount,
 		PaymentStatus: body.PaymentStatus,
 	}
@@ -75,7 +91,7 @@ func NewAddPaymentManagementAccepted(body *AddResponseBody) *paymentviews.Paymen
 func NewGetPaymentManagementOK(body *GetResponseBody) *paymentviews.PaymentManagementView {
 	v := &paymentviews.PaymentManagementView{
 		ID:            body.ID,
-		CartID:        body.CartID,
+		UserID:        body.UserID,
 		Amount:        body.Amount,
 		PaymentStatus: body.PaymentStatus,
 	}

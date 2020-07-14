@@ -21,8 +21,11 @@ import (
 // endpoint.
 func EncodeAddResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*userviews.UserManagement)
+		enc := encoder(ctx, w)
+		body := NewAddResponseBody(res.Projected)
 		w.WriteHeader(http.StatusCreated)
-		return nil
+		return enc.Encode(body)
 	}
 }
 
@@ -41,18 +44,14 @@ func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
-		err = ValidateAddRequestBody(&body)
-		if err != nil {
-			return nil, err
-		}
 
 		var (
-			id string
+			userID string
 
 			params = mux.Vars(r)
 		)
-		id = params["ID"]
-		payload := NewAddPayload(&body, id)
+		userID = params["userId"]
+		payload := NewAddPayload(&body, userID)
 
 		return payload, nil
 	}
@@ -75,12 +74,12 @@ func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahtt
 func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			id string
+			userID string
 
 			params = mux.Vars(r)
 		)
-		id = params["ID"]
-		payload := NewGetPayload(id)
+		userID = params["userId"]
+		payload := NewGetPayload(userID)
 
 		return payload, nil
 	}
@@ -103,8 +102,7 @@ func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goaht
 // *userviews.UserManagementView.
 func marshalUserviewsUserManagementViewToUserManagementResponse(v *userviews.UserManagementView) *UserManagementResponse {
 	res := &UserManagementResponse{
-		ID:       *v.ID,
-		UserName: *v.UserName,
+		UserID: *v.UserID,
 	}
 
 	return res

@@ -23,16 +23,16 @@ import (
 // to call the "cart" service "add" endpoint
 func (c *Client) BuildAddRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		cartID string
+		userID string
 	)
 	{
 		p, ok := v.(*cart.AddPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("cart", "add", "*cart.AddPayload", v)
 		}
-		cartID = p.CartID
+		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddCartPath(cartID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddCartPath(userID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("cart", "add", u.String(), err)
@@ -90,16 +90,16 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // set to call the "cart" service "remove" endpoint
 func (c *Client) BuildRemoveRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		cartID string
+		userID string
 	)
 	{
 		p, ok := v.(*cart.RemovePayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("cart", "remove", "*cart.RemovePayload", v)
 		}
-		cartID = p.CartID
+		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveCartPath(cartID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveCartPath(userID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("cart", "remove", u.String(), err)
@@ -158,16 +158,16 @@ func DecodeRemoveResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 // to call the "cart" service "get" endpoint
 func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		cartID string
+		userID string
 	)
 	{
 		p, ok := v.(*cart.GetPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("cart", "get", "*cart.GetPayload", v)
 		}
-		cartID = p.CartID
+		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetCartPath(cartID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetCartPath(userID)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("cart", "get", u.String(), err)
@@ -226,7 +226,7 @@ func DecodeGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // *CartManagementResponse.
 func unmarshalCartManagementResponseToCartviewsCartManagementView(v *CartManagementResponse) *cartviews.CartManagementView {
 	res := &cartviews.CartManagementView{
-		CartID:      v.CartID,
+		UserID:      v.UserID,
 		Name:        v.Name,
 		Count:       v.Count,
 		CostPerItem: v.CostPerItem,

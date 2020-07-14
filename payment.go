@@ -22,8 +22,8 @@ func (s *paymentsrvc) Add(ctx context.Context, p *payment.AddPayload) (res *paym
 	res = &payment.PaymentManagement{}
 	s.logger.Print("payment.add started")
 	payment := payment.PaymentManagement{
-		CartID: p.CartID,
-		ID:     &p.ID,
+		UserID: p.UserID,
+		ID:     p.ID,
 	}
 
 	result, err := PayAmount(&payment)
@@ -41,8 +41,8 @@ func (s *paymentsrvc) Get(ctx context.Context, p *payment.GetPayload) (res *paym
 
 	s.logger.Print("payment.get started")
 	payment := payment.PaymentManagement{
-		CartID: p.CartID,
-		ID:     &p.ID,
+		UserID: p.UserID,
+		ID:     p.ID,
 	}
 
 	result, err := GetPaymentAmoutFromCart(&payment)

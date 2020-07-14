@@ -23,16 +23,16 @@ import (
 // to call the "payment" service "add" endpoint
 func (c *Client) BuildAddRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id string
+		userID string
 	)
 	{
 		p, ok := v.(*payment.AddPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("payment", "add", "*payment.AddPayload", v)
 		}
-		id = p.ID
+		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddPaymentPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddPaymentPath(userID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("payment", "add", u.String(), err)
@@ -106,18 +106,16 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // to call the "payment" service "get" endpoint
 func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id     string
-		cartID string
+		userID string
 	)
 	{
 		p, ok := v.(*payment.GetPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("payment", "get", "*payment.GetPayload", v)
 		}
-		id = p.ID
-		cartID = p.CartID
+		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetPaymentPath(id, cartID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetPaymentPath(userID)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("payment", "get", u.String(), err)
@@ -127,6 +125,22 @@ func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Requ
 	}
 
 	return req, nil
+}
+
+// EncodeGetRequest returns an encoder for requests sent to the payment get
+// server.
+func EncodeGetRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*payment.GetPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("payment", "get", "*payment.GetPayload", v)
+		}
+		body := NewGetRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("payment", "get", err)
+		}
+		return nil
+	}
 }
 
 // DecodeGetResponse returns a decoder for responses returned by the payment

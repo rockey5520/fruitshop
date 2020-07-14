@@ -24,8 +24,8 @@ type PaymentManagement struct {
 type PaymentManagementView struct {
 	// cartId is the unique cart id of the User.
 	ID *string
-	// cartId is the unique cart id of the User.
-	CartID *string
+	// userId is the unique id of the User.
+	UserID *string
 	// Amount to be paid for the purchase
 	Amount *float64
 	// Payment status
@@ -37,8 +37,7 @@ var (
 	// PaymentManagement indexed by view name.
 	PaymentManagementMap = map[string][]string{
 		"default": []string{
-			"ID",
-			"cartId",
+			"userId",
 			"amount",
 			"paymentStatus",
 		},
@@ -60,8 +59,8 @@ func ValidatePaymentManagement(result *PaymentManagement) (err error) {
 // ValidatePaymentManagementView runs the validations defined on
 // PaymentManagementView using the "default" view.
 func ValidatePaymentManagementView(result *PaymentManagementView) (err error) {
-	if result.CartID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("cartId", "result"))
+	if result.UserID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("userId", "result"))
 	}
 	return
 }

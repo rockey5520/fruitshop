@@ -8,6 +8,7 @@ require (
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/jinzhu/gorm v1.9.14
 	goa.design/goa/v3 v3.1.3
+	goa.design/plugins/v3 v3.2.0
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.3 // indirect

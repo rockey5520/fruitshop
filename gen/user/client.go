@@ -33,9 +33,13 @@ func NewClient(add, get, show goa.Endpoint) *Client {
 // Add may return the following errors:
 //	- "not_found" (type *NotFound): User not found
 //	- error: internal error
-func (c *Client) Add(ctx context.Context, p *AddPayload) (err error) {
-	_, err = c.AddEndpoint(ctx, p)
-	return
+func (c *Client) Add(ctx context.Context, p *AddPayload) (res *UserManagement, err error) {
+	var ires interface{}
+	ires, err = c.AddEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*UserManagement), nil
 }
 
 // Get calls the "get" endpoint of the "user" service.

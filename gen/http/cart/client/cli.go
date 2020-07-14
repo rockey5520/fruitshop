@@ -14,18 +14,18 @@ import (
 )
 
 // BuildAddPayload builds the payload for the cart add endpoint from CLI flags.
-func BuildAddPayload(cartAddBody string, cartAddCartID string) (*cart.AddPayload, error) {
+func BuildAddPayload(cartAddBody string, cartAddUserID string) (*cart.AddPayload, error) {
 	var err error
 	var body AddRequestBody
 	{
 		err = json.Unmarshal([]byte(cartAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.31933437727177916,\n      \"count\": 8317691352667182512,\n      \"name\": \"Voluptatem esse perspiciatis delectus.\",\n      \"totalCost\": 0.9110304979788784\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.11945221888838935,\n      \"count\": 8003916626658546661,\n      \"name\": \"Officiis officiis et cumque eum est consequatur.\",\n      \"totalCost\": 0.2826886157163321\n   }'")
 		}
 	}
-	var cartID string
+	var userID string
 	{
-		cartID = cartAddCartID
+		userID = cartAddUserID
 	}
 	v := &cart.AddPayload{
 		Name:        body.Name,
@@ -33,25 +33,25 @@ func BuildAddPayload(cartAddBody string, cartAddCartID string) (*cart.AddPayload
 		CostPerItem: body.CostPerItem,
 		TotalCost:   body.TotalCost,
 	}
-	v.CartID = cartID
+	v.UserID = userID
 
 	return v, nil
 }
 
 // BuildRemovePayload builds the payload for the cart remove endpoint from CLI
 // flags.
-func BuildRemovePayload(cartRemoveBody string, cartRemoveCartID string) (*cart.RemovePayload, error) {
+func BuildRemovePayload(cartRemoveBody string, cartRemoveUserID string) (*cart.RemovePayload, error) {
 	var err error
 	var body RemoveRequestBody
 	{
 		err = json.Unmarshal([]byte(cartRemoveBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.8360423006618124,\n      \"count\": 4445129785425122174,\n      \"name\": \"Non consequuntur qui laudantium id culpa aut.\",\n      \"totalCost\": 0.18706090858816168\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.9308342602059104,\n      \"count\": 1819382036291031517,\n      \"name\": \"Est officiis ut.\",\n      \"totalCost\": 0.2421495069964654\n   }'")
 		}
 	}
-	var cartID string
+	var userID string
 	{
-		cartID = cartRemoveCartID
+		userID = cartRemoveUserID
 	}
 	v := &cart.RemovePayload{
 		Name:        body.Name,
@@ -59,19 +59,19 @@ func BuildRemovePayload(cartRemoveBody string, cartRemoveCartID string) (*cart.R
 		CostPerItem: body.CostPerItem,
 		TotalCost:   body.TotalCost,
 	}
-	v.CartID = cartID
+	v.UserID = userID
 
 	return v, nil
 }
 
 // BuildGetPayload builds the payload for the cart get endpoint from CLI flags.
-func BuildGetPayload(cartGetCartID string) (*cart.GetPayload, error) {
-	var cartID string
+func BuildGetPayload(cartGetUserID string) (*cart.GetPayload, error) {
+	var userID string
 	{
-		cartID = cartGetCartID
+		userID = cartGetUserID
 	}
 	v := &cart.GetPayload{}
-	v.CartID = cartID
+	v.UserID = userID
 
 	return v, nil
 }

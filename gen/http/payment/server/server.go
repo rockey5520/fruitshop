@@ -56,8 +56,8 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Add", "POST", "/api/v1/payment/pay/{ID}"},
-			{"Get", "GET", "/api/v1/payment/{ID}/{cartId}"},
+			{"Add", "POST", "/api/v1/payment/pay/{userId}"},
+			{"Get", "GET", "/api/v1/payment/{userId}"},
 		},
 		Add: NewAddHandler(e.Add, mux, decoder, encoder, errhandler, formatter),
 		Get: NewGetHandler(e.Get, mux, decoder, encoder, errhandler, formatter),
@@ -88,7 +88,7 @@ func MountAddHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/api/v1/payment/pay/{ID}", f)
+	mux.Handle("POST", "/api/v1/payment/pay/{userId}", f)
 }
 
 // NewAddHandler creates a HTTP handler which loads the HTTP request and calls
@@ -139,7 +139,7 @@ func MountGetHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/api/v1/payment/{ID}/{cartId}", f)
+	mux.Handle("GET", "/api/v1/payment/{userId}", f)
 }
 
 // NewGetHandler creates a HTTP handler which loads the HTTP request and calls

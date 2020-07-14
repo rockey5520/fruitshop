@@ -14,35 +14,35 @@ import (
 )
 
 // BuildAddPayload builds the payload for the user add endpoint from CLI flags.
-func BuildAddPayload(userAddBody string, userAddID string) (*user.AddPayload, error) {
+func BuildAddPayload(userAddBody string, userAddUserID string) (*user.AddPayload, error) {
 	var err error
 	var body AddRequestBody
 	{
 		err = json.Unmarshal([]byte(userAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"userName\": \"Ab enim.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"ID\": \"Ab enim.\"\n   }'")
 		}
 	}
-	var id string
+	var userID string
 	{
-		id = userAddID
+		userID = userAddUserID
 	}
 	v := &user.AddPayload{
-		UserName: body.UserName,
+		ID: body.ID,
 	}
-	v.ID = id
+	v.UserID = userID
 
 	return v, nil
 }
 
 // BuildGetPayload builds the payload for the user get endpoint from CLI flags.
-func BuildGetPayload(userGetID string) (*user.GetPayload, error) {
-	var id string
+func BuildGetPayload(userGetUserID string) (*user.GetPayload, error) {
+	var userID string
 	{
-		id = userGetID
+		userID = userGetUserID
 	}
 	v := &user.GetPayload{}
-	v.ID = id
+	v.UserID = userID
 
 	return v, nil
 }

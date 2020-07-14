@@ -23,16 +23,16 @@ import (
 // to call the "user" service "add" endpoint
 func (c *Client) BuildAddRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id string
+		userID string
 	)
 	{
 		p, ok := v.(*user.AddPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("user", "add", "*user.AddPayload", v)
 		}
-		id = p.ID
+		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddUserPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddUserPath(userID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("user", "add", u.String(), err)
@@ -78,7 +78,22 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 		}
 		switch resp.StatusCode {
 		case http.StatusCreated:
-			return nil, nil
+			var (
+				body AddResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "add", err)
+			}
+			p := NewAddUserManagementCreated(&body)
+			view := "default"
+			vres := &userviews.UserManagement{Projected: p, View: view}
+			if err = userviews.ValidateUserManagement(vres); err != nil {
+				return nil, goahttp.ErrValidationError("user", "add", err)
+			}
+			res := user.NewUserManagement(vres)
+			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("user", "add", resp.StatusCode, string(body))
@@ -90,16 +105,16 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // to call the "user" service "get" endpoint
 func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id string
+		userID string
 	)
 	{
 		p, ok := v.(*user.GetPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("user", "get", "*user.GetPayload", v)
 		}
-		id = p.ID
+		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetUserPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetUserPath(userID)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("user", "get", u.String(), err)
@@ -215,8 +230,8 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 // *UserManagementResponse.
 func unmarshalUserManagementResponseToUserviewsUserManagementView(v *UserManagementResponse) *userviews.UserManagementView {
 	res := &userviews.UserManagementView{
-		ID:       v.ID,
-		UserName: v.UserName,
+		ID:     v.ID,
+		UserID: v.UserID,
 	}
 
 	return res

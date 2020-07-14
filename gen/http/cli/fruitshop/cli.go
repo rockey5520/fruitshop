@@ -11,6 +11,7 @@ import (
 	"flag"
 	"fmt"
 	cartc "fruitshop/gen/http/cart/client"
+	discountc "fruitshop/gen/http/discount/client"
 	fruitc "fruitshop/gen/http/fruit/client"
 	paymentc "fruitshop/gen/http/payment/client"
 	userc "fruitshop/gen/http/user/client"
@@ -30,27 +31,29 @@ func UsageCommands() string {
 fruit (get|show)
 cart (add|remove|get)
 payment (add|get)
+discount show
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
-      "userName": "Ab enim."
-   }' --id "Incidunt quae quia officia rerum est."` + "\n" +
+      "ID": "Ab enim."
+   }' --user-id "Incidunt quae quia officia rerum est."` + "\n" +
 		os.Args[0] + ` fruit get --body '{
-      "cost": 0.4703888278036248
-   }' --name "Eveniet in fugiat."` + "\n" +
+      "cost": 0.9509512832245888
+   }' --name "Doloremque corrupti quo et."` + "\n" +
 		os.Args[0] + ` cart add --body '{
-      "costPerItem": 0.31933437727177916,
-      "count": 8317691352667182512,
-      "name": "Voluptatem esse perspiciatis delectus.",
-      "totalCost": 0.9110304979788784
-   }' --cart-id "Molestias beatae aperiam."` + "\n" +
+      "costPerItem": 0.11945221888838935,
+      "count": 8003916626658546661,
+      "name": "Officiis officiis et cumque eum est consequatur.",
+      "totalCost": 0.2826886157163321
+   }' --user-id "Eos blanditiis ut nesciunt."` + "\n" +
 		os.Args[0] + ` payment add --body '{
-      "amount": 0.2481123861431309,
-      "cartId": "Temporibus voluptate reprehenderit et aspernatur consequatur quaerat."
-   }' --id "Nostrum sed."` + "\n" +
+      "ID": "Id earum explicabo tenetur sit.",
+      "amount": 0.6465372050495056
+   }' --user-id "Quidem velit quidem."` + "\n" +
+		os.Args[0] + ` discount show --user-id "Sit nesciunt cumque et provident eaque est."` + "\n" +
 		""
 }
 
@@ -66,12 +69,12 @@ func ParseEndpoint(
 	var (
 		userFlags = flag.NewFlagSet("user", flag.ContinueOnError)
 
-		userAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
-		userAddBodyFlag = userAddFlags.String("body", "REQUIRED", "")
-		userAddIDFlag   = userAddFlags.String("id", "REQUIRED", "ID")
+		userAddFlags      = flag.NewFlagSet("add", flag.ExitOnError)
+		userAddBodyFlag   = userAddFlags.String("body", "REQUIRED", "")
+		userAddUserIDFlag = userAddFlags.String("user-id", "REQUIRED", "userId")
 
-		userGetFlags  = flag.NewFlagSet("get", flag.ExitOnError)
-		userGetIDFlag = userGetFlags.String("id", "REQUIRED", "ID")
+		userGetFlags      = flag.NewFlagSet("get", flag.ExitOnError)
+		userGetUserIDFlag = userGetFlags.String("user-id", "REQUIRED", "userId")
 
 		userShowFlags = flag.NewFlagSet("show", flag.ExitOnError)
 
@@ -87,24 +90,29 @@ func ParseEndpoint(
 
 		cartAddFlags      = flag.NewFlagSet("add", flag.ExitOnError)
 		cartAddBodyFlag   = cartAddFlags.String("body", "REQUIRED", "")
-		cartAddCartIDFlag = cartAddFlags.String("cart-id", "REQUIRED", "cartId of the user")
+		cartAddUserIDFlag = cartAddFlags.String("user-id", "REQUIRED", "ID of the user")
 
 		cartRemoveFlags      = flag.NewFlagSet("remove", flag.ExitOnError)
 		cartRemoveBodyFlag   = cartRemoveFlags.String("body", "REQUIRED", "")
-		cartRemoveCartIDFlag = cartRemoveFlags.String("cart-id", "REQUIRED", "cartId of the user")
+		cartRemoveUserIDFlag = cartRemoveFlags.String("user-id", "REQUIRED", "ID of the user")
 
 		cartGetFlags      = flag.NewFlagSet("get", flag.ExitOnError)
-		cartGetCartIDFlag = cartGetFlags.String("cart-id", "REQUIRED", "cartId")
+		cartGetUserIDFlag = cartGetFlags.String("user-id", "REQUIRED", "ID")
 
 		paymentFlags = flag.NewFlagSet("payment", flag.ContinueOnError)
 
-		paymentAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
-		paymentAddBodyFlag = paymentAddFlags.String("body", "REQUIRED", "")
-		paymentAddIDFlag   = paymentAddFlags.String("id", "REQUIRED", "ID of the user")
+		paymentAddFlags      = flag.NewFlagSet("add", flag.ExitOnError)
+		paymentAddBodyFlag   = paymentAddFlags.String("body", "REQUIRED", "")
+		paymentAddUserIDFlag = paymentAddFlags.String("user-id", "REQUIRED", "userId of the user")
 
 		paymentGetFlags      = flag.NewFlagSet("get", flag.ExitOnError)
-		paymentGetIDFlag     = paymentGetFlags.String("id", "REQUIRED", "cartId")
-		paymentGetCartIDFlag = paymentGetFlags.String("cart-id", "REQUIRED", "cartId")
+		paymentGetBodyFlag   = paymentGetFlags.String("body", "REQUIRED", "")
+		paymentGetUserIDFlag = paymentGetFlags.String("user-id", "REQUIRED", "userId")
+
+		discountFlags = flag.NewFlagSet("discount", flag.ContinueOnError)
+
+		discountShowFlags      = flag.NewFlagSet("show", flag.ExitOnError)
+		discountShowUserIDFlag = discountShowFlags.String("user-id", "REQUIRED", "userId")
 	)
 	userFlags.Usage = userUsage
 	userAddFlags.Usage = userAddUsage
@@ -123,6 +131,9 @@ func ParseEndpoint(
 	paymentFlags.Usage = paymentUsage
 	paymentAddFlags.Usage = paymentAddUsage
 	paymentGetFlags.Usage = paymentGetUsage
+
+	discountFlags.Usage = discountUsage
+	discountShowFlags.Usage = discountShowUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -147,6 +158,8 @@ func ParseEndpoint(
 			svcf = cartFlags
 		case "payment":
 			svcf = paymentFlags
+		case "discount":
+			svcf = discountFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -208,6 +221,13 @@ func ParseEndpoint(
 
 			}
 
+		case "discount":
+			switch epn {
+			case "show":
+				epf = discountShowFlags
+
+			}
+
 		}
 	}
 	if epf == nil {
@@ -233,10 +253,10 @@ func ParseEndpoint(
 			switch epn {
 			case "add":
 				endpoint = c.Add()
-				data, err = userc.BuildAddPayload(*userAddBodyFlag, *userAddIDFlag)
+				data, err = userc.BuildAddPayload(*userAddBodyFlag, *userAddUserIDFlag)
 			case "get":
 				endpoint = c.Get()
-				data, err = userc.BuildGetPayload(*userGetIDFlag)
+				data, err = userc.BuildGetPayload(*userGetUserIDFlag)
 			case "show":
 				endpoint = c.Show()
 				data = nil
@@ -256,23 +276,30 @@ func ParseEndpoint(
 			switch epn {
 			case "add":
 				endpoint = c.Add()
-				data, err = cartc.BuildAddPayload(*cartAddBodyFlag, *cartAddCartIDFlag)
+				data, err = cartc.BuildAddPayload(*cartAddBodyFlag, *cartAddUserIDFlag)
 			case "remove":
 				endpoint = c.Remove()
-				data, err = cartc.BuildRemovePayload(*cartRemoveBodyFlag, *cartRemoveCartIDFlag)
+				data, err = cartc.BuildRemovePayload(*cartRemoveBodyFlag, *cartRemoveUserIDFlag)
 			case "get":
 				endpoint = c.Get()
-				data, err = cartc.BuildGetPayload(*cartGetCartIDFlag)
+				data, err = cartc.BuildGetPayload(*cartGetUserIDFlag)
 			}
 		case "payment":
 			c := paymentc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
 			case "add":
 				endpoint = c.Add()
-				data, err = paymentc.BuildAddPayload(*paymentAddBodyFlag, *paymentAddIDFlag)
+				data, err = paymentc.BuildAddPayload(*paymentAddBodyFlag, *paymentAddUserIDFlag)
 			case "get":
 				endpoint = c.Get()
-				data, err = paymentc.BuildGetPayload(*paymentGetIDFlag, *paymentGetCartIDFlag)
+				data, err = paymentc.BuildGetPayload(*paymentGetBodyFlag, *paymentGetUserIDFlag)
+			}
+		case "discount":
+			c := discountc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "show":
+				endpoint = c.Show()
+				data, err = discountc.BuildShowPayload(*discountShowUserIDFlag)
 			}
 		}
 	}
@@ -299,27 +326,27 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func userAddUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user add -body JSON -id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] user add -body JSON -user-id STRING
 
 Add implements add.
     -body JSON: 
-    -id STRING: ID
+    -user-id STRING: userId
 
 Example:
     `+os.Args[0]+` user add --body '{
-      "userName": "Ab enim."
-   }' --id "Incidunt quae quia officia rerum est."
+      "ID": "Ab enim."
+   }' --user-id "Incidunt quae quia officia rerum est."
 `, os.Args[0])
 }
 
 func userGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user get -id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] user get -user-id STRING
 
 Get implements get.
-    -id STRING: ID
+    -user-id STRING: userId
 
 Example:
-    `+os.Args[0]+` user get --id "Molestiae corporis suscipit quidem."
+    `+os.Args[0]+` user get --user-id "Molestiae corporis suscipit quidem."
 `, os.Args[0])
 }
 
@@ -356,8 +383,8 @@ Get implements get.
 
 Example:
     `+os.Args[0]+` fruit get --body '{
-      "cost": 0.4703888278036248
-   }' --name "Eveniet in fugiat."
+      "cost": 0.9509512832245888
+   }' --name "Doloremque corrupti quo et."
 `, os.Args[0])
 }
 
@@ -387,47 +414,47 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func cartAddUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] cart add -body JSON -cart-id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] cart add -body JSON -user-id STRING
 
 Add implements add.
     -body JSON: 
-    -cart-id STRING: cartId of the user
+    -user-id STRING: ID of the user
 
 Example:
     `+os.Args[0]+` cart add --body '{
-      "costPerItem": 0.31933437727177916,
-      "count": 8317691352667182512,
-      "name": "Voluptatem esse perspiciatis delectus.",
-      "totalCost": 0.9110304979788784
-   }' --cart-id "Molestias beatae aperiam."
+      "costPerItem": 0.11945221888838935,
+      "count": 8003916626658546661,
+      "name": "Officiis officiis et cumque eum est consequatur.",
+      "totalCost": 0.2826886157163321
+   }' --user-id "Eos blanditiis ut nesciunt."
 `, os.Args[0])
 }
 
 func cartRemoveUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] cart remove -body JSON -cart-id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] cart remove -body JSON -user-id STRING
 
 Remove implements remove.
     -body JSON: 
-    -cart-id STRING: cartId of the user
+    -user-id STRING: ID of the user
 
 Example:
     `+os.Args[0]+` cart remove --body '{
-      "costPerItem": 0.8360423006618124,
-      "count": 4445129785425122174,
-      "name": "Non consequuntur qui laudantium id culpa aut.",
-      "totalCost": 0.18706090858816168
-   }' --cart-id "Fugit veniam ea laboriosam."
+      "costPerItem": 0.9308342602059104,
+      "count": 1819382036291031517,
+      "name": "Est officiis ut.",
+      "totalCost": 0.2421495069964654
+   }' --user-id "Et vel ad labore."
 `, os.Args[0])
 }
 
 func cartGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] cart get -cart-id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] cart get -user-id STRING
 
 Get implements get.
-    -cart-id STRING: cartId
+    -user-id STRING: ID
 
 Example:
-    `+os.Args[0]+` cart get --cart-id "Explicabo tenetur sit consequatur eligendi."
+    `+os.Args[0]+` cart get --user-id "Labore ratione numquam."
 `, os.Args[0])
 }
 
@@ -446,28 +473,54 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func paymentAddUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] payment add -body JSON -id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] payment add -body JSON -user-id STRING
 
 Add implements add.
     -body JSON: 
-    -id STRING: ID of the user
+    -user-id STRING: userId of the user
 
 Example:
     `+os.Args[0]+` payment add --body '{
-      "amount": 0.2481123861431309,
-      "cartId": "Temporibus voluptate reprehenderit et aspernatur consequatur quaerat."
-   }' --id "Nostrum sed."
+      "ID": "Id earum explicabo tenetur sit.",
+      "amount": 0.6465372050495056
+   }' --user-id "Quidem velit quidem."
 `, os.Args[0])
 }
 
 func paymentGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] payment get -id STRING -cart-id STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] payment get -body JSON -user-id STRING
 
 Get implements get.
-    -id STRING: cartId
-    -cart-id STRING: cartId
+    -body JSON: 
+    -user-id STRING: userId
 
 Example:
-    `+os.Args[0]+` payment get --id "A iure et autem excepturi." --cart-id "Dolor omnis consequatur ipsa nam."
+    `+os.Args[0]+` payment get --body '{
+      "ID": "Quaerat atque."
+   }' --user-id "Nostrum sed."
+`, os.Args[0])
+}
+
+// discountUsage displays the usage of the discount command and its subcommands.
+func discountUsage() {
+	fmt.Fprintf(os.Stderr, `Discounts applied on the cart
+Usage:
+    %s [globalflags] discount COMMAND [flags]
+
+COMMAND:
+    show: Show implements show.
+
+Additional help:
+    %s discount COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func discountShowUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] discount show -user-id STRING
+
+Show implements show.
+    -user-id STRING: userId
+
+Example:
+    `+os.Args[0]+` discount show --user-id "Sit nesciunt cumque et provident eaque est."
 `, os.Args[0])
 }

@@ -18,29 +18,39 @@ func NewUser(logger *log.Logger) user.Service {
 }
 
 // Add implements add.
-func (s *usersrvc) Add(ctx context.Context,
-	p *user.AddPayload) (err error) {
+func (s *usersrvc) Add(ctx context.Context, p *user.AddPayload) (res *user.UserManagement, err error) {
+	res = &user.UserManagement{}
+
 	s.logger.Print("user.add started")
 	newUser := user.UserManagement{
-		ID:       p.ID,
-		UserName: p.UserName,
+		ID:     p.UserID + p.UserID,
+		UserID: p.UserID,
 	}
-	err = CreateUser(&newUser)
-	err = CreateCart(&newUser)
+	result, err := CreateUser(&newUser)
+	if err != nil {
+		s.logger.Print("An error occurred...")
+		s.logger.Print(err)
+		return
+	}
+
 	if err != nil {
 		s.logger.Print("An error occurred...")
 		s.logger.Print(err)
 		return
 	}
 	s.logger.Print("user.add completed")
-	return
+	return &result, err
 }
 
 // Get implements get.
-func (s *usersrvc) Get(ctx context.Context,
-	p *user.GetPayload) (res *user.UserManagement, err error) {
-	s.logger.Print("user.get started")
-	result, err := GetUser(p.ID)
+func (s *usersrvc) Get(ctx context.Context, p *user.GetPayload) (res *user.UserManagement, err error) {
+	res = &user.UserManagement{}
+	s.logger.Print("user.get")
+	newUser := user.UserManagement{
+		ID:     p.UserID + p.UserID,
+		UserID: p.UserID,
+	}
+	result, err := GetUser(&newUser)
 	if err != nil {
 		s.logger.Print("An error occurred...")
 		s.logger.Print(err)
@@ -48,11 +58,12 @@ func (s *usersrvc) Get(ctx context.Context,
 	}
 	s.logger.Print("user.get completed")
 	return &result, err
+
+	return
 }
 
 // Show implements show.
-func (s *usersrvc) Show(ctx context.Context) (res user.UserManagementCollection,
-	err error) {
+func (s *usersrvc) Show(ctx context.Context) (res user.UserManagementCollection, err error) {
 	s.logger.Print("user.show started")
 	res, err = ListUsers()
 	if err != nil {

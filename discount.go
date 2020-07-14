@@ -17,8 +17,18 @@ func NewDiscount(logger *log.Logger) discount.Service {
 	return &discountsrvc{logger}
 }
 
-// Show implements show.
-func (s *discountsrvc) Show(ctx context.Context, p *discount.ShowPayload) (res discount.DiscountManagementCollection, err error) {
+// Get implements get.
+func (s *discountsrvc) Get(ctx context.Context, p *discount.GetPayload) (res discount.DiscountManagementCollection, err error) {
 	s.logger.Print("discount.show")
-	return
+	discount := discount.DiscountManagement{
+		UserID: p.UserID,
+	}
+	res, err = getDiscounts(&discount)
+	if err != nil {
+		s.logger.Print("An error occurred...")
+		s.logger.Print(err)
+		return
+	}
+	s.logger.Print("user.show completed")
+	return res, err
 }

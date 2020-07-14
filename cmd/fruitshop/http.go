@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	cart "fruitshop/gen/cart"
+	discount "fruitshop/gen/discount"
 	fruit "fruitshop/gen/fruit"
 	cartsvr "fruitshop/gen/http/cart/server"
+	discountsvr "fruitshop/gen/http/discount/server"
 	fruitsvr "fruitshop/gen/http/fruit/server"
 	paymentsvr "fruitshop/gen/http/payment/server"
 	usersvr "fruitshop/gen/http/user/server"
@@ -24,7 +26,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, fruitEndpoints *fruit.Endpoints, cartEndpoints *cart.Endpoints, paymentEndpoints *payment.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, fruitEndpoints *fruit.Endpoints, cartEndpoints *cart.Endpoints, paymentEndpoints *payment.Endpoints, discountEndpoints *discount.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -55,10 +57,11 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		userServer    *usersvr.Server
-		fruitServer   *fruitsvr.Server
-		cartServer    *cartsvr.Server
-		paymentServer *paymentsvr.Server
+		userServer     *usersvr.Server
+		fruitServer    *fruitsvr.Server
+		cartServer     *cartsvr.Server
+		paymentServer  *paymentsvr.Server
+		discountServer *discountsvr.Server
 	)
 	{
 		eh := errorHandler(logger)
@@ -66,12 +69,14 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 		fruitServer = fruitsvr.New(fruitEndpoints, mux, dec, enc, eh, nil)
 		cartServer = cartsvr.New(cartEndpoints, mux, dec, enc, eh, nil)
 		paymentServer = paymentsvr.New(paymentEndpoints, mux, dec, enc, eh, nil)
+		discountServer = discountsvr.New(discountEndpoints, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
 				userServer,
 				fruitServer,
 				cartServer,
 				paymentServer,
+				discountServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
@@ -81,6 +86,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 	fruitsvr.Mount(mux, fruitServer)
 	cartsvr.Mount(mux, cartServer)
 	paymentsvr.Mount(mux, paymentServer)
+	discountsvr.Mount(mux, discountServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -103,6 +109,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range paymentServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range discountServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 

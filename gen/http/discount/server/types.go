@@ -13,7 +13,7 @@ import (
 )
 
 // DiscountManagementResponseCollection is the type of the "discount" service
-// "show" endpoint HTTP response body.
+// "get" endpoint HTTP response body.
 type DiscountManagementResponseCollection []*DiscountManagementResponse
 
 // DiscountManagementResponse is used to define fields on response body types.
@@ -27,7 +27,7 @@ type DiscountManagementResponse struct {
 }
 
 // NewDiscountManagementResponseCollection builds the HTTP response body from
-// the result of the "show" endpoint of the "discount" service.
+// the result of the "get" endpoint of the "discount" service.
 func NewDiscountManagementResponseCollection(res discountviews.DiscountManagementCollectionView) DiscountManagementResponseCollection {
 	body := make([]*DiscountManagementResponse, len(res))
 	for i, val := range res {
@@ -36,9 +36,9 @@ func NewDiscountManagementResponseCollection(res discountviews.DiscountManagemen
 	return body
 }
 
-// NewShowPayload builds a discount service show endpoint payload.
-func NewShowPayload(userID string) *discount.ShowPayload {
-	v := &discount.ShowPayload{}
+// NewGetPayload builds a discount service get endpoint payload.
+func NewGetPayload(userID string) *discount.GetPayload {
+	v := &discount.GetPayload{}
 	v.UserID = userID
 
 	return v

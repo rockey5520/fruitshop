@@ -15,27 +15,27 @@ import (
 
 // Endpoints wraps the "discount" service endpoints.
 type Endpoints struct {
-	Show goa.Endpoint
+	Get goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "discount" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Show: NewShowEndpoint(s),
+		Get: NewGetEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "discount" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
-	e.Show = m(e.Show)
+	e.Get = m(e.Get)
 }
 
-// NewShowEndpoint returns an endpoint function that calls the method "show" of
+// NewGetEndpoint returns an endpoint function that calls the method "get" of
 // service "discount".
-func NewShowEndpoint(s Service) goa.Endpoint {
+func NewGetEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*ShowPayload)
-		res, err := s.Show(ctx, p)
+		p := req.(*GetPayload)
+		res, err := s.Get(ctx, p)
 		if err != nil {
 			return nil, err
 		}

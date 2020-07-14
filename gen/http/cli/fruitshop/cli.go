@@ -31,7 +31,7 @@ func UsageCommands() string {
 fruit (get|show)
 cart (add|remove|get)
 payment (add|get)
-discount show
+discount get
 `
 }
 
@@ -53,7 +53,7 @@ func UsageExamples() string {
       "ID": "Id earum explicabo tenetur sit.",
       "amount": 0.6465372050495056
    }' --user-id "Quidem velit quidem."` + "\n" +
-		os.Args[0] + ` discount show --user-id "Sit nesciunt cumque et provident eaque est."` + "\n" +
+		os.Args[0] + ` discount get --user-id "Sit nesciunt cumque et provident eaque est."` + "\n" +
 		""
 }
 
@@ -111,8 +111,8 @@ func ParseEndpoint(
 
 		discountFlags = flag.NewFlagSet("discount", flag.ContinueOnError)
 
-		discountShowFlags      = flag.NewFlagSet("show", flag.ExitOnError)
-		discountShowUserIDFlag = discountShowFlags.String("user-id", "REQUIRED", "userId")
+		discountGetFlags      = flag.NewFlagSet("get", flag.ExitOnError)
+		discountGetUserIDFlag = discountGetFlags.String("user-id", "REQUIRED", "userId")
 	)
 	userFlags.Usage = userUsage
 	userAddFlags.Usage = userAddUsage
@@ -133,7 +133,7 @@ func ParseEndpoint(
 	paymentGetFlags.Usage = paymentGetUsage
 
 	discountFlags.Usage = discountUsage
-	discountShowFlags.Usage = discountShowUsage
+	discountGetFlags.Usage = discountGetUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -223,8 +223,8 @@ func ParseEndpoint(
 
 		case "discount":
 			switch epn {
-			case "show":
-				epf = discountShowFlags
+			case "get":
+				epf = discountGetFlags
 
 			}
 
@@ -297,9 +297,9 @@ func ParseEndpoint(
 		case "discount":
 			c := discountc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
-			case "show":
-				endpoint = c.Show()
-				data, err = discountc.BuildShowPayload(*discountShowUserIDFlag)
+			case "get":
+				endpoint = c.Get()
+				data, err = discountc.BuildGetPayload(*discountGetUserIDFlag)
 			}
 		}
 	}
@@ -508,19 +508,19 @@ Usage:
     %s [globalflags] discount COMMAND [flags]
 
 COMMAND:
-    show: Show implements show.
+    get: Get implements get.
 
 Additional help:
     %s discount COMMAND --help
 `, os.Args[0], os.Args[0])
 }
-func discountShowUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] discount show -user-id STRING
+func discountGetUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] discount get -user-id STRING
 
-Show implements show.
+Get implements get.
     -user-id STRING: userId
 
 Example:
-    `+os.Args[0]+` discount show --user-id "Sit nesciunt cumque et provident eaque est."
+    `+os.Args[0]+` discount get --user-id "Sit nesciunt cumque et provident eaque est."
 `, os.Args[0])
 }

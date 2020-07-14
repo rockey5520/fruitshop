@@ -19,23 +19,23 @@ import (
 	goahttp "goa.design/goa/v3/http"
 )
 
-// BuildShowRequest instantiates a HTTP request object with method and path set
-// to call the "discount" service "show" endpoint
-func (c *Client) BuildShowRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+// BuildGetRequest instantiates a HTTP request object with method and path set
+// to call the "discount" service "get" endpoint
+func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		userID string
 	)
 	{
-		p, ok := v.(*discount.ShowPayload)
+		p, ok := v.(*discount.GetPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("discount", "show", "*discount.ShowPayload", v)
+			return nil, goahttp.ErrInvalidType("discount", "get", "*discount.GetPayload", v)
 		}
 		userID = p.UserID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowDiscountPath(userID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetDiscountPath(userID)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("discount", "show", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("discount", "get", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -44,10 +44,10 @@ func (c *Client) BuildShowRequest(ctx context.Context, v interface{}) (*http.Req
 	return req, nil
 }
 
-// DecodeShowResponse returns a decoder for responses returned by the discount
-// show endpoint. restoreBody controls whether the response body should be
+// DecodeGetResponse returns a decoder for responses returned by the discount
+// get endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
-func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+func DecodeGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -64,24 +64,24 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body ShowResponseBody
+				body GetResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("discount", "show", err)
+				return nil, goahttp.ErrDecodingError("discount", "get", err)
 			}
-			p := NewShowDiscountManagementCollectionOK(body)
+			p := NewGetDiscountManagementCollectionOK(body)
 			view := "default"
 			vres := discountviews.DiscountManagementCollection{Projected: p, View: view}
 			if err = discountviews.ValidateDiscountManagementCollection(vres); err != nil {
-				return nil, goahttp.ErrValidationError("discount", "show", err)
+				return nil, goahttp.ErrValidationError("discount", "get", err)
 			}
 			res := discount.NewDiscountManagementCollection(vres)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("discount", "show", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("discount", "get", resp.StatusCode, string(body))
 		}
 	}
 }

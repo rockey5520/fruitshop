@@ -15,23 +15,23 @@ import (
 
 // Client is the "discount" service client.
 type Client struct {
-	ShowEndpoint goa.Endpoint
+	GetEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "discount" service client given the endpoints.
-func NewClient(show goa.Endpoint) *Client {
+func NewClient(get goa.Endpoint) *Client {
 	return &Client{
-		ShowEndpoint: show,
+		GetEndpoint: get,
 	}
 }
 
-// Show calls the "show" endpoint of the "discount" service.
-// Show may return the following errors:
+// Get calls the "get" endpoint of the "discount" service.
+// Get may return the following errors:
 //	- "not_found" (type *NotFound): Fruit not found
 //	- error: internal error
-func (c *Client) Show(ctx context.Context, p *ShowPayload) (res DiscountManagementCollection, err error) {
+func (c *Client) Get(ctx context.Context, p *GetPayload) (res DiscountManagementCollection, err error) {
 	var ires interface{}
-	ires, err = c.ShowEndpoint(ctx, p)
+	ires, err = c.GetEndpoint(ctx, p)
 	if err != nil {
 		return
 	}

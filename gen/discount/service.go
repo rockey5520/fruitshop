@@ -14,8 +14,8 @@ import (
 
 // Discounts applied on the cart
 type Service interface {
-	// Show implements show.
-	Show(context.Context, *ShowPayload) (res DiscountManagementCollection, err error)
+	// Get implements get.
+	Get(context.Context, *GetPayload) (res DiscountManagementCollection, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -26,15 +26,15 @@ const ServiceName = "discount"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"show"}
+var MethodNames = [1]string{"get"}
 
-// ShowPayload is the payload type of the discount service show method.
-type ShowPayload struct {
+// GetPayload is the payload type of the discount service get method.
+type GetPayload struct {
 	// userId
 	UserID string
 }
 
-// DiscountManagementCollection is the result type of the discount service show
+// DiscountManagementCollection is the result type of the discount service get
 // method.
 type DiscountManagementCollection []*DiscountManagement
 

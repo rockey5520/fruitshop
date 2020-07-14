@@ -15,9 +15,9 @@ import (
 	goahttp "goa.design/goa/v3/http"
 )
 
-// EncodeShowResponse returns an encoder for responses returned by the discount
-// show endpoint.
-func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeGetResponse returns an encoder for responses returned by the discount
+// get endpoint.
+func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(discountviews.DiscountManagementCollection)
 		enc := encoder(ctx, w)
@@ -27,9 +27,9 @@ func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goaht
 	}
 }
 
-// DecodeShowRequest returns a decoder for requests sent to the discount show
+// DecodeGetRequest returns a decoder for requests sent to the discount get
 // endpoint.
-func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			userID string
@@ -37,7 +37,7 @@ func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 			params = mux.Vars(r)
 		)
 		userID = params["userId"]
-		payload := NewShowPayload(userID)
+		payload := NewGetPayload(userID)
 
 		return payload, nil
 	}

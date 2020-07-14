@@ -17,8 +17,8 @@ import (
 
 // Client lists the discount service endpoint HTTP clients.
 type Client struct {
-	// Show Doer is the HTTP client used to make requests to the show endpoint.
-	ShowDoer goahttp.Doer
+	// Get Doer is the HTTP client used to make requests to the get endpoint.
+	GetDoer goahttp.Doer
 
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
@@ -40,7 +40,7 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		ShowDoer:            doer,
+		GetDoer:             doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -49,20 +49,20 @@ func NewClient(
 	}
 }
 
-// Show returns an endpoint that makes HTTP requests to the discount service
-// show server.
-func (c *Client) Show() goa.Endpoint {
+// Get returns an endpoint that makes HTTP requests to the discount service get
+// server.
+func (c *Client) Get() goa.Endpoint {
 	var (
-		decodeResponse = DecodeShowResponse(c.decoder, c.RestoreResponseBody)
+		decodeResponse = DecodeGetResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildShowRequest(ctx, v)
+		req, err := c.BuildGetRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.ShowDoer.Do(req)
+		resp, err := c.GetDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("discount", "show", err)
+			return nil, goahttp.ErrRequestError("discount", "get", err)
 		}
 		return decodeResponse(resp)
 	}

@@ -11,14 +11,14 @@ import (
 	discount "fruitshop/gen/discount"
 )
 
-// BuildShowPayload builds the payload for the discount show endpoint from CLI
+// BuildGetPayload builds the payload for the discount get endpoint from CLI
 // flags.
-func BuildShowPayload(discountShowUserID string) (*discount.ShowPayload, error) {
+func BuildGetPayload(discountGetUserID string) (*discount.GetPayload, error) {
 	var userID string
 	{
-		userID = discountShowUserID
+		userID = discountGetUserID
 	}
-	v := &discount.ShowPayload{}
+	v := &discount.GetPayload{}
 	v.UserID = userID
 
 	return v, nil

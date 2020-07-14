@@ -86,8 +86,8 @@ paths:
     get:
       tags:
       - discount
-      summary: show discount
-      operationId: discount#show
+      summary: get discount
+      operationId: discount#get
       parameters:
       - name: userId
         in: path
@@ -393,7 +393,7 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/DiscountManagementResponse'
-    description: ShowResponseBody is the result type for an array of DiscountManagementResponse (default view)
+    description: GetResponseBody is the result type for an array of DiscountManagementResponse (default view)
     example:
     - name: Apple10
       status: APPLIED

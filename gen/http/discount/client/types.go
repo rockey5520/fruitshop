@@ -13,9 +13,9 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// ShowResponseBody is the type of the "discount" service "show" endpoint HTTP
+// GetResponseBody is the type of the "discount" service "get" endpoint HTTP
 // response body.
-type ShowResponseBody []*DiscountManagementResponse
+type GetResponseBody []*DiscountManagementResponse
 
 // DiscountManagementResponse is used to define fields on response body types.
 type DiscountManagementResponse struct {
@@ -27,9 +27,9 @@ type DiscountManagementResponse struct {
 	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 }
 
-// NewShowDiscountManagementCollectionOK builds a "discount" service "show"
+// NewGetDiscountManagementCollectionOK builds a "discount" service "get"
 // endpoint result from a HTTP "OK" response.
-func NewShowDiscountManagementCollectionOK(body ShowResponseBody) discountviews.DiscountManagementCollectionView {
+func NewGetDiscountManagementCollectionOK(body GetResponseBody) discountviews.DiscountManagementCollectionView {
 	v := make([]*discountviews.DiscountManagementView, len(body))
 	for i, val := range body {
 		v[i] = unmarshalDiscountManagementResponseToDiscountviewsDiscountManagementView(val)

@@ -19,7 +19,7 @@ import (
 // Server lists the discount service endpoint HTTP handlers.
 type Server struct {
 	Mounts []*MountPoint
-	Show   http.Handler
+	Get    http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -55,9 +55,9 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Show", "GET", "/api/v1/discount/{userId}"},
+			{"Get", "GET", "/api/v1/discount/{userId}"},
 		},
-		Show: NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
+		Get: NewGetHandler(e.Get, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -66,17 +66,17 @@ func (s *Server) Service() string { return "discount" }
 
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
-	s.Show = m(s.Show)
+	s.Get = m(s.Get)
 }
 
 // Mount configures the mux to serve the discount endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
-	MountShowHandler(mux, h.Show)
+	MountGetHandler(mux, h.Get)
 }
 
-// MountShowHandler configures the mux to serve the "discount" service "show"
+// MountGetHandler configures the mux to serve the "discount" service "get"
 // endpoint.
-func MountShowHandler(mux goahttp.Muxer, h http.Handler) {
+func MountGetHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
@@ -86,9 +86,9 @@ func MountShowHandler(mux goahttp.Muxer, h http.Handler) {
 	mux.Handle("GET", "/api/v1/discount/{userId}", f)
 }
 
-// NewShowHandler creates a HTTP handler which loads the HTTP request and calls
-// the "discount" service "show" endpoint.
-func NewShowHandler(
+// NewGetHandler creates a HTTP handler which loads the HTTP request and calls
+// the "discount" service "get" endpoint.
+func NewGetHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -97,13 +97,13 @@ func NewShowHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeShowRequest(mux, decoder)
-		encodeResponse = EncodeShowResponse(encoder)
+		decodeRequest  = DecodeGetRequest(mux, decoder)
+		encodeResponse = EncodeGetResponse(encoder)
 		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "show")
+		ctx = context.WithValue(ctx, goa.MethodKey, "get")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "discount")
 		payload, err := decodeRequest(r)
 		if err != nil {

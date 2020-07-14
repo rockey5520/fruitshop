@@ -11,7 +11,7 @@ import (
 	"fmt"
 )
 
-// ShowDiscountPath returns the URL path to the discount service show HTTP endpoint.
-func ShowDiscountPath(userID string) string {
+// GetDiscountPath returns the URL path to the discount service get HTTP endpoint.
+func GetDiscountPath(userID string) string {
 	return fmt.Sprintf("/api/v1/discount/%v", userID)
 }

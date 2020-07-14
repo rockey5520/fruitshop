@@ -177,7 +177,7 @@ var _ = Service("payment", func() {
 var _ = Service("discount", func() {
 	Description("Discounts applied on the cart")
 
-	Method("show", func() {
+	Method("get", func() {
 		Payload(func() {
 			Field(1, "userId", String, "userId")
 			Required("userId")

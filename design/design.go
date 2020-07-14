@@ -59,6 +59,26 @@ var _ = Service("user", func() {
 	Files("/openapi.json", "./gen/http/openapi.json")
 })
 
+// Coupon Service declaration with two methods and Swagger API specification file
+var _ = Service("coupon", func() {
+	Description("The coupon service allows users to apply coupons")
+
+	Method("add", func() {
+		Payload(func() {
+			Field(1, "userId", String, "userId")
+
+			Required("userId")
+		})
+		Result(CouponManagement)
+		Error("not_found", NotFound, "User not found")
+		HTTP(func() {
+			POST("/api/v1/coup/{userId}")
+			Response(StatusOK)
+		})
+	})
+
+})
+
 // Fruit Service declaration with get method and Swagger API specification file
 var _ = Service("fruit", func() {
 	Description("The user service allows access to fruits")
@@ -212,6 +232,42 @@ var UserManagement = ResultType("application/vnd.user", func() {
 	Required("ID")
 })
 
+// CouponManagement is a custom ResultType used to configure views for our custom type
+var CouponManagement = ResultType("application/vnd.coupon", func() {
+	Description("A CouponManagement type describes a coupon system of e-store.")
+	Reference(Coupon)
+	TypeName("CouponManagement")
+
+	Attributes(func() {
+		Attribute("userId", String, "ID is the unique id of the User.", func() {
+			Example("1")
+		})
+	})
+	Attributes(func() {
+		Attribute("ID", String, "ID is the unique id of the Users coupon.", func() {
+			Example("1")
+		})
+	})
+	Attribute("name", String, "Name of the coupon.", func() {
+		Example("ORANGE30")
+	})
+	Attributes(func() {
+		Attribute("status", String, "status of  Users coupon.", func() {
+			Example("1")
+		})
+	})
+	Attributes(func() {
+		Attribute("createTime", String, "Users coupon created date time", func() {
+			Example("2012-10-31 15:50:13.793654 +0000 UTC")
+		})
+	})
+
+	View("default", func() {
+		Attribute("userId")
+	})
+	Required("userId")
+})
+
 // FruitManagement is a custom ResultType used to configure views for our custom type
 var FruitManagement = ResultType("application/vnd.fruit", func() {
 	Description("A FruitManagement type describes a Fruit of e-store.")
@@ -333,6 +389,7 @@ var Discount = Type("Discount", func() {
 	Attribute("status", String, "Status of the discount", func() {
 		Example("APPLIED")
 	})
+
 	Required("userId")
 })
 
@@ -345,6 +402,25 @@ var User = Type("User", func() {
 	Attribute("userId", String, "userId", func() {
 		Example("123")
 	})
+	Required("userId")
+})
+
+// Coupon is the custom type for Users in our database
+var Coupon = Type("Coupon", func() {
+	Description("Coupon describes coupon system of the store")
+	Attribute("ID", String, "ID is the unique id of the Coupon.", func() {
+		Example("1")
+	})
+	Attribute("userId", String, "userId is the unique id of the User.", func() {
+		Example("1")
+	})
+	Attribute("name", String, "Name of the coupon.", func() {
+		Example("ORANGE30")
+	})
+	Attribute("createTime", String, "Users coupon created date time", func() {
+		Example("2012-10-31 15:50:13.793654 +0000 UTC")
+	})
+
 	Required("userId")
 })
 

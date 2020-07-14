@@ -82,6 +82,25 @@ paths:
           description: Accepted response.
       schemes:
       - http
+  /api/v1/coup/{userId}:
+    post:
+      tags:
+      - coupon
+      summary: add coupon
+      operationId: coupon#add
+      parameters:
+      - name: userId
+        in: path
+        description: userId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/CouponAddResponseBody'
+      schemes:
+      - http
   /api/v1/discount/{userId}:
     get:
       tags:
@@ -266,27 +285,27 @@ definitions:
       costPerItem:
         type: number
         description: Cost of fruits
-        example: 0.2876743323246392
+        example: 0.06413881801999202
         format: double
       count:
         type: integer
         description: Number of fruits
-        example: 578118207626934877
+        example: 3695626853889125425
         format: int64
       name:
         type: string
         description: name of the fruit
-        example: Accusamus eos odio autem quidem voluptatem ratione.
+        example: Voluptatem ratione nulla consequatur.
       totalCost:
         type: number
         description: Total cost for the item
-        example: 0.40068066636823596
+        example: 0.4493405174320575
         format: double
     example:
-      costPerItem: 0.04467929195032163
-      count: 4971639452633052563
-      name: Aut vitae.
-      totalCost: 0.32287398640890763
+      costPerItem: 0.4569020290341104
+      count: 1158597662155183476
+      name: Ut non nulla tempore.
+      totalCost: 0.22951621500575964
     required:
     - name
     - count
@@ -364,30 +383,43 @@ definitions:
       costPerItem:
         type: number
         description: Cost of fruits
-        example: 0.09290485256542964
+        example: 0.8752655482393593
         format: double
       count:
         type: integer
         description: Number of fruits
-        example: 8072899782453271251
+        example: 7950584263500250401
         format: int64
       name:
         type: string
         description: Name of the fruit
-        example: Id et veritatis delectus consequatur quasi temporibus.
+        example: Consequatur quasi.
       totalCost:
         type: number
         description: Total cost for the item
-        example: 0.5439296629364719
+        example: 0.09290485256542964
         format: double
     example:
       costPerItem: 0.48801406869022196
       count: 304365264115333450
-      name: Excepturi architecto eos.
+      name: Qui excepturi architecto eos.
       totalCost: 0.5996207044813423
     required:
     - name
     - count
+  CouponAddResponseBody:
+    title: 'Mediatype identifier: application/vnd.coupon; view=default'
+    type: object
+    properties:
+      userId:
+        type: string
+        description: ID is the unique id of the User.
+        example: "1"
+    description: AddResponseBody result type (default view)
+    example:
+      userId: "1"
+    required:
+    - userId
   DiscountDiscountManagementResponseCollection:
     title: 'Mediatype identifier: application/vnd.discount; type=collection; view=default'
     type: array
@@ -445,10 +477,10 @@ definitions:
       cost:
         type: number
         description: cost
-        example: 0.47834399753577034
+        example: 0.18876800265051077
         format: double
     example:
-      cost: 0.47037292765073974
+      cost: 0.21781079259965586
     required:
     - cost
   FruitGetResponseBody:
@@ -574,9 +606,9 @@ definitions:
       ID:
         type: string
         description: ID
-        example: Iure et autem excepturi veritatis dolor.
+        example: Omnis consequatur ipsa nam nemo aliquid ipsa.
     example:
-      ID: Consequatur ipsa nam nemo aliquid ipsa nostrum.
+      ID: Qui et deleniti reiciendis in.
   UserAddResponseBody:
     title: 'Mediatype identifier: application/vnd.user; view=default'
     type: object
@@ -623,5 +655,6 @@ definitions:
       $ref: '#/definitions/UserManagementResponse'
     description: ShowResponseBody is the result type for an array of UserManagementResponse (default view)
     example:
+    - userId: "123"
     - userId: "123"
     - userId: "123"

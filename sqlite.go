@@ -3,11 +3,13 @@ package fruitshop
 import (
 	"fmt"
 	cart "fruitshop/gen/cart"
+	"fruitshop/gen/coupon"
 	"fruitshop/gen/discount"
 	fruit "fruitshop/gen/fruit"
 	payment "fruitshop/gen/payment"
 	"fruitshop/gen/user"
 	"math"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -21,6 +23,7 @@ type Fruit *fruit.FruitManagement
 type Cart *cart.CartManagement
 type Payment *payment.PaymentManagement
 type Discount *discount.DiscountManagement
+type Coupon *coupon.CouponManagement
 
 // InitDB is the function that starts a database file and table structures
 // if not created then returns db object for next functions
@@ -66,6 +69,12 @@ func InitDB() *gorm.DB {
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(DiscountTableStruct)
 	}
 
+	var CouponTableStruct = coupon.CouponManagement{}
+	if !db.HasTable(CouponTableStruct) {
+		db.CreateTable(CouponTableStruct)
+		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(CouponTableStruct)
+	}
+
 	return db
 }
 
@@ -88,12 +97,14 @@ func CreateUser(user User) (user.UserManagement, error) {
 	var err1 error
 	var err2 error
 	var err3 error
+	var err4 error
 	// If user does not exists then create a user
 	if !doesUserExist(user) {
 		err1 = db.Create(&user).Error
 		err2 = CreateCart(user)
 		err3 = CreateDiscount(user)
-		if err1 != nil || err2 != nil || err3 != nil {
+		err4 = CreateCoupon(user)
+		if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
 			fmt.Println("An error occurred...")
 			fmt.Println(err)
 
@@ -108,6 +119,124 @@ func CreateUser(user User) (user.UserManagement, error) {
 	return result, err
 }
 
+func setCouponOrange30Active(input Coupon) {
+
+	db := InitDB()
+	defer db.Close()
+
+	var coupon coupon.CouponManagement
+	db.Model(coupon).
+		Where("id = ?", input.ID).
+		Update("status", "ACTIVE")
+
+}
+
+func updateCouponStatus(input Coupon) {
+	db := InitDB()
+	defer db.Close()
+
+	var coupon coupon.CouponManagement
+	db.Where("ID = ?", input.ID).First(&coupon)
+
+	user := user.UserManagement{
+		UserID: input.UserID,
+	}
+
+	var carts cart.CartManagementCollection
+	fmt.Println("input.UserID", input.UserID)
+	carts, err = ListAllItemsInCartForId(&user)
+	if err != nil {
+		fmt.Println("An error occurred...")
+		fmt.Println(err)
+
+	}
+	for _, x := range carts {
+		if x.Name == "Orange" && x.Count > 0 {
+			discountCalculated := ((float64(x.Count) * x.CostPerItem) / 100) * 30
+			updatedTotalCost := x.TotalCost - discountCalculated
+			cart := cart.CartManagement{
+				UserID:    input.UserID,
+				Name:      x.Name,
+				TotalCost: updatedTotalCost,
+			}
+			err = UpdateItemInCart(&cart)
+			if err != nil {
+				fmt.Println("An error occurred...")
+				fmt.Println(err)
+
+			}
+			discount := discount.DiscountManagement{
+				UserID: input.UserID,
+			}
+			db.Model(&discount).Where("user_id = ?", input.UserID).
+				Where("name = ?", "ORANGE30").
+				Update("status", "APPLIED")
+
+		}
+	}
+
+	time.Sleep(10 * time.Second)
+
+	db.Model(coupon).
+		Where("id = ?", input.ID).
+		Update("status", "NOTACTIVE")
+
+	discount := discount.DiscountManagement{
+		UserID: input.UserID,
+	}
+	db.Model(&discount).Where("user_id = ?", input.UserID).
+		Where("name = ?", "ORANGE30").
+		Update("status", "NOTAPPLIED")
+
+	for _, x := range carts {
+		if x.Name == "Orange" && x.Count > 0 {
+			updatedTotalCost := float64(x.Count) * x.CostPerItem
+			cart := cart.CartManagement{
+				UserID:    input.UserID,
+				Name:      x.Name,
+				TotalCost: updatedTotalCost,
+			}
+			err = UpdateItemInCart(&cart)
+			if err != nil {
+				fmt.Println("An error occurred...")
+				fmt.Println(err)
+
+			}
+
+			db.Model(&discount).Where("user_id = ?", input.UserID).
+				Where("name = ?", "ORANGE30").
+				Update("status", "APPLIED")
+
+		}
+	}
+
+}
+
+//CreateCoupon creates coupon table and dummy data
+func CreateCoupon(input User) error {
+	db := InitDB()
+	defer db.Close()
+
+	var orange30 string = "ORANGE30"
+	var notactive string = "NOTACTIVE"
+
+	coupon := coupon.CouponManagement{
+		ID:     &input.ID,
+		UserID: input.UserID,
+		Status: &notactive,
+		Name:   &orange30,
+	}
+
+	err := db.Create(&coupon).Error
+	if err != nil {
+		fmt.Println("An error occurred...")
+		fmt.Println(err)
+
+	}
+	return err
+}
+
+// doesUserExist checks if user exists
 func doesUserExist(input User) bool {
 	var res user.UserManagement
 	res, err = GetUser(input)
@@ -220,7 +349,7 @@ func CreateDiscount(user User) error {
 
 	var apple10 string = "APPLE10"
 	var pearbanana string = "PEARBANANA30"
-	var orange30 string = "ORANGE10"
+	var orange30 string = "ORANGE30"
 
 	var notapplied string = "NOTAPPLIED"
 
@@ -327,7 +456,6 @@ func ListAllItemsInCartForId(input User) (cart.CartManagementCollection, error) 
 	db := InitDB()
 	defer db.Close()
 	var carts cart.CartManagementCollection
-	fmt.Println("UserID ", input.UserID)
 	err := db.Where("user_id = ?", input.UserID).Find(&carts).Error
 	if err != nil {
 		fmt.Println("An error occurred...")

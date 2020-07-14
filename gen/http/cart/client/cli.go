@@ -20,7 +20,7 @@ func BuildAddPayload(cartAddBody string, cartAddUserID string) (*cart.AddPayload
 	{
 		err = json.Unmarshal([]byte(cartAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.11945221888838935,\n      \"count\": 8003916626658546661,\n      \"name\": \"Officiis officiis et cumque eum est consequatur.\",\n      \"totalCost\": 0.2826886157163321\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.894851030773132,\n      \"count\": 7292308058415125718,\n      \"name\": \"Nesciunt dolor rem voluptatem.\",\n      \"totalCost\": 0.0707223839239514\n   }'")
 		}
 	}
 	var userID string
@@ -46,7 +46,7 @@ func BuildRemovePayload(cartRemoveBody string, cartRemoveUserID string) (*cart.R
 	{
 		err = json.Unmarshal([]byte(cartRemoveBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.9308342602059104,\n      \"count\": 1819382036291031517,\n      \"name\": \"Est officiis ut.\",\n      \"totalCost\": 0.2421495069964654\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"costPerItem\": 0.5091094421766209,\n      \"count\": 5966374767107831392,\n      \"name\": \"Et vel ad labore.\",\n      \"totalCost\": 0.8888484296200508\n   }'")
 		}
 	}
 	var userID string

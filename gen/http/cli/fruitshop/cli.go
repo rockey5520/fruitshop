@@ -11,6 +11,7 @@ import (
 	"flag"
 	"fmt"
 	cartc "fruitshop/gen/http/cart/client"
+	couponc "fruitshop/gen/http/coupon/client"
 	discountc "fruitshop/gen/http/discount/client"
 	fruitc "fruitshop/gen/http/fruit/client"
 	paymentc "fruitshop/gen/http/payment/client"
@@ -28,6 +29,7 @@ import (
 //
 func UsageCommands() string {
 	return `user (add|get|show)
+coupon add
 fruit (get|show)
 cart (add|remove|get)
 payment (add|get)
@@ -40,20 +42,20 @@ func UsageExamples() string {
 	return os.Args[0] + ` user add --body '{
       "ID": "Ab enim."
    }' --user-id "Incidunt quae quia officia rerum est."` + "\n" +
+		os.Args[0] + ` coupon add --user-id "Nobis doloremque corrupti quo et tempore."` + "\n" +
 		os.Args[0] + ` fruit get --body '{
-      "cost": 0.9509512832245888
-   }' --name "Doloremque corrupti quo et."` + "\n" +
+      "cost": 0.7865847662925625
+   }' --name "Officiis et cumque eum est consequatur."` + "\n" +
 		os.Args[0] + ` cart add --body '{
-      "costPerItem": 0.11945221888838935,
-      "count": 8003916626658546661,
-      "name": "Officiis officiis et cumque eum est consequatur.",
-      "totalCost": 0.2826886157163321
-   }' --user-id "Eos blanditiis ut nesciunt."` + "\n" +
+      "costPerItem": 0.894851030773132,
+      "count": 7292308058415125718,
+      "name": "Nesciunt dolor rem voluptatem.",
+      "totalCost": 0.0707223839239514
+   }' --user-id "Delectus voluptatibus."` + "\n" +
 		os.Args[0] + ` payment add --body '{
-      "ID": "Id earum explicabo tenetur sit.",
-      "amount": 0.6465372050495056
-   }' --user-id "Quidem velit quidem."` + "\n" +
-		os.Args[0] + ` discount get --user-id "Sit nesciunt cumque et provident eaque est."` + "\n" +
+      "ID": "Quidem velit quidem.",
+      "amount": 0.11918360553101845
+   }' --user-id "Quisquam temporibus voluptate reprehenderit et aspernatur consequatur."` + "\n" +
 		""
 }
 
@@ -77,6 +79,11 @@ func ParseEndpoint(
 		userGetUserIDFlag = userGetFlags.String("user-id", "REQUIRED", "userId")
 
 		userShowFlags = flag.NewFlagSet("show", flag.ExitOnError)
+
+		couponFlags = flag.NewFlagSet("coupon", flag.ContinueOnError)
+
+		couponAddFlags      = flag.NewFlagSet("add", flag.ExitOnError)
+		couponAddUserIDFlag = couponAddFlags.String("user-id", "REQUIRED", "userId")
 
 		fruitFlags = flag.NewFlagSet("fruit", flag.ContinueOnError)
 
@@ -119,6 +126,9 @@ func ParseEndpoint(
 	userGetFlags.Usage = userGetUsage
 	userShowFlags.Usage = userShowUsage
 
+	couponFlags.Usage = couponUsage
+	couponAddFlags.Usage = couponAddUsage
+
 	fruitFlags.Usage = fruitUsage
 	fruitGetFlags.Usage = fruitGetUsage
 	fruitShowFlags.Usage = fruitShowUsage
@@ -152,6 +162,8 @@ func ParseEndpoint(
 		switch svcn {
 		case "user":
 			svcf = userFlags
+		case "coupon":
+			svcf = couponFlags
 		case "fruit":
 			svcf = fruitFlags
 		case "cart":
@@ -185,6 +197,13 @@ func ParseEndpoint(
 
 			case "show":
 				epf = userShowFlags
+
+			}
+
+		case "coupon":
+			switch epn {
+			case "add":
+				epf = couponAddFlags
 
 			}
 
@@ -260,6 +279,13 @@ func ParseEndpoint(
 			case "show":
 				endpoint = c.Show()
 				data = nil
+			}
+		case "coupon":
+			c := couponc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "add":
+				endpoint = c.Add()
+				data, err = couponc.BuildAddPayload(*couponAddUserIDFlag)
 			}
 		case "fruit":
 			c := fruitc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -360,6 +386,30 @@ Example:
 `, os.Args[0])
 }
 
+// couponUsage displays the usage of the coupon command and its subcommands.
+func couponUsage() {
+	fmt.Fprintf(os.Stderr, `The coupon service allows users to apply coupons
+Usage:
+    %s [globalflags] coupon COMMAND [flags]
+
+COMMAND:
+    add: Add implements add.
+
+Additional help:
+    %s coupon COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func couponAddUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] coupon add -user-id STRING
+
+Add implements add.
+    -user-id STRING: userId
+
+Example:
+    `+os.Args[0]+` coupon add --user-id "Nobis doloremque corrupti quo et tempore."
+`, os.Args[0])
+}
+
 // fruitUsage displays the usage of the fruit command and its subcommands.
 func fruitUsage() {
 	fmt.Fprintf(os.Stderr, `The user service allows access to fruits
@@ -383,8 +433,8 @@ Get implements get.
 
 Example:
     `+os.Args[0]+` fruit get --body '{
-      "cost": 0.9509512832245888
-   }' --name "Doloremque corrupti quo et."
+      "cost": 0.7865847662925625
+   }' --name "Officiis et cumque eum est consequatur."
 `, os.Args[0])
 }
 
@@ -422,11 +472,11 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` cart add --body '{
-      "costPerItem": 0.11945221888838935,
-      "count": 8003916626658546661,
-      "name": "Officiis officiis et cumque eum est consequatur.",
-      "totalCost": 0.2826886157163321
-   }' --user-id "Eos blanditiis ut nesciunt."
+      "costPerItem": 0.894851030773132,
+      "count": 7292308058415125718,
+      "name": "Nesciunt dolor rem voluptatem.",
+      "totalCost": 0.0707223839239514
+   }' --user-id "Delectus voluptatibus."
 `, os.Args[0])
 }
 
@@ -439,11 +489,11 @@ Remove implements remove.
 
 Example:
     `+os.Args[0]+` cart remove --body '{
-      "costPerItem": 0.9308342602059104,
-      "count": 1819382036291031517,
-      "name": "Est officiis ut.",
-      "totalCost": 0.2421495069964654
-   }' --user-id "Et vel ad labore."
+      "costPerItem": 0.5091094421766209,
+      "count": 5966374767107831392,
+      "name": "Et vel ad labore.",
+      "totalCost": 0.8888484296200508
+   }' --user-id "Laudantium id culpa aut dolorum labore."
 `, os.Args[0])
 }
 
@@ -454,7 +504,7 @@ Get implements get.
     -user-id STRING: ID
 
 Example:
-    `+os.Args[0]+` cart get --user-id "Labore ratione numquam."
+    `+os.Args[0]+` cart get --user-id "Ea laboriosam praesentium."
 `, os.Args[0])
 }
 
@@ -481,9 +531,9 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` payment add --body '{
-      "ID": "Id earum explicabo tenetur sit.",
-      "amount": 0.6465372050495056
-   }' --user-id "Quidem velit quidem."
+      "ID": "Quidem velit quidem.",
+      "amount": 0.11918360553101845
+   }' --user-id "Quisquam temporibus voluptate reprehenderit et aspernatur consequatur."
 `, os.Args[0])
 }
 
@@ -496,8 +546,8 @@ Get implements get.
 
 Example:
     `+os.Args[0]+` payment get --body '{
-      "ID": "Quaerat atque."
-   }' --user-id "Nostrum sed."
+      "ID": "Mollitia quae eos fugit autem sit."
+   }' --user-id "Cumque et."
 `, os.Args[0])
 }
 
@@ -521,6 +571,6 @@ Get implements get.
     -user-id STRING: userId
 
 Example:
-    `+os.Args[0]+` discount get --user-id "Sit nesciunt cumque et provident eaque est."
+    `+os.Args[0]+` discount get --user-id "A iure et autem excepturi."
 `, os.Args[0])
 }

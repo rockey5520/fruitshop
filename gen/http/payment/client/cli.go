@@ -21,7 +21,7 @@ func BuildAddPayload(paymentAddBody string, paymentAddUserID string) (*payment.A
 	{
 		err = json.Unmarshal([]byte(paymentAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"ID\": \"Id earum explicabo tenetur sit.\",\n      \"amount\": 0.6465372050495056\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"ID\": \"Quidem velit quidem.\",\n      \"amount\": 0.11918360553101845\n   }'")
 		}
 	}
 	var userID string
@@ -45,7 +45,7 @@ func BuildGetPayload(paymentGetBody string, paymentGetUserID string) (*payment.G
 	{
 		err = json.Unmarshal([]byte(paymentGetBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"ID\": \"Quaerat atque.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"ID\": \"Mollitia quae eos fugit autem sit.\"\n   }'")
 		}
 	}
 	var userID string

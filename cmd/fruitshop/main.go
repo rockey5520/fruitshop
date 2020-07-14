@@ -6,6 +6,7 @@ import (
 	"fmt"
 	fruitshop "fruitshop"
 	cart "fruitshop/gen/cart"
+	coupon "fruitshop/gen/coupon"
 	discount "fruitshop/gen/discount"
 	fruit "fruitshop/gen/fruit"
 	payment "fruitshop/gen/payment"
@@ -41,6 +42,7 @@ func main() {
 	// Initialize the services.
 	var (
 		userSvc     user.Service
+		couponSvc   coupon.Service
 		fruitSvc    fruit.Service
 		cartSvc     cart.Service
 		paymentSvc  payment.Service
@@ -48,6 +50,7 @@ func main() {
 	)
 	{
 		userSvc = fruitshop.NewUser(logger)
+		couponSvc = fruitshop.NewCoupon(logger)
 		fruitSvc = fruitshop.NewFruit(logger)
 		cartSvc = fruitshop.NewCart(logger)
 		paymentSvc = fruitshop.NewPayment(logger)
@@ -58,6 +61,7 @@ func main() {
 	// potentially running in different processes.
 	var (
 		userEndpoints     *user.Endpoints
+		couponEndpoints   *coupon.Endpoints
 		fruitEndpoints    *fruit.Endpoints
 		cartEndpoints     *cart.Endpoints
 		paymentEndpoints  *payment.Endpoints
@@ -65,6 +69,7 @@ func main() {
 	)
 	{
 		userEndpoints = user.NewEndpoints(userSvc)
+		couponEndpoints = coupon.NewEndpoints(couponSvc)
 		fruitEndpoints = fruit.NewEndpoints(fruitSvc)
 		cartEndpoints = cart.NewEndpoints(cartSvc)
 		paymentEndpoints = payment.NewEndpoints(paymentSvc)
@@ -108,7 +113,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host += ":80"
 			}
-			handleHTTPServer(ctx, u, userEndpoints, fruitEndpoints, cartEndpoints, paymentEndpoints, discountEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, userEndpoints, couponEndpoints, fruitEndpoints, cartEndpoints, paymentEndpoints, discountEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:

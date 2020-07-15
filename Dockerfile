@@ -1,13 +1,20 @@
-FROM golang:1.14.4
+FROM golang:latest
 
-ENV GO111MODULE=on
+ENV WORK_DIR "$GOPATH/src/github.com/github.com/rockey5520/fruitshop"
 
-WORKDIR /Fruitshop
+RUN mkdir -p $WORK_DIR
+ADD . $WORK_DIR
+WORKDIR $WORK_DIR
 
-COPY . .
+#COPY swagger/swagger.json /opt/goa/swagger/
+#COPY swagger/swagger.yaml /opt/goa/swagger/
 
-#RUN ["go", "mod", "vendor"]
-RUN ["go", "get", "-u", "goa.design/goa/v3/...@v3"]
-RUN ["go", "get", "github.com/githubnemo/CompileDaemon"]
-EXPOSE 8080
-ENTRYPOINT CompileDaemon -log-prefix=false -build="go build /Fruitshop/cmd/fruitshop" -command="./fruitshop"
+RUN git clone --branch v1 https://github.com/goadesign/goa.git $GOPATH/src/github.com/goadesign/goa
+
+RUN go get
+RUN go build -o fruitshop .
+#RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o fruitshop .
+
+EXPOSE 9090
+RUN chmod +x ./fruitshop
+CMD ["./fruitshop"]

@@ -7,7 +7,9 @@
 
 
 
-**Overview :** This project is to build an Fruit store with both front end and back end parts of the application. Angular 10 is used to build front end part and Golang is used for building RESTFul API serving data from in-memory DB
+**Overview :** This project is to build an Fruit store with both front end and back end parts of the application. Angular 10 is used to build front end part and Golang is used for building RESTFul API serving data from in-memory DB.
+
+**Observation:** When tried to attemp the same exact backend with Java, Go outperformed in performance and time taken for each api request. i have let the logging enabled while application running to have a little information about where the program control is going for each call and track the time take for each call to optimize further more
 
 **Project Rules**
 

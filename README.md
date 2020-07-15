@@ -1,4 +1,10 @@
-# fruitshop
+<p align="center">
+    <a href="https://exercism.io/profiles/rockey5520">
+        <img height=85 src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQWvuFYj4jQjctg_BrTDkaKWgK0G7Pm3hSGKQ&usqp=CAU">
+    </a>
+    <br>A Fruit store built using Angular 10 for font end and Golang for backend api
+</p>
+
 
 Executable build command : go build ./cmd/clients
 

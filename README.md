@@ -82,15 +82,35 @@ chmod +x gobuild.sh
 Now if the build and run is completed successfully application starts up and you would see a screen something like this
 
 ![https://res.cloudinary.com/rockey5520/image/upload/v1594848905/fruitstore/successfulbuild_mgcpqc.png]()
+
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594848905/fruitstore/successfulbuild_mgcpqc.png)
+
+
 
 To see the application, launch incognito mode in a browser you like and go to `http://localhost:8080`and this should present you a login form as below
 
-![https://res.cloudinary.com/rockey5520/image/upload/v1594849128/fruitstore/loginform_tzxsg1.jpg]()
+![](https://res.cloudinary.com/rockey5520/image/upload/v1594849128/fruitstore/loginform_tzxsg1.jpg)
+
+If you have not created an account earlier you can use the login id you choose (preferred you name without spaces or mobile number) and click login. But if you try to register with an id exists in database form with throw error saying `userid already exists`
+
+Upon login you should see a shopping cart something like below
+
+![](https://res.cloudinary.com/rockey5520/image/upload/v1594849520/fruitstore/home_page_uugebm.jpg)
 
 
 
-Executable build command : go build ./cmd/clients
+![](https://res.cloudinary.com/rockey5520/image/upload/v1594851723/fruitstore/discounts_applied_zvonn5.jpg)
+
+Here you can use self explanatory descriptions to add fruits to carts and discounts earlier mentioned will be applied automatically but for 30% discount on oranges , one need to click on `ORANGE 30 Discount coupn`  to apply which is valid for only 10 seconds post the time discount will removed from the cart. 
+
+In Angular Observable is used to link the components so that changes are applied across other components when there is a change to one. Discount coupon table is not in requirement but i left it there so it sits as a nice help to check if the discounts and coupons active for a particular user.
+
+
+
+While there is so much more this site can evolve, I am going to see next if i can implement websockets in Golang to inform angular about changes in the backend. If you made it until here , wow!! you had lots of patience , Please feel free to drop me a message if you have any questions
+
+Wondering why branch named `main` instead of `master` ? Reason is after the following tweet from github ceo https://twitter.com/natfriedman/status/1271253144442253312 i am trying to use less racially charged words. Not that this will resolve every problem related to racial injustice,  However i believe it's always good to have the know-how and the tools to be able to change the names we use. That goes for branch names as well. :)
+
 
 Useful commands :
 
@@ -99,5 +119,3 @@ export PATH=$GOBIN:$PATH
 export PATH=$PATH:/usr/local/go/bin
 sudo apt install sqlite
 chmod +x /home/wendel/.vscode/extensions/alexcvzz.vscode-sqlite-0.8.2/bin/sqlite-v3.26.0-linux-x64
-
-Wondering why branch named `main` instead of `master` ? Reason is after the following tweet from github ceo https://twitter.com/natfriedman/status/1271253144442253312 i am trying to use less racially charged words. Not that this will resolve every problem related to racial injustice,  However i believe it's always good to have the know-how and the tools to be able to change the names we use. That goes for branch names as well. :)

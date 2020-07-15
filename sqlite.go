@@ -203,10 +203,6 @@ func updateCouponStatus(input Coupon) {
 
 			}
 
-			db.Model(&discount).Where("user_id = ?", input.UserID).
-				Where("name = ?", "ORANGE30").
-				Update("status", "APPLIED")
-
 		}
 	}
 

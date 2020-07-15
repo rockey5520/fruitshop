@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  backend:
+    image: fruitshop
+    expose:
+      - "80"
+    ports:
+      - "8080:80"
+  frontend:
+    image: fruitshop-ui
+    expose:
+      - "80"
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend

@@ -1,0 +1,10 @@
+<mat-toolbar color="primary">
+    <h1 display-4><strong>Cinemo Fruit Shop</strong> </h1>
+
+    <span class="spacer"></span>
+    <button *ngIf="currentUser" mat-raised-button class="icon" aria-label="Example icon-button with share icon"
+        (click)="logout()">
+        <mat-icon>power_settings_new</mat-icon>
+        Logout
+    </button>
+</mat-toolbar>

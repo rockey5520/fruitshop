@@ -1,0 +1,14 @@
+.page-container{
+    padding: 80px 40px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-image: url("./../../../assets/photos/bg.png");
+    background-repeat: repeat;
+    .auth-card {
+        max-width: 500px;
+        background-color: #eee;
+    }
+}

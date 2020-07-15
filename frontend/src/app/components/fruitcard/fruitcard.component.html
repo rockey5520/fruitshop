@@ -1,0 +1,24 @@
+
+<mat-card>
+    <img mat-card-image src="../../../assets/photos/{{fruit.name}}.jpg" width="450" height="300"
+        alt="{{fruit.name}} image">
+    <mat-card-header>
+        <mat-card-title>{{fruit.name}} {{fruit.cost | currency: 'EUR' }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-actions>
+
+        <button mat-mini-fab color="secondary" aria-label="Example icon button with a plus one icon"
+            (click)="addToCount()">
+            <mat-icon>exposure_plus_1</mat-icon>
+        </button>
+        
+        <button mat-raised-button>{{count}}</button>
+
+        <button mat-mini-fab aria-label="Example icon button with a plus one icon" (click)="subToCount()"
+            [disabled]="(count <= 0)">
+            <mat-icon>exposure_neg_1</mat-icon>
+        </button>
+        <button mat-raised-button color="primary" (click)="addToCart()">Update Cart</button>
+
+    </mat-card-actions>
+</mat-card>

@@ -1,0 +1,24 @@
+<h2>Login</h2>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="userId">userId</label>
+        <input type="text" formControlName="userId" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.userId.errors }" />
+        <div *ngIf="submitted && f.userId.errors" class="invalid-feedback">
+            <div *ngIf="f.userId.errors.required">userId is required</div>
+        </div>
+    </div>
+    <!-- <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors.required">Password is required</div>
+        </div>
+    </div> -->
+    <div class="form-group">
+        <button mat-raised-button color="primary" [disabled]="loading" class="mr-1">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Login
+        </button>
+        <a mat-raised-button routerLink="/register" class="ml-1">Register</a>
+    </div>
+</form>

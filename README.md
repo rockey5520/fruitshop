@@ -82,6 +82,7 @@ chmod +x gobuild.sh
 Now if the build and run is completed successfully application starts up and you would see a screen something like this
 
 ![https://res.cloudinary.com/rockey5520/image/upload/v1594848905/fruitstore/successfulbuild_mgcpqc.png]()
+![](https://res.cloudinary.com/rockey5520/image/upload/v1594848905/fruitstore/successfulbuild_mgcpqc.png)
 
 To see the application, launch incognito mode in a browser you like and go to `http://localhost:8080`and this should present you a login form as below
 

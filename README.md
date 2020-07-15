@@ -1,6 +1,6 @@
 <p align="center">
     <a href=""">
-        <img height=200 src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQWvuFYj4jQjctg_BrTDkaKWgK0G7Pm3hSGKQ&usqp=CAU">
+        <img height=400 src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQWvuFYj4jQjctg_BrTDkaKWgK0G7Pm3hSGKQ&usqp=CAU">
     </a>
     <br>A Fruit store built using Angular 10 for font end and Golang for backend api
 </p>

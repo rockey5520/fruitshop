@@ -81,8 +81,6 @@ chmod +x gobuild.sh
 
 Now if the build and run is completed successfully application starts up and you would see a screen something like this
 
-![https://res.cloudinary.com/rockey5520/image/upload/v1594848905/fruitstore/successfulbuild_mgcpqc.png]()
-
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594848905/fruitstore/successfulbuild_mgcpqc.png)
 
 

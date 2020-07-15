@@ -13,5 +13,5 @@ import (
 
 // GetDiscountPath returns the URL path to the discount service get HTTP endpoint.
 func GetDiscountPath(userID string) string {
-	return fmt.Sprintf("/api/v1/discount/%v", userID)
+	return fmt.Sprintf("/server/api/v1/discount/%v", userID)
 }

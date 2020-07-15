@@ -55,7 +55,7 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Add", "POST", "/api/v1/coup/{userId}"},
+			{"Add", "POST", "/server/api/v1/coup/{userId}"},
 		},
 		Add: NewAddHandler(e.Add, mux, decoder, encoder, errhandler, formatter),
 	}
@@ -83,7 +83,7 @@ func MountAddHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/api/v1/coup/{userId}", f)
+	mux.Handle("POST", "/server/api/v1/coup/{userId}", f)
 }
 
 // NewAddHandler creates a HTTP handler which loads the HTTP request and calls

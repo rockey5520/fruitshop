@@ -13,5 +13,5 @@ import (
 
 // AddCouponPath returns the URL path to the coupon service add HTTP endpoint.
 func AddCouponPath(userID string) string {
-	return fmt.Sprintf("/api/v1/coup/%v", userID)
+	return fmt.Sprintf("/server/api/v1/coup/%v", userID)
 }

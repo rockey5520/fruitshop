@@ -13,10 +13,10 @@ import (
 
 // AddPaymentPath returns the URL path to the payment service add HTTP endpoint.
 func AddPaymentPath(userID string) string {
-	return fmt.Sprintf("/api/v1/payment/pay/%v", userID)
+	return fmt.Sprintf("/server/api/v1/payment/pay/%v", userID)
 }
 
 // GetPaymentPath returns the URL path to the payment service get HTTP endpoint.
 func GetPaymentPath(userID string) string {
-	return fmt.Sprintf("/api/v1/payment/%v", userID)
+	return fmt.Sprintf("/server/api/v1/payment/%v", userID)
 }

@@ -13,7 +13,7 @@ var _ = API("fruitshop", func() {
 	Description("This api manages online fruit shop with CRUD operations")
 	Server("fruitshop", func() {
 		Host("localhost", func() {
-			URI("http://localhost:8080/api/v1")
+			URI("http://localhost:8080/server/api/v1")
 		})
 	})
 
@@ -31,7 +31,7 @@ var _ = Service("user", func() {
 		Result(UserManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			POST("/api/v1/user/{userId}")
+			POST("/server/api/v1/user/{userId}")
 			Response(StatusCreated)
 		})
 	})
@@ -44,7 +44,7 @@ var _ = Service("user", func() {
 		Result(UserManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			GET("/api/v1/user/{userId}")
+			GET("/server/api/v1/user/{userId}")
 			Response(StatusOK)
 		})
 	})
@@ -52,9 +52,17 @@ var _ = Service("user", func() {
 	Method("show", func() {
 		Result(CollectionOf(UserManagement))
 		HTTP(func() {
-			GET("/api/v1/user")
+			GET("/server/api/v1/user")
 			Response(StatusOK)
 		})
+	})
+	Files("/{*path}", "./fruitshop-ui/", func() {
+		Description("Serve home page")
+		Docs(func() {
+			Description("Download docs")
+			URL("http//cellarapi.com/docs/actions/download")
+		})
+
 	})
 	Files("/openapi.json", "./gen/http/openapi.json")
 })
@@ -72,7 +80,7 @@ var _ = Service("coupon", func() {
 		Result(CouponManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			POST("/api/v1/coup/{userId}")
+			POST("/server/api/v1/coup/{userId}")
 			Response(StatusOK)
 		})
 	})
@@ -92,7 +100,7 @@ var _ = Service("fruit", func() {
 		Result(FruitManagement)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			GET("/api/v1/fruit/{name}")
+			GET("/server/api/v1/fruit/{name}")
 			Response(StatusOK)
 		})
 	})
@@ -100,7 +108,7 @@ var _ = Service("fruit", func() {
 	Method("show", func() {
 		Result(CollectionOf(FruitManagement))
 		HTTP(func() {
-			GET("/api/v1/fruit")
+			GET("/server/api/v1/fruit")
 			Response(StatusOK)
 		})
 	})
@@ -122,7 +130,7 @@ var _ = Service("cart", func() {
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/cart/add/{userId}")
+			POST("/server/api/v1/cart/add/{userId}")
 			Response(StatusAccepted)
 		})
 	})
@@ -140,7 +148,7 @@ var _ = Service("cart", func() {
 		Result(Empty)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/cart/remove/{userId}")
+			POST("/server/api/v1/cart/remove/{userId}")
 			Response(StatusAccepted)
 		})
 	})
@@ -153,7 +161,7 @@ var _ = Service("cart", func() {
 		Result(CollectionOf(CartManagement))
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			GET("/api/v1/cart/{userId}")
+			GET("/server/api/v1/cart/{userId}")
 			Response(StatusOK)
 		})
 	})
@@ -172,7 +180,7 @@ var _ = Service("payment", func() {
 		Result(PaymentManagement)
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			POST("/api/v1/payment/pay/{userId}")
+			POST("/server/api/v1/payment/pay/{userId}")
 			Response(StatusAccepted)
 		})
 	})
@@ -186,7 +194,7 @@ var _ = Service("payment", func() {
 		Result(PaymentManagement)
 		Error("not_found", NotFound, "User not found")
 		HTTP(func() {
-			GET("/api/v1/payment/{userId}")
+			GET("/server/api/v1/payment/{userId}")
 			Response(StatusOK)
 		})
 	})
@@ -205,7 +213,7 @@ var _ = Service("discount", func() {
 		Result(CollectionOf(DiscountManagement))
 		Error("not_found", NotFound, "Fruit not found")
 		HTTP(func() {
-			GET("/api/v1/discount/{userId}")
+			GET("/server/api/v1/discount/{userId}")
 			Response(StatusOK)
 		})
 	})

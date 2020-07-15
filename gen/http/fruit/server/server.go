@@ -56,8 +56,8 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Get", "GET", "/api/v1/fruit/{name}"},
-			{"Show", "GET", "/api/v1/fruit"},
+			{"Get", "GET", "/server/api/v1/fruit/{name}"},
+			{"Show", "GET", "/server/api/v1/fruit"},
 		},
 		Get:  NewGetHandler(e.Get, mux, decoder, encoder, errhandler, formatter),
 		Show: NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
@@ -88,7 +88,7 @@ func MountGetHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/api/v1/fruit/{name}", f)
+	mux.Handle("GET", "/server/api/v1/fruit/{name}", f)
 }
 
 // NewGetHandler creates a HTTP handler which loads the HTTP request and calls
@@ -139,7 +139,7 @@ func MountShowHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/api/v1/fruit", f)
+	mux.Handle("GET", "/server/api/v1/fruit", f)
 }
 
 // NewShowHandler creates a HTTP handler which loads the HTTP request and calls

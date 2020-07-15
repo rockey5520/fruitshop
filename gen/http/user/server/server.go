@@ -11,6 +11,7 @@ import (
 	"context"
 	user "fruitshop/gen/user"
 	"net/http"
+	"path"
 
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
@@ -57,9 +58,10 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Add", "POST", "/api/v1/user/{userId}"},
-			{"Get", "GET", "/api/v1/user/{userId}"},
-			{"Show", "GET", "/api/v1/user"},
+			{"Add", "POST", "/server/api/v1/user/{userId}"},
+			{"Get", "GET", "/server/api/v1/user/{userId}"},
+			{"Show", "GET", "/server/api/v1/user"},
+			{"./fruitshop-ui/", "GET", "/"},
 			{"./gen/http/openapi.json", "GET", "/openapi.json"},
 		},
 		Add:  NewAddHandler(e.Add, mux, decoder, encoder, errhandler, formatter),
@@ -83,6 +85,11 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountAddHandler(mux, h.Add)
 	MountGetHandler(mux, h.Get)
 	MountShowHandler(mux, h.Show)
+	MountFruitshopUI(mux, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		upath := path.Clean(r.URL.Path)
+		rpath := upath
+		http.ServeFile(w, r, path.Join("./fruitshop-ui/", rpath))
+	}))
 	MountGenHTTPOpenapiJSON(mux, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./gen/http/openapi.json")
 	}))
@@ -97,7 +104,7 @@ func MountAddHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/api/v1/user/{userId}", f)
+	mux.Handle("POST", "/server/api/v1/user/{userId}", f)
 }
 
 // NewAddHandler creates a HTTP handler which loads the HTTP request and calls
@@ -148,7 +155,7 @@ func MountGetHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/api/v1/user/{userId}", f)
+	mux.Handle("GET", "/server/api/v1/user/{userId}", f)
 }
 
 // NewGetHandler creates a HTTP handler which loads the HTTP request and calls
@@ -199,7 +206,7 @@ func MountShowHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/api/v1/user", f)
+	mux.Handle("GET", "/server/api/v1/user", f)
 }
 
 // NewShowHandler creates a HTTP handler which loads the HTTP request and calls
@@ -232,6 +239,12 @@ func NewShowHandler(
 			errhandler(ctx, w, err)
 		}
 	})
+}
+
+// MountFruitshopUI configures the mux to serve GET request made to "/".
+func MountFruitshopUI(mux goahttp.Muxer, h http.Handler) {
+	mux.Handle("GET", "/", h.ServeHTTP)
+	mux.Handle("GET", "/*path", h.ServeHTTP)
 }
 
 // MountGenHTTPOpenapiJSON configures the mux to serve GET request made to

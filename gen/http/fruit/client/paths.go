@@ -13,10 +13,10 @@ import (
 
 // GetFruitPath returns the URL path to the fruit service get HTTP endpoint.
 func GetFruitPath(name string) string {
-	return fmt.Sprintf("/api/v1/fruit/%v", name)
+	return fmt.Sprintf("/server/api/v1/fruit/%v", name)
 }
 
 // ShowFruitPath returns the URL path to the fruit service show HTTP endpoint.
 func ShowFruitPath() string {
-	return "/api/v1/fruit"
+	return "/server/api/v1/fruit"
 }

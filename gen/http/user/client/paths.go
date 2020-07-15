@@ -13,15 +13,15 @@ import (
 
 // AddUserPath returns the URL path to the user service add HTTP endpoint.
 func AddUserPath(userID string) string {
-	return fmt.Sprintf("/api/v1/user/%v", userID)
+	return fmt.Sprintf("/server/api/v1/user/%v", userID)
 }
 
 // GetUserPath returns the URL path to the user service get HTTP endpoint.
 func GetUserPath(userID string) string {
-	return fmt.Sprintf("/api/v1/user/%v", userID)
+	return fmt.Sprintf("/server/api/v1/user/%v", userID)
 }
 
 // ShowUserPath returns the URL path to the user service show HTTP endpoint.
 func ShowUserPath() string {
-	return "/api/v1/user"
+	return "/server/api/v1/user"
 }

@@ -7,13 +7,14 @@ require (
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/jinzhu/gorm v1.9.14
-	goa.design/goa/v3 v3.1.3
+	goa.design/goa/v3 v3.2.0
 	goa.design/plugins/v3 v3.2.0
+	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.3 // indirect
-	golang.org/x/tools v0.0.0-20200710042808-f1c4188a97a1 // indirect
-	google.golang.org/genproto v0.0.0-20200711021454-869866162049 // indirect
+	golang.org/x/tools v0.0.0-20200715195738-4cea89713c0f // indirect
+	google.golang.org/genproto v0.0.0-20200715011427-11fb19a81f2c // indirect
 	google.golang.org/grpc v1.30.0 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect

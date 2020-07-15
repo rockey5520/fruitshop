@@ -12,4 +12,3 @@ RUN ["go", "get", "github.com/githubnemo/CompileDaemon"]
 RUN ["go", "build", "/Fruitshop/cmd/fruitshop"]
 EXPOSE 8080
 ENTRYPOINT ["./fruitshop"]
-

@@ -6,8 +6,8 @@ import (
 	"log"
 )
 
-// user service example implementation.
-// The example methods log the requests and return zero values.
+// user service implementation.
+// These methods log the requests and return zero values.
 type usersrvc struct {
 	logger *log.Logger
 }
@@ -17,7 +17,7 @@ func NewUser(logger *log.Logger) user.Service {
 	return &usersrvc{logger}
 }
 
-// Add implements add.
+// Add implements add feature for the user to the user table
 func (s *usersrvc) Add(ctx context.Context, p *user.AddPayload) (res *user.UserManagement, err error) {
 	res = &user.UserManagement{}
 
@@ -42,7 +42,7 @@ func (s *usersrvc) Add(ctx context.Context, p *user.AddPayload) (res *user.UserM
 	return &result, err
 }
 
-// Get implements get.
+// Get implements get feature for the user from the user table
 func (s *usersrvc) Get(ctx context.Context, p *user.GetPayload) (res *user.UserManagement, err error) {
 	res = &user.UserManagement{}
 	s.logger.Print("user.get")
@@ -58,11 +58,9 @@ func (s *usersrvc) Get(ctx context.Context, p *user.GetPayload) (res *user.UserM
 	}
 	s.logger.Print("user.get completed")
 	return &result, err
-
-	return
 }
 
-// Show implements show.
+// Show implements show feature for all users in the user table
 func (s *usersrvc) Show(ctx context.Context) (res user.UserManagementCollection, err error) {
 	s.logger.Print("user.show started")
 	res, err = ListUsers()

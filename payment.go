@@ -6,8 +6,8 @@ import (
 	"log"
 )
 
-// payment service example implementation.
-// The example methods log the requests and return zero values.
+// payment service implementation.
+// These methods log the requests and return zero values.
 type paymentsrvc struct {
 	logger *log.Logger
 }
@@ -17,7 +17,7 @@ func NewPayment(logger *log.Logger) payment.Service {
 	return &paymentsrvc{logger}
 }
 
-// Add implements add.
+// Add implements add feature for payment processing
 func (s *paymentsrvc) Add(ctx context.Context, p *payment.AddPayload) (res *payment.PaymentManagement, err error) {
 	res = &payment.PaymentManagement{}
 	s.logger.Print("payment.add started")
@@ -36,7 +36,7 @@ func (s *paymentsrvc) Add(ctx context.Context, p *payment.AddPayload) (res *paym
 	return &result, err
 }
 
-// Get implements get.
+// Get implements get feature for payment amount fetch for the user
 func (s *paymentsrvc) Get(ctx context.Context, p *payment.GetPayload) (res *payment.PaymentManagement, err error) {
 
 	s.logger.Print("payment.get started")

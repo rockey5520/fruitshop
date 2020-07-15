@@ -51,46 +51,53 @@ func InitDB() *gorm.DB {
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(FruitTableStruct)
 	}
 
+	// Creating cart table if it doesn't exist
 	var CartTableStruct = cart.CartManagement{}
 	if !db.HasTable(CartTableStruct) {
 		db.CreateTable(CartTableStruct)
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(CartTableStruct)
 	}
 
+	// Creating payment table if it doesn't exist
 	var PaymentTableStruct = payment.PaymentManagement{}
 	if !db.HasTable(PaymentTableStruct) {
 		db.CreateTable(PaymentTableStruct)
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(PaymentTableStruct)
 	}
 
+	// Creating discount table if it doesn't exist
 	var DiscountTableStruct = discount.DiscountManagement{}
 	if !db.HasTable(DiscountTableStruct) {
 		db.CreateTable(DiscountTableStruct)
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(DiscountTableStruct)
 	}
 
+	// Creating coupon table if it doesn't exist
 	var CouponTableStruct = coupon.CouponManagement{}
 	if !db.HasTable(CouponTableStruct) {
 		db.CreateTable(CouponTableStruct)
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(CouponTableStruct)
 	}
-
 	return db
 }
 
-// GetClient retrieves one client by its ID
+// GetClient retrieves user by its ID
 func GetUser(input User) (user.UserManagement, error) {
 	db := InitDB()
 	defer db.Close()
 
 	var users user.UserManagement
-	db.Where("id = ?", input.ID).
-		First(&users)
+	err := db.Where("id = ?", input.ID).
+		First(&users).Error
 
+	if err != nil {
+		fmt.Println("An error occurred...")
+		fmt.Println(err)
+	}
 	return users, err
 }
 
-// CreateClient created a client row in DB
+// CreateUser creates a user row in DB
 func CreateUser(user User) (user.UserManagement, error) {
 	db := InitDB()
 	defer db.Close()
@@ -98,7 +105,7 @@ func CreateUser(user User) (user.UserManagement, error) {
 	var err2 error
 	var err3 error
 	var err4 error
-	// If user does not exists then create a user
+	// If user does not exists then create a user, cart , discount and coupon rows in respective tables
 	if !doesUserExist(user) {
 		err1 = db.Create(&user).Error
 		err2 = CreateCart(user)
@@ -107,7 +114,6 @@ func CreateUser(user User) (user.UserManagement, error) {
 		if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
 			fmt.Println("An error occurred...")
 			fmt.Println(err)
-
 		}
 	}
 	result, err := GetUser(user)
@@ -119,31 +125,38 @@ func CreateUser(user User) (user.UserManagement, error) {
 	return result, err
 }
 
+// setCouponOrange30Active activates Orange 30 percent discount for the customer
 func setCouponOrange30Active(input Coupon) {
-
 	db := InitDB()
 	defer db.Close()
 
 	var coupon coupon.CouponManagement
-	db.Model(coupon).
+	err := db.Model(coupon).
 		Where("id = ?", input.ID).
-		Update("status", "ACTIVE")
-
+		Update("status", "ACTIVE").Error
+	if err != nil {
+		fmt.Println("An error occurred...")
+		fmt.Println(err)
+	}
 }
 
+//updateCouponStatus updates the coupon status in the database and adjusted the cart balances accordingly per type of coupon
 func updateCouponStatus(input Coupon) {
 	db := InitDB()
 	defer db.Close()
 
 	var coupon coupon.CouponManagement
-	db.Where("ID = ?", input.ID).First(&coupon)
+	err := db.Where("ID = ?", input.ID).First(&coupon).Error
+	if err != nil {
+		fmt.Println("An error occurred...")
+		fmt.Println(err)
+	}
 
 	user := user.UserManagement{
 		UserID: input.UserID,
 	}
 
 	var carts cart.CartManagementCollection
-	fmt.Println("input.UserID", input.UserID)
 	carts, err = ListAllItemsInCartForId(&user)
 	if err != nil {
 		fmt.Println("An error occurred...")
@@ -171,22 +184,32 @@ func updateCouponStatus(input Coupon) {
 			db.Model(&discount).Where("user_id = ?", input.UserID).
 				Where("name = ?", "ORANGE30").
 				Update("status", "APPLIED")
-
 		}
 	}
 
+	// configurable timer for the coupon expiry
 	time.Sleep(10 * time.Second)
 
-	db.Model(coupon).
+	err = db.Model(coupon).
 		Where("id = ?", input.ID).
-		Update("status", "NOTACTIVE")
+		Update("status", "NOTACTIVE").Error
+
+	if err != nil {
+		fmt.Println("An error occurred...")
+		fmt.Println(err)
+	}
 
 	discount := discount.DiscountManagement{
 		UserID: input.UserID,
 	}
-	db.Model(&discount).Where("user_id = ?", input.UserID).
+	err = db.Model(&discount).Where("user_id = ?", input.UserID).
 		Where("name = ?", "ORANGE30").
-		Update("status", "NOTAPPLIED")
+		Update("status", "NOTAPPLIED").Error
+
+	if err != nil {
+		fmt.Println("An error occurred...")
+		fmt.Println(err)
+	}
 
 	for _, x := range carts {
 		if x.Name == "Orange" && x.Count > 0 {
@@ -200,12 +223,9 @@ func updateCouponStatus(input Coupon) {
 			if err != nil {
 				fmt.Println("An error occurred...")
 				fmt.Println(err)
-
 			}
-
 		}
 	}
-
 }
 
 //CreateCoupon creates coupon table and dummy data
@@ -232,14 +252,14 @@ func CreateCoupon(input User) error {
 	return err
 }
 
-// doesUserExist checks if user exists
+// DoesUserExist checks if user exists in the database
 func doesUserExist(input User) bool {
 	var res user.UserManagement
 	res, err = GetUser(input)
 	return res.ID == input.ID
 }
 
-// ListClients retrieves the clients stored in Database
+// ListClients retrieves all the users stored in Database
 func ListUsers() (user.UserManagementCollection, error) {
 	db := InitDB()
 	defer db.Close()
@@ -256,9 +276,9 @@ func CreateFruit(fruit Fruit) error {
 	return err
 }
 
-// ListClients retrieves the fruits stored in Database
 var counter = 0
 
+// ListClients retrieves the fruits stored in Database
 func ListFruits() (fruit.FruitManagementCollection, error) {
 	db := InitDB()
 	defer db.Close()
@@ -274,6 +294,7 @@ func ListFruits() (fruit.FruitManagementCollection, error) {
 	return fruits, err
 }
 
+//getDiscounts get all discounts applied per user
 func getDiscounts(input Discount) (discount.DiscountManagementCollection, error) {
 	db := InitDB()
 	defer db.Close()
@@ -282,7 +303,6 @@ func getDiscounts(input Discount) (discount.DiscountManagementCollection, error)
 	if err != nil {
 		fmt.Println("An error occurred...")
 		fmt.Println(err)
-
 	}
 	return discounts, err
 }
@@ -346,7 +366,6 @@ func CreateDiscount(user User) error {
 	var apple10 string = "APPLE10"
 	var pearbanana string = "PEARBANANA30"
 	var orange30 string = "ORANGE30"
-
 	var notapplied string = "NOTAPPLIED"
 
 	discountApple10 := discount.DiscountManagement{
@@ -389,9 +408,7 @@ func AddItemInCart(cart Cart) error {
 	if err != nil {
 		fmt.Println("An error occurred...")
 		fmt.Println(err)
-
 	}
-	// check the dicounts can be applied
 
 	if cart.Name == "Apple" {
 		checkApple10(cart)
@@ -414,12 +431,12 @@ func AddItemInCart(cart Cart) error {
 	if err != nil {
 		fmt.Println("An error occurred...")
 		fmt.Println(err)
-
 	}
 
 	return err
 }
 
+//updatePayment updates the payment for the user
 func updatePayment(input User) error {
 	db := InitDB()
 	defer db.Close()
@@ -436,18 +453,15 @@ func updatePayment(input User) error {
 		Where("id = ?", input.ID).Find(&payment).
 		Update("amount", totalAmount).Error
 
-	/* err := db.Find(payment).
-	Update("amount", totalAmount).
-	Update("payment_status", "NOTPAID").Error */
 	if err != nil {
 		fmt.Println("An error occurred...")
 		fmt.Println(err)
 	}
 
 	return err
-
 }
 
+// Liststs all items in the cart
 func ListAllItemsInCartForId(input User) (cart.CartManagementCollection, error) {
 	db := InitDB()
 	defer db.Close()
@@ -460,8 +474,8 @@ func ListAllItemsInCartForId(input User) (cart.CartManagementCollection, error) 
 	return carts, err
 }
 
+// Check if 10 percent discount can be applied on apples
 func checkApple10(input Cart) {
-	fmt.Println("checkapple10 - 2")
 	user := user.UserManagement{
 		UserID: input.UserID,
 	}
@@ -477,16 +491,14 @@ func checkApple10(input Cart) {
 
 	var carts cart.CartManagementCollection
 	carts, err = ListAllItemsInCartForId(&user)
-	fmt.Println("checkapple10 - 3")
+
 	for _, x := range carts {
 		cart := x
 		fmt.Println(cart.Name)
 		fmt.Println(cart.Count)
 		fmt.Println(cart.Name == "Apple")
 		if cart.Name == "Apple" {
-			fmt.Println("checkapple10 - 4")
 			if cart.Count >= 7 {
-				fmt.Println("cart.Count ", cart.Count)
 				discount := ((float64(cart.Count) * cart.CostPerItem) / 100) * 10
 				cart.TotalCost = cart.TotalCost - discount
 				err = UpdateItemInCart(cart)
@@ -495,7 +507,6 @@ func checkApple10(input Cart) {
 					fmt.Println("An error occurred...")
 					fmt.Println(err)
 				}
-
 			}
 		}
 	}
@@ -517,6 +528,7 @@ func checkApple10(input Cart) {
 
 }
 
+// check if banana pear 30 percent discount can be applied or not
 func checkPearBanana30(input Cart) {
 
 	user := user.UserManagement{
@@ -546,13 +558,10 @@ func checkPearBanana30(input Cart) {
 		}
 	}
 
-	fmt.Println("pearCount ", pearCount)
-	fmt.Println("bananaCount ", bananaCount)
 	sets := getSets(pearCount, bananaCount)
 	if sets != 0 {
 		for _, x := range carts {
 			cart := x
-
 			if cart.Name == "Pear" {
 				discount := float64(sets*2) / float64(100) * float64(30)
 				cart.TotalCost = float64(cart.Count)*cart.CostPerItem - discount
@@ -561,7 +570,6 @@ func checkPearBanana30(input Cart) {
 				fmt.Println("discount", discount)
 				updateCartTotalCostByID(cart)
 			} else if cart.Name == "Banana" {
-
 				discount := float64(sets*2) / float64(100) * float64(30)
 				cart.TotalCost = float64(cart.Count)*cart.CostPerItem - discount
 				fmt.Println("cart.Name", cart.Name)
@@ -569,7 +577,6 @@ func checkPearBanana30(input Cart) {
 				fmt.Println("discount", discount)
 				updateCartTotalCostByID(cart)
 			}
-
 		}
 		discountUpdate = true
 	} else {
@@ -595,6 +602,7 @@ func checkPearBanana30(input Cart) {
 
 }
 
+// updateCartTotalCostByID updated cart total cost by userId
 func updateCartTotalCostByID(input Cart) {
 	db := InitDB()
 	defer db.Close()
@@ -612,6 +620,7 @@ func updateCartTotalCostByID(input Cart) {
 
 }
 
+// updateDiscountCartAndPayment updated discount on the cart and updates
 func updateDiscountCartAndPayment(input Cart) {
 	db := InitDB()
 	defer db.Close()
@@ -631,6 +640,7 @@ func updateDiscountCartAndPayment(input Cart) {
 
 }
 
+// recalculateCartTable recalcualtes the cart table
 func recalculateCartTable(input Cart) {
 	db := InitDB()
 	defer db.Close()
@@ -650,6 +660,7 @@ func recalculateCartTable(input Cart) {
 
 }
 
+// updatePayments updated the payments table
 func updatePayments(input Cart) {
 	user := user.UserManagement{
 		UserID: input.UserID,
@@ -683,6 +694,7 @@ func updatePayments(input Cart) {
 	}
 }
 
+// getSets gets the number of sets of banana and pears
 func getSets(pear int, banana int) int {
 
 	pearCount := pear
@@ -761,6 +773,7 @@ func UpdateItemInCart(input Cart) error {
 	return err
 }
 
+// gets the current cost of the item
 func getCurrentCost(ID string, user_id string, name string) float64 {
 	db := InitDB()
 	defer db.Close()
@@ -772,6 +785,8 @@ func getCurrentCost(ID string, user_id string, name string) float64 {
 	fmt.Println(carts)
 	return carts.TotalCost
 }
+
+// getCurrentCount get all count of items in the cart per fruit
 func getCurrentCount(user_id string, name string) int {
 	db := InitDB()
 	defer db.Close()
@@ -791,7 +806,7 @@ func RemoveItemInCart(cart Cart) error {
 	db.Table("fruit_managements").Where("name = ?", cart.Name).First(&fruits)
 
 	cartId := cart.UserID + cart.UserID
-	amount := fruits.Cost * getCurrentCost(cartId, *&cart.UserID, cart.Name)
+	amount := fruits.Cost * getCurrentCost(cartId, cart.UserID, cart.Name)
 
 	var payments payment.PaymentManagement
 	db.Where("ID = ?", cartId).First(&payments)
@@ -848,6 +863,7 @@ func GetPaymentAmoutFromCart(input Payment) (payment.PaymentManagement, error) {
 	return payments, err
 }
 
+// PayAmount performs the payment
 func PayAmount(input Payment) (payment.PaymentManagement, error) {
 	db := InitDB()
 	defer db.Close()
@@ -906,6 +922,7 @@ func PayAmount(input Payment) (payment.PaymentManagement, error) {
 	return payments, err
 }
 
+// initialize the fruit database
 func initialize() {
 	db := InitDB()
 	defer db.Close()

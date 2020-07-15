@@ -21,11 +21,11 @@ var _ = API("fruitshop", func() {
 
 // User Service declaration with two methods and Swagger API specification file
 var _ = Service("user", func() {
-	Description("The user service allows access to user members")
+	Description("User service allows access to customers")
 	Method("add", func() {
 		Payload(func() {
-			Field(1, "ID", String, "ID")
-			Field(2, "userId", String, "userId")
+			Field(1, "ID", String, "Unique ID of the customer")
+			Field(2, "userId", String, "User Id of the customer")
 			Required("userId")
 		})
 		Result(UserManagement)
@@ -38,7 +38,7 @@ var _ = Service("user", func() {
 
 	Method("get", func() {
 		Payload(func() {
-			Field(1, "userId", String, "userId")
+			Field(1, "userId", String, "User Id of the customer")
 			Required("userId")
 		})
 		Result(UserManagement)
@@ -56,24 +56,19 @@ var _ = Service("user", func() {
 			Response(StatusOK)
 		})
 	})
-	Files("/{*path}", "./fruitshop-ui/", func() {
+	Files("/{*path}", "./frontend/dist/fruitshop-ui/", func() {
 		Description("Serve home page")
-		Docs(func() {
-			Description("Download docs")
-			URL("http//cellarapi.com/docs/actions/download")
-		})
-
 	})
 	Files("/openapi.json", "./gen/http/openapi.json")
 })
 
 // Coupon Service declaration with two methods and Swagger API specification file
 var _ = Service("coupon", func() {
-	Description("The coupon service allows users to apply coupons")
+	Description("The coupon service allows coupon management")
 
 	Method("add", func() {
 		Payload(func() {
-			Field(1, "userId", String, "userId")
+			Field(1, "userId", String, "User Id of the customer")
 
 			Required("userId")
 		})
@@ -87,14 +82,14 @@ var _ = Service("coupon", func() {
 
 })
 
-// Fruit Service declaration with get method and Swagger API specification file
+// Fruit Service allows access to get details about fruits with get method and Swagger API specification file
 var _ = Service("fruit", func() {
-	Description("The user service allows access to fruits")
+	Description("This service allows access to get details about fruits")
 
 	Method("get", func() {
 		Payload(func() {
-			Field(1, "name", String, "name")
-			Field(2, "cost", Float64, "cost")
+			Field(1, "name", String, "Name of the fruit")
+			Field(2, "cost", Float64, "Cost of the fruit")
 			Required("name", "cost")
 		})
 		Result(FruitManagement)
@@ -112,19 +107,19 @@ var _ = Service("fruit", func() {
 			Response(StatusOK)
 		})
 	})
-	//Files("/openapi.json", "./gen/http/openapi.json")
 })
 
+// Cart Service allows access to get details about carts of users
 var _ = Service("cart", func() {
 	Description("The cart service allows to manage the state of the cart")
 	Method("add", func() {
 		Payload(func() {
 
-			Field(1, "userId", String, "ID of the user")
-			Field(2, "name", String, "name of the fruit")
+			Field(1, "userId", String, "User Id of the customer")
+			Field(2, "name", String, "Name of the fruit")
 			Field(3, "count", Int, "Number of fruits")
 			Field(4, "costPerItem", Float64, "Cost of fruits")
-			Field(5, "totalCost", Float64, "Total cost for the item")
+			Field(5, "totalCost", Float64, "Total cost for the type of the fruit")
 			Required("userId", "name", "count")
 		})
 		Result(Empty)
@@ -138,11 +133,11 @@ var _ = Service("cart", func() {
 	Method("remove", func() {
 		Payload(func() {
 
-			Field(1, "userId", String, "ID of the user")
+			Field(1, "userId", String, "User Id of the customer")
 			Field(2, "name", String, "Name of the fruit")
 			Field(3, "count", Int, "Number of fruits")
 			Field(4, "costPerItem", Float64, "Cost of fruits")
-			Field(5, "totalCost", Float64, "Total cost for the item")
+			Field(5, "totalCost", Float64, "Total cost for type of the frui")
 			Required("userId", "name", "count")
 		})
 		Result(Empty)
@@ -262,11 +257,6 @@ var CouponManagement = ResultType("application/vnd.coupon", func() {
 	Attributes(func() {
 		Attribute("status", String, "status of  Users coupon.", func() {
 			Example("1")
-		})
-	})
-	Attributes(func() {
-		Attribute("createTime", String, "Users coupon created date time", func() {
-			Example("2012-10-31 15:50:13.793654 +0000 UTC")
 		})
 	})
 

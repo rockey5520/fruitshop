@@ -17,11 +17,8 @@ paths:
     get:
       tags:
       - user
-      summary: Download ./fruitshop-ui/
+      summary: Download ./frontend/dist/fruitshop-ui/
       description: Serve home page
-      externalDocs:
-        description: Download docs
-        url: http//cellarapi.com/docs/actions/download
       operationId: user#/{*path}
       parameters:
       - name: path
@@ -81,7 +78,7 @@ paths:
       parameters:
       - name: userId
         in: path
-        description: ID of the user
+        description: User Id of the customer
         required: true
         type: string
       - name: AddRequestBody
@@ -106,7 +103,7 @@ paths:
       parameters:
       - name: userId
         in: path
-        description: ID of the user
+        description: User Id of the customer
         required: true
         type: string
       - name: RemoveRequestBody
@@ -131,7 +128,7 @@ paths:
       parameters:
       - name: userId
         in: path
-        description: userId
+        description: User Id of the customer
         required: true
         type: string
       responses:
@@ -182,7 +179,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: name
+        description: Name of the fruit
         required: true
         type: string
       - name: GetRequestBody
@@ -271,7 +268,7 @@ paths:
       parameters:
       - name: userId
         in: path
-        description: userId
+        description: User Id of the customer
         required: true
         type: string
       responses:
@@ -289,7 +286,7 @@ paths:
       parameters:
       - name: userId
         in: path
-        description: userId
+        description: User Id of the customer
         required: true
         type: string
       - name: AddRequestBody
@@ -321,11 +318,11 @@ definitions:
         format: int64
       name:
         type: string
-        description: name of the fruit
+        description: Name of the fruit
         example: Ratione nulla consequatur nostrum.
       totalCost:
         type: number
-        description: Total cost for the item
+        description: Total cost for the type of the fruit
         example: 0.16768942315212468
         format: double
     example:
@@ -423,7 +420,7 @@ definitions:
         example: Consequatur quasi.
       totalCost:
         type: number
-        description: Total cost for the item
+        description: Total cost for type of the frui
         example: 0.09290485256542964
         format: double
     example:
@@ -546,7 +543,7 @@ definitions:
     properties:
       cost:
         type: number
-        description: cost
+        description: Cost of the fruit
         example: 0.21781079259965586
         format: double
     example:
@@ -675,7 +672,7 @@ definitions:
     properties:
       ID:
         type: string
-        description: ID
+        description: Unique ID of the customer
         example: Ipsa nostrum qui et deleniti.
     example:
       ID: In accusamus.

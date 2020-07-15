@@ -6,8 +6,8 @@ import (
 	"log"
 )
 
-// discount service example implementation.
-// The example methods log the requests and return zero values.
+// discount service implementation.
+// These methods log the requests and return zero values.
 type discountsrvc struct {
 	logger *log.Logger
 }
@@ -17,7 +17,7 @@ func NewDiscount(logger *log.Logger) discount.Service {
 	return &discountsrvc{logger}
 }
 
-// Get implements get.
+// Get implements get feature of the discounts applied for the purchases
 func (s *discountsrvc) Get(ctx context.Context, p *discount.GetPayload) (res discount.DiscountManagementCollection, err error) {
 	s.logger.Print("discount.show")
 	discount := discount.DiscountManagement{

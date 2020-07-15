@@ -7,8 +7,8 @@ import (
 	"log"
 )
 
-// cart service example implementation.
-// The example methods log the requests and return zero values.
+// cart service implementation.
+// These methods log the requests and return zero values.
 type cartsrvc struct {
 	logger *log.Logger
 }
@@ -18,7 +18,7 @@ func NewCart(logger *log.Logger) cart.Service {
 	return &cartsrvc{logger}
 }
 
-// Add implements add.
+// Add implements add method for the cart item.
 func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 	s.logger.Print("cart.add")
 	newCart := cart.CartManagement{
@@ -36,7 +36,7 @@ func (s *cartsrvc) Add(ctx context.Context, p *cart.AddPayload) (err error) {
 	return
 }
 
-// Remove implements remove.
+// Remove implements remove functionality for the item in cart
 func (s *cartsrvc) Remove(ctx context.Context, p *cart.RemovePayload) (err error) {
 	s.logger.Print("cart.remove")
 	newCart := cart.CartManagement{
@@ -53,7 +53,7 @@ func (s *cartsrvc) Remove(ctx context.Context, p *cart.RemovePayload) (err error
 	return
 }
 
-// Get implements get.
+// Get implements get functionality to fetch cart of the user
 func (s *cartsrvc) Get(ctx context.Context, p *cart.GetPayload) (res cart.CartManagementCollection, err error) {
 	s.logger.Print("cart.get")
 	user := user.UserManagement{

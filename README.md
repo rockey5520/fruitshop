@@ -64,7 +64,7 @@ Architecture diagrams.
 - - Total price.
   - Total savings.
 
-**Assumptions**
+**Pre Requisite**
 
 ```shell
 1. Node v12.18.2 installed

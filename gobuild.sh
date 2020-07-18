@@ -1,10 +1,10 @@
 #!/bin/bash
 
-file="fruitshop.db"
+#file="fruitshop.db"
 
-if [ -f $file ] ; then
-    rm $file
-fi
+#if [ -f $file ] ; then
+ #   rm $file
+#fi
 
 
 

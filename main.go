@@ -13,7 +13,7 @@ func main() {
 
 	// initialize DB and load meta data
 	models.ConnectDataBase()
-	LoadFruitsInventory()
+	//LoadFruitsInventory()
 
 	// Endpoints for customer
 	router.GET("/server/api/v1/customers", controllers.FindCustomers)
@@ -27,7 +27,11 @@ func main() {
 	// Endpoints for discounts
 	router.GET("/server/api/v1/discounts/:login_id", controllers.FindDiscounts)
 
-	// Use middleware to serve static
+	// Endpoints for cart
+	router.GET("/server/api/v1/cart/:login_id", controllers.FindCart)
+	router.POST("/server/api/v1/cart/:login_id", controllers.AddItemInCart)
+
+	// Use middleware to serve static pages for the website
 	router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))
 	router.Use(static.Serve("/download", static.LocalFile("./output", true)))
 
@@ -36,11 +40,6 @@ func main() {
 		panic("Unable to invoke router")
 	}
 
-}
-
-func cleanDB() {
-	var fruits models.Fruit
-	models.DB.Where("id > 0").Find(&fruits).Unscoped().Delete(&fruits)
 }
 
 //LoadFruitsInventory will load fruits inventory metadata

@@ -11,16 +11,18 @@ import (
 func FindDiscounts(c *gin.Context) {
 
 	customer := models.Customer{
-		CustomerLoginId: c.Param("login_id"),
+		LoginId: c.Param("login_id"),
 	}
-	var discounts models.Discount
+	var discounts []models.Discount
 
-	models.DB.First(&customer)
-	discounts.CustomerLoginId = customer.CustomerLoginId
+	//models.DB.First(&customer)
+	// Where("customer_login_id = ?", c.Param("login_id")).
 
-	models.DB.Where("customer_login_id = ?", c.Param("login_id")).
+	//models.DB.First(&customer, c.Param("login_id"))
+	models.DB.Where("login_id = ?", c.Param("login_id")).First(&customer).
 		Preload("Discounts").
 		Find(&customer)
+	discounts = customer.Discounts
 
-	c.JSON(http.StatusOK, gin.H{"data": customer})
+	c.JSON(http.StatusOK, gin.H{"data": discounts})
 }

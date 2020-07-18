@@ -29,7 +29,8 @@ func main() {
 
 	// Endpoints for cart
 	router.GET("/server/api/v1/cart/:login_id", controllers.FindCart)
-	router.POST("/server/api/v1/cart/:login_id", controllers.AddItemInCart)
+	router.POST("/server/api/v1/cartitem/:login_id", controllers.AddItemInCart)
+	router.GET("/server/api/v1/cartitem/:login_id", controllers.GetAllCartItems)
 
 	// Use middleware to serve static pages for the website
 	router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))

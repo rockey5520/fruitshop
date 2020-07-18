@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"fruitshop/models"
 	"net/http"
 
@@ -14,9 +15,19 @@ func GetAllCartItems(c *gin.Context) {
 	customer := models.Customer{}
 	cart := models.Cart{}
 
-	models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer)
-	models.DB.Where("customer_id = ?", customer.ID).Find(&cart)
-	models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems)
+	if err := models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer record not found!"})
+		return
+	}
+
+	if err := models.DB.Where("customer_id = ?", customer.ID).Find(&cart); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cart record not found!"})
+		return
+	}
+	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "CusCartItems record not found!"})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": cartItems})
 }
@@ -24,15 +35,12 @@ func GetAllCartItems(c *gin.Context) {
 // FindCart will fetch the details about the cart of the customer
 func FindCart(c *gin.Context) {
 	customer := models.Customer{}
-	var cart models.Cart
+	cart := models.Cart{}
 
 	models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer)
-	models.DB.
-		Preload("Cart").
-		Find(&customer)
 
-	cart = customer.Cart
-	cart.ID = customer.ID
+	models.DB.Where("customer_id = ?", customer.ID).Find(&cart)
+	fmt.Println(cart)
 	c.JSON(http.StatusOK, gin.H{"data": cart})
 
 }

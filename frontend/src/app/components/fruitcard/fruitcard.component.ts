@@ -1,9 +1,10 @@
+import { CustomerModel } from './../../models/customer.model';
 import { Component, OnInit, Input } from '@angular/core';
 import { FruitModel } from 'src/app/models/fruit.model';
 import { CartService } from './../../services/cart.service';
 import { AuthenticationService } from './../../services/authentication.service';
 import { DiscountService } from './../../services/discount.service';
-import { User } from '../../models/user.model';
+
 
 @Component({
   selector: 'app-fruitcard',
@@ -14,7 +15,7 @@ export class FruitcardComponent implements OnInit {
 
   @Input()
   fruit: FruitModel
-  currentUser: User;
+  currentUser: CustomerModel;
 
   count: number;
 
@@ -39,7 +40,7 @@ export class FruitcardComponent implements OnInit {
   }
 
   addToCart(): void {
-    this.cartService.addToCart(this.currentUser.userId, this.fruit, this.count).subscribe(() => {
+    this.cartService.addToCart(this.currentUser.loginid, this.fruit, this.count).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
     })

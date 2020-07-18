@@ -1,8 +1,11 @@
 package models
 
+import "github.com/jinzhu/gorm"
+
 type Customer struct {
-	ID        int    `json:"id" gorm:"primary_key"`
-	LoginId   string `json:"loginid" gorm:"primary_key;unique_index"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
+	CustomerLoginId string     `json:"loginid" gorm:"primary_key;unique_index"`
+	FirstName       string     `json:"firstname"`
+	LastName        string     `json:"lastname"`
+	Discounts       []Discount `gorm:"foreignkey:CustomerLoginId;association_foreignkey:CustomerLoginId"`
+	gorm.Model
 }

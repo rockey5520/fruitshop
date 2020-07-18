@@ -1,31 +1,34 @@
+import { CustomerModel } from './../models/customer.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { User } from '../models/user.model';
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-    private currentUserSubject: BehaviorSubject<User>;
-    public currentUser: Observable<User>;
+    private currentUserSubject: BehaviorSubject<CustomerModel>;
+    public currentUser: Observable<CustomerModel>;
 
     constructor(private http: HttpClient) {
-        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+        this.currentUserSubject = new BehaviorSubject<CustomerModel>(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
-    public get currentUserValue(): User {
+    public get currentUserValue(): CustomerModel {
         return this.currentUserSubject.value;
     }
 
-    login(userId) {
-        console.log("success",userId)
-        return this.http.post<any>(`/server/api/v1/user/${userId}`, { userId })
+    login(loginid) {
+        console.log("success",loginid)
+        console.log("localStorage.length", localStorage.length)
+        console.log("localStorage.getItem",localStorage.getItem("currentUser"))
+        return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
-                
                 localStorage.setItem('currentUser', JSON.stringify(user));
+                console.log("currentUser",localStorage.getItem("currentUser"))
                 this.currentUserSubject.next(user);
                 return user;
             }));

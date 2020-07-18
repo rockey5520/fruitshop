@@ -11,7 +11,7 @@ import (
 func FindCustomer(c *gin.Context) {
 	var customer models.Customer
 
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&customer).Error; err != nil {
+	if err := models.DB.Where("login_id = ?", c.Param("login_id")).First(&customer).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer record not found!"})
 		return
 	}
@@ -29,11 +29,14 @@ func CreateCustomer(c *gin.Context) {
 	}
 
 	// Create new customer
-	customer := models.Customer{FirstName: input.FirstName, LastName: input.LastName, LoginId: input.LoginId}
+	customer := models.Customer{FirstName: input.FirstName, LastName: input.LastName, CustomerLoginId: input.LoginId}
 	if err := models.DB.Create(&customer).Error; err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "Customer already exists with the same login id"})
 		return
 	}
+
+	// Loads default discounts for the customer
+	LoadDiscountsInventory(customer)
 
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }
@@ -51,4 +54,23 @@ type CreateCustomerInput struct {
 	FirstName string `json:"firstname" binding:"required"`
 	LastName  string `json:"lastname" binding:"required"`
 	LoginId   string `json:"loginid" binding:"required"`
+}
+
+//LoadDiscountsInventory will load Discount coupons to the database with default status
+func LoadDiscountsInventory(customer models.Customer) {
+
+	apple10 := models.Discount{Name: "APPLE10", Status: "APPLIED", CustomerLoginId: customer.CustomerLoginId}
+	orange30 := models.Discount{Name: "ORANGE30", Status: "NOTAPPLIED", CustomerLoginId: customer.CustomerLoginId}
+	pearbanana30 := models.Discount{Name: "PEARBANANA", Status: "NOTAPPLIED", CustomerLoginId: customer.CustomerLoginId}
+
+	if err := models.DB.Create(&apple10).Error; err != nil {
+		panic("Unable to create inventory")
+	}
+	if err := models.DB.Create(&orange30).Error; err != nil {
+		panic("Unable to create inventory")
+	}
+	if err := models.DB.Create(&pearbanana30).Error; err != nil {
+		panic("Unable to create inventory")
+	}
+
 }

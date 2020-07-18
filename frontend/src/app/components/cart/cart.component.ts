@@ -1,3 +1,4 @@
+import { CustomerModel } from './../../models/customer.model';
 import { FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 
@@ -10,7 +11,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Observable, pipe } from 'rxjs';
 import { map, reduce, filter, first } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
-import { User } from '../../models/user.model';
+
 import { DiscountModel } from '../../models/discount..model';
 
 import { Inject } from '@angular/core';
@@ -34,7 +35,7 @@ export class CartComponent implements OnInit {
   cartdisplayedColumns: string[] = ['name', 'status'];
 
   total: number;
-  currentUser: User;
+  currentUser: CustomerModel;
   cartId: string
   totalSavings: number
   seconds1: number
@@ -69,7 +70,7 @@ export class CartComponent implements OnInit {
   }
 
   updateData() {
-    this.cartList = this.cartService.getCartByID(this.currentUser.userId)
+    this.cartList = this.cartService.getCartByID(this.currentUser.loginid)
       .pipe(map(item => item.filter(item => item.count > 0)));
 
     this.total = 0;
@@ -83,14 +84,14 @@ export class CartComponent implements OnInit {
 
   updateDiscountData() {
 
-    this.discountList = this.discountService.getDiscountsByID(this.currentUser.userId)
+    this.discountList = this.discountService.getDiscountsByID(this.currentUser.loginid)
     console.log("discount list", this.discountList)
   }
 
 
 
   pay(): void {
-    this.paymentService.pay(this.currentUser.userId, this.currentUser.userId, this.total).subscribe(() => {
+    this.paymentService.pay(this.currentUser.loginid, this.currentUser.loginid, this.total).subscribe(() => {
       this.cartService.update.next(true)
 
     })
@@ -98,13 +99,13 @@ export class CartComponent implements OnInit {
 
   applyDiscount(): void {
 
-    this.paymentService.applyDiscount(this.currentUser.userId).subscribe(() => {
+    this.paymentService.applyDiscount(this.currentUser.loginid).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
     })
     this.formNotComplete = true;
     setTimeout(() => {
-      this.cartService.getCartByID(this.currentUser.userId,).subscribe(() => {
+      this.cartService.getCartByID(this.currentUser.loginid,).subscribe(() => {
         this.cartService.update.next(true)
         this.discountService.update.next(true)
       })

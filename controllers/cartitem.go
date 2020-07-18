@@ -33,6 +33,7 @@ func AddItemInCart(c *gin.Context) {
 	cartItem := models.CartItem{CartID: cart.ID, Name: input.Name}
 	if input.Count > 0 {
 		// Create/update fruit to the cart
+
 		cartItem.Count = input.Count
 		if err := models.DB.Model(&cartItem).Where("cart_id = ? and name = ?", cart.ID, input.Name).First(&cartItem).Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
@@ -42,26 +43,49 @@ func AddItemInCart(c *gin.Context) {
 			models.DB.Model(&cartItem).Where("cart_id = ? and name = ?", cart.ID, input.Name).Update("count", input.Count)
 		}
 	} else if input.Count == 0 {
-		models.DB.Unscoped().Delete(&cartItem)
+		models.DB.Where("cart_id = ? AND name = ?", cart.ID, input.Name).Delete(&cartItem)
 		//if err := models.DB.Model(&cartItem).Where("cart_id = ? and name = ?", cart.ID, input.Name).First(&cartItem).Error; err != nil {
 
 	}
+	fruit := models.Fruit{Name: input.Name}
+	// recalcuate the payment for the cart
+	RecalcualtePayments(customer, cart, cartItem, fruit)
 
+	c.JSON(http.StatusOK, gin.H{"data": cartItem})
+
+}
+
+// RecalcualtePayments recalcuates the payment for the cart
+func RecalcualtePayments(customer models.Customer, cart models.Cart, cartItem models.CartItem, fruit models.Fruit) {
 	// Recalcualte the payments
 	var cartItems []models.CartItem
 	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
 	var totalCost float64
-	fmt.Println("i am here ")
 	for _, item := range cartItems {
-
-		fruit := models.Fruit{Name: item.Name}
 		models.DB.First(&fruit)
 		totalCost += float64(item.Count) * fruit.Price
 	}
 	models.DB.Model(&cart).Where("customer_id = ?", customer.ID).Update("total", totalCost)
 
-	c.JSON(http.StatusOK, gin.H{"data": cartItem})
+	if fruit.Name == "Apple" && cartItem.Count >= 7 {
+		var restCost float64
+		var appleCost float64
+		for _, item := range cartItems {
+			if item.Name != "Apple" {
+				var fruit models.Fruit
+				models.DB.Where("name = ?", item.Name).First(&fruit)
+				restCost += float64(item.Count) * fruit.Price
+			} else {
+				var fruit models.Fruit
+				models.DB.Where("name = ?", item.Name).First(&fruit)
+				appleCost += float64(item.Count) * fruit.Price
+			}
+			discount := ((float64(item.Count) * fruit.Price) / 100) * 10
+			totalCost = (appleCost - discount) + restCost
+		}
+		models.DB.Model(&cart).Where("customer_id = ?", customer.ID).Update("total", totalCost)
+	}
 
 }

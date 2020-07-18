@@ -61,7 +61,7 @@ type CreateCustomerInput struct {
 //LoadDiscountsInventory will load Discount coupons to the database with default status
 func LoadDiscountsInventory(customer models.Customer) {
 
-	apple10 := models.Discount{Name: "APPLE10", Status: "APPLIED", CustomerId: customer.ID}
+	apple10 := models.Discount{Name: "APPLE10", Status: "NOTAPPLIED", CustomerId: customer.ID}
 	orange30 := models.Discount{Name: "ORANGE30", Status: "NOTAPPLIED", CustomerId: customer.ID}
 	pearbanana30 := models.Discount{Name: "PEARBANANA", Status: "NOTAPPLIED", CustomerId: customer.ID}
 

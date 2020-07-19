@@ -97,14 +97,19 @@ func ApplyOrange30Coupon(c *gin.Context) {
 
 	var discount models.Discount
 	models.DB.Where("customer_id = ? AND name = ?", cart.CustomerId, "ORANGE30").Find(&discount)
+	var coupon models.Coupon
 	var fruit models.Fruit
 	models.DB.Where("name = ?", cartItem.Name).First(&fruit)
+	fmt.Println(cartItem.Name)
+	fmt.Println(cartItem.Count)
+	fmt.Println(discount.Status)
 	if cartItem.Name == "Orange" && cartItem.Count > 0 && discount.Status == "NOTAPPLIED" {
 		discountCalculated := ((float64(cartItem.Count) * fruit.Price) / 100) * 30
 		updatedTotalCost := cartItem.ItemTotal - discountCalculated
 		models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("item_total", updatedTotalCost)
 		RecalcualtePayments(cart)
 		models.DB.Model(&discount).Where("customer_id = ? AND name = ?", cart.CustomerId, "ORANGE30").Update("status", "APPLIED")
+		models.DB.Model(&coupon).Where("cart_id = ?", cart.ID, "ORANGE30").Update("status", "APPLIED")
 	}
 
 	// configurable timer for the coupon expiry
@@ -112,6 +117,7 @@ func ApplyOrange30Coupon(c *gin.Context) {
 
 	models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("item_total", float64(cartItem.Count)*fruit.Price)
 	models.DB.Model(&discount).Where("customer_id = ? AND name = ?", cart.CustomerId, "ORANGE30").Update("status", "NOTAPPLIED")
+	models.DB.Model(&coupon).Where("cart_id = ?", cart.ID, "ORANGE30").Update("status", "NOTAPPLIED")
 
 	RecalcualtePayments(cart)
 

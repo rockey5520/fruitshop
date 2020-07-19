@@ -7,6 +7,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type CustomersService struct{}
+
+func NewCustomerService() CustomersService {
+	return CustomersService{}
+}
+
+// swagger:operation GET /user/starred/{author}/{repo} customers
+// ---
+// summary: Checks whether the requested repository is starred by currently authenticated user.
+// description: Depending on the combined length of author and repo, the following HTTP status will be returned 17+ StatusForbidden, 11+ StatusNotFound, 10- StatusOK
+// parameters:
+// - name: author
+//   in: path
+//   description: username of author
+//   type: string
+//   required: true
 // FindCustomer returns customer details if customer exists in the store
 func FindCustomer(c *gin.Context) {
 	var customer models.Customer
@@ -19,10 +35,16 @@ func FindCustomer(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }
 
-//CreateCustomer will created customer for the fruit store
+// swagger:route POST /api/v1/customers customer CreateCustomerInput
+// This end point creates a new customer
+// responses:
+//	200: Customer
+//  400: badReq
+
+// CreateCustomer will created customer for the fruit store
 func CreateCustomer(c *gin.Context) {
 	// Validate input
-	var input CreateCustomerInput
+	var input models.CreateCustomerInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -54,12 +76,6 @@ func FindCustomers(c *gin.Context) {
 	models.DB.Find(&customers)
 
 	c.JSON(http.StatusOK, gin.H{"data": customers})
-}
-
-type CreateCustomerInput struct {
-	FirstName string `json:"firstname" binding:"required"`
-	LastName  string `json:"lastname" binding:"required"`
-	LoginId   string `json:"loginid" binding:"required"`
 }
 
 type PayInput struct {

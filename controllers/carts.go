@@ -15,8 +15,10 @@ func GetAllCartItems(c *gin.Context) {
 	var cartItems []models.CartItem
 	customer := models.Customer{}
 	cart := models.Cart{}
-
-	if err := models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer); err != nil {
+	models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer)
+	models.DB.Where("customer_id = ?", customer.ID).Find(&cart)
+	models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems)
+	/* if err := models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer record not found!"})
 		return
 	}
@@ -29,6 +31,7 @@ func GetAllCartItems(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "CusCartItems record not found!"})
 		return
 	}
+	*/
 
 	c.JSON(http.StatusOK, gin.H{"data": cartItems})
 }

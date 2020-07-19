@@ -1,4 +1,4 @@
-import { CustomerModel } from './../../models/customer.model';
+import { Customer } from './../../models/customer.model';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -13,7 +13,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 })
 export class HeaderComponent implements OnInit {
 
-  currentUser: CustomerModel;
+  currentUser: Customer;
   constructor(
     private router: Router, 
     private authenticationService: AuthenticationService) {

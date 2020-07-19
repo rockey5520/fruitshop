@@ -1,69 +1,23 @@
-/* export class User {
-    ID: string;
-    userId: string;
 
-} */
-
-/* export interface CustomerModel {
-    id: number;
-    loginid: string;
-    firstname: string;
-    lastname: string;
+export interface OrderedFruitModel {
+    data: OrderedFruitModelData;
 }
 
-export interface RootObject {
-    customer: CustomerModel;
-}
- */
-
-export interface Customer {
-    data: Data;
-}
-
-export interface Data {
-    loginid:   string;
-    firstname: string;
-    lastname:  string;
-    Discounts: null;
-    Cart:      Cart;
-    ID:        number;
-    CreatedAt: Date;
-    UpdatedAt: Date;
-    DeletedAt: null;
-}
-
-export interface Cart {
-    id:         number;
-    CustomerId: number;
-    total:      number;
-    CartItem:   null;
-    Coupon:     Coupon;
-    Payment:    Payment;
-}
-
-export interface Coupon {
-    id:     number;
-    cartid: number;
-    name:   string;
-    status: string;
-}
-
-export interface Payment {
-    id:     number;
-    CartId: number;
-    amount: number;
-    string: string;
+export interface OrderedFruitModelData {
+    id:    number;
+    name:  string;
+    price: number;
 }
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-    public static toWelcome(json: string): Customer {
-        return cast(JSON.parse(json), r("Welcome"));
+    public static toOrderedFruitModel(json: string): OrderedFruitModel {
+        return cast(JSON.parse(json), r("OrderedFruitModel"));
     }
 
-    public static welcomeToJson(value: Customer): string {
-        return JSON.stringify(uncast(value, r("Welcome")), null, 2);
+    public static OrderedFruitModelToJson(value: OrderedFruitModel): string {
+        return JSON.stringify(uncast(value, r("OrderedFruitModel")), null, 2);
     }
 }
 
@@ -197,38 +151,12 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-    "Welcome": o([
+    "OrderedFruitModel": o([
         { json: "data", js: "data", typ: r("Data") },
     ], false),
     "Data": o([
-        { json: "loginid", js: "loginid", typ: "" },
-        { json: "firstname", js: "firstname", typ: "" },
-        { json: "lastname", js: "lastname", typ: "" },
-        { json: "Discounts", js: "Discounts", typ: null },
-        { json: "Cart", js: "Cart", typ: r("Cart") },
-        { json: "ID", js: "ID", typ: 0 },
-        { json: "CreatedAt", js: "CreatedAt", typ: Date },
-        { json: "UpdatedAt", js: "UpdatedAt", typ: Date },
-        { json: "DeletedAt", js: "DeletedAt", typ: null },
-    ], false),
-    "Cart": o([
         { json: "id", js: "id", typ: 0 },
-        { json: "CustomerId", js: "CustomerId", typ: 0 },
-        { json: "total", js: "total", typ: 0 },
-        { json: "CartItem", js: "CartItem", typ: null },
-        { json: "Coupon", js: "Coupon", typ: r("Coupon") },
-        { json: "Payment", js: "Payment", typ: r("Payment") },
-    ], false),
-    "Coupon": o([
-        { json: "id", js: "id", typ: 0 },
-        { json: "cartid", js: "cartid", typ: 0 },
         { json: "name", js: "name", typ: "" },
-        { json: "status", js: "status", typ: "" },
-    ], false),
-    "Payment": o([
-        { json: "id", js: "id", typ: 0 },
-        { json: "CartId", js: "CartId", typ: 0 },
-        { json: "amount", js: "amount", typ: 0 },
-        { json: "string", js: "string", typ: "" },
+        { json: "price", js: "price", typ: 0 },
     ], false),
 };

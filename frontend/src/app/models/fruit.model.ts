@@ -11,4 +11,4 @@ export interface FruitModel {
 
 export interface RootObject {
     data: FruitModel[];
-}
+} 

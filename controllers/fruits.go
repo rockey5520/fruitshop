@@ -11,7 +11,7 @@ import (
 func FindFruit(c *gin.Context) {
 	var fruit models.Fruit
 
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&fruit).Error; err != nil {
+	if err := models.DB.Where("name = ?", c.Param("name")).First(&fruit).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Fruit record not found!"})
 		return
 	}

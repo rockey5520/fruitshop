@@ -1,4 +1,4 @@
-import { CustomerModel } from './../../models/customer.model';
+import { Data } from './../../models/customer.model';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -47,7 +47,7 @@ export class RegisterComponent implements OnInit {
 
   validateEmailNotTaken({ value }: AbstractControl): Observable<ValidationErrors | null> {
     return this.userService.getUser(value)
-      .pipe(debounceTime(500), map((user: CustomerModel) => {
+      .pipe(debounceTime(500), map((user: Data) => {
         console.log("user.loginid ", user.loginid)
         if (user.loginid !== "") {
           return {

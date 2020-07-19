@@ -29,8 +29,13 @@ func CreateUpdateItemInCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Cart record not found!"})
 		return
 	}
+	var fruit models.Fruit
+	if err := models.DB.Where("name = ?", input.Name).First(&fruit).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Fruit record not found!"})
+		return
+	}
 	//Create/Update/Delete Cart entry based on the count
-	cartItem := models.CartItem{CartID: cart.ID, Name: input.Name}
+	cartItem := models.CartItem{CartID: cart.ID, Name: input.Name, CostPerItem: fruit.Price}
 	if input.Count > 0 {
 		// Create/update fruit to the cart
 
@@ -47,7 +52,6 @@ func CreateUpdateItemInCart(c *gin.Context) {
 		//if err := models.DB.Model(&cartItem).Where("cart_id = ? and name = ?", cart.ID, input.Name).First(&cartItem).Error; err != nil {
 
 	}
-	var fruit models.Fruit
 	models.DB.Where("name = ?", cartItem.Name).Find(&fruit)
 	// RecalcuateItem payment for the item in the cart
 	RecalcualteIemPayments(customer, cart, cartItem, fruit)

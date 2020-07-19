@@ -1,4 +1,5 @@
-import { DiscountModel } from './../models/discount..model';
+
+import { DiscountModel, DiscountModelDatum } from './../models/discount..model';
 import { Injectable, ɵɵresolveBody } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CartModel } from '../models/cart.model';
@@ -12,13 +13,15 @@ import { HttpHeaders } from '@angular/common/http';
 })
 export class DiscountService {
     public update;
+    
 
     constructor(private http: HttpClient) {
         this.update = new BehaviorSubject<boolean>(false);
+        
     }
-    public getDiscountsByID(ID: String): Observable<DiscountModel[]> {
+    public getDiscountsByID(ID: String): Observable<DiscountModel> {
         console.log("discount ID", ID)
-        return this.http.get<DiscountModel[]>(`/server/api/v1/discount/${ID}`);
+        return this.http.get<DiscountModel>(`/server/api/v1/discounts/${ID}`);
     }
 
 }

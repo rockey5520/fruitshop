@@ -1,6 +1,7 @@
+import { OrderedFruitModel } from './../models/orderedfruit.mode';
+import { CartItem } from './../models/cartitem.model';
 import { Injectable, ɵɵresolveBody } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CartModel } from '../models/cart.model';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { FruitModel } from '../models/fruit.model';
 import { catchError } from 'rxjs/operators';
@@ -16,9 +17,9 @@ export class CartService {
   constructor(private http: HttpClient) {
     this.update = new BehaviorSubject<boolean>(false);
   }
-  public getCartByID(ID: String): Observable<CartModel[]> {
-
-    return this.http.get<CartModel[]>(`/server/api/v1/cart/${ID}`);
+  public getCartByID(ID: String): Observable<CartItem> {
+    return this.http.get<CartItem>(`/server/api/v1/cartitem/${ID}`)
+    
   }
 
   public addToCart(ID: String, fruit: FruitModel, count: number) {
@@ -29,11 +30,10 @@ export class CartService {
     }
 
     const body = {
-      "cartId": ID,
       "Name": fruit.name,
       "Count": count
     }
 
-    return this.http.post(`/server/api/v1/cart/add/${ID}`, body, httpOptions)
+    return this.http.post(`/server/api/v1/cartitem/${ID}`, body, httpOptions)
   }
 }

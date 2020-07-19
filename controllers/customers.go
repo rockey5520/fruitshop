@@ -69,7 +69,7 @@ type PayInput struct {
 
 type CartItemInput struct {
 	Name  string `json:"name" binding:"required"`
-	Count int    `json:"count" binding:"required"`
+	Count int    `json:"count"`
 }
 
 //LoadDiscountsInventory will load Discount coupons to the database with default status

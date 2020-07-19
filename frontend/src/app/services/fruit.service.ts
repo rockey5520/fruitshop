@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { FruitModel } from './../models/fruit.model';
-import { RootObject } from './../models/fruit.model';
 import { throwError } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 

@@ -71,13 +71,14 @@ func RecalcualteIemPayments(customer models.Customer, cart models.Cart, cartItem
 	}
 
 	for _, item := range cartItems {
+		fmt.Println(item.Name)
 		if item.Name == "Apple" {
 			if cartItem.Count >= 7 {
 				ApplyApple10Discount(customer, cart, cartItem, fruit)
 			} else {
 				var discount models.Discount
 				models.DB.Model(&discount).Where("customer_id = ? AND name = ?", cart.CustomerId, "APPLE10").Update("status", "NOTAPPLIED")
-				models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "APPLE").Update("item_total", (float64(cartItem.Count) * fruit.Price))
+				models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "Apple").Update("item_total", (float64(cartItem.Count) * fruit.Price))
 			}
 		} else if item.Name == "Banana" || item.Name == "Pear" {
 			//Applying pear banana 30% discount
@@ -131,15 +132,25 @@ func ApplyBananaPear30Discount(customer models.Customer, cart models.Cart, cartI
 				var fruit models.Fruit
 				models.DB.Where("name = ?", cartItem.Name).Find(&fruit)
 				discount := float64(sets*4) / float64(100) * float64(30)
-				models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("total", (float64(cartItem.Count)*fruit.Price)-discount)
+				models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("item_total", (float64(cartItem.Count)*fruit.Price)-discount)
 			} else if cartItem.Name == "Banana" {
 				var fruit models.Fruit
 				models.DB.Where("name = ?", cartItem.Name).Find(&fruit)
 				discount := float64(sets*2) / float64(100) * float64(30)
-				models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("total", (float64(cartItem.Count)*fruit.Price)-discount)
+				models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("item_total", (float64(cartItem.Count)*fruit.Price)-discount)
 			}
 		}
 		discountUpdate = true
+	} else {
+		for _, x := range cartItems {
+			cartItem := x
+			if cartItem.Name == "Pear" {
+				models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "Pear").Update("item_total", (float64(cartItem.Count) * fruit.Price))
+			} else if cartItem.Name == "Banana" {
+				models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "Banana").Update("item_total", (float64(cartItem.Count) * fruit.Price))
+			}
+		}
+
 	}
 
 	if discountUpdate {
@@ -165,7 +176,9 @@ func ApplyApple10Discount(customer models.Customer, cart models.Cart, cartItem m
 	discount := ((float64(cartItem.Count) * fruit.Price) / 100) * 10
 	itemCost = (appleCost - discount)
 
-	models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("total", itemCost)
+	models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("item_total", itemCost)
+	var discountItem models.Discount
+	models.DB.Model(&discountItem).Where("customer_id = ? AND name = ?", cart.CustomerId, "APPLE10").Update("status", "APPLIED")
 
 }
 

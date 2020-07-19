@@ -38,7 +38,10 @@ func FindCart(c *gin.Context) {
 	customer := models.Customer{}
 	cart := models.Cart{}
 
-	models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer)
+	if err := models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cart record not found!"})
+		return
+	}
 
 	models.DB.Where("customer_id = ?", customer.ID).Find(&cart)
 	fmt.Println(cart)
@@ -68,6 +71,23 @@ func CreateCoupon(customer models.Customer) {
 
 	if err := models.DB.Create(&coupon).Error; err != nil {
 		panic("Unable to create coupon")
+	}
+
+}
+
+// CreatePayment  ill create default payment entry
+func CreatePayment(customer models.Customer) {
+
+	var cart models.Cart
+	models.DB.Where("customer_id = ?", customer.ID).Find(&cart)
+
+	payment := models.Payment{
+		CartId: cart.ID,
+		Amount: 0,
+		Status: "NOTPAID",
+	}
+	if err := models.DB.Create(&payment).Error; err != nil {
+		panic("Unable to create payment")
 	}
 
 }

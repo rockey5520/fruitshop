@@ -12,7 +12,7 @@ import (
 // CreateUpdateItemInCart will add users choosen fruits to the cart list
 func CreateUpdateItemInCart(c *gin.Context) {
 	// Bind the input payload to schema for validations
-	var input models.CartItem
+	var input CartItemInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

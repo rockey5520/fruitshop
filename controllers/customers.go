@@ -41,6 +41,8 @@ func CreateCustomer(c *gin.Context) {
 	CreateCart(customer)
 	// Creates coupon entry for the cart and set with default values
 	CreateCoupon(customer)
+	// Creates payment entry for the cart and set with default values
+	CreatePayment(customer)
 
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }
@@ -58,6 +60,16 @@ type CreateCustomerInput struct {
 	FirstName string `json:"firstname" binding:"required"`
 	LastName  string `json:"lastname" binding:"required"`
 	LoginId   string `json:"loginid" binding:"required"`
+}
+
+type PayInput struct {
+	Amount float64 `json:"amount" binding:"required"`
+	Status string  `json:"status"`
+}
+
+type CartItemInput struct {
+	Name  string `json:"name" binding:"required"`
+	Count int    `json:"count" binding:"required"`
 }
 
 //LoadDiscountsInventory will load Discount coupons to the database with default status

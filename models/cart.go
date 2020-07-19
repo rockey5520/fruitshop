@@ -5,4 +5,5 @@ type Cart struct {
 	CustomerId uint       `gorm:"not null;unique_index"`
 	Total      float64    `json:"total"`
 	CartItem   []CartItem `gorm:"foreignkey:CartID;association_foreignkey:ID"`
+	Coupon     Coupon     `gorm:"foreignkey:CartID;association_foreignkey:ID"`
 }

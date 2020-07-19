@@ -39,6 +39,8 @@ func CreateCustomer(c *gin.Context) {
 	LoadDiscountsInventory(customer)
 	//Creates an entry for cart for the customer with default values
 	CreateCart(customer)
+	// Creates coupon entry for the cart and set with default values
+	CreateCoupon(customer)
 
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }

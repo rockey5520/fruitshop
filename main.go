@@ -29,8 +29,11 @@ func main() {
 
 	// Endpoints for cart
 	router.GET("/server/api/v1/cart/:login_id", controllers.FindCart)
-	router.POST("/server/api/v1/cartitem/:login_id", controllers.AddItemInCart)
+	router.POST("/server/api/v1/cartitem/:login_id", controllers.CreateUpdateItemInCart)
 	router.GET("/server/api/v1/cartitem/:login_id", controllers.GetAllCartItems)
+
+	// Endpoints for coupon
+	router.GET("/server/api/v1/orangecoupon/:login_id", controllers.ApplyOrangeCoupon)
 
 	// Use middleware to serve static pages for the website
 	router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))
@@ -66,5 +69,4 @@ func LoadFruitsInventory() {
 	if err := models.DB.Create(&orange).Error; err != nil {
 		panic("Unable to create data into fruits inventory")
 	}
-
 }

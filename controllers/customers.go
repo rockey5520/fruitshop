@@ -7,23 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CustomersService struct{}
-
-func NewCustomerService() CustomersService {
-	return CustomersService{}
-}
-
-// swagger:operation GET /user/starred/{author}/{repo} customers
-// ---
-// summary: Checks whether the requested repository is starred by currently authenticated user.
-// description: Depending on the combined length of author and repo, the following HTTP status will be returned 17+ StatusForbidden, 11+ StatusNotFound, 10- StatusOK
-// parameters:
-// - name: author
-//   in: path
-//   description: username of author
-//   type: string
-//   required: true
-// FindCustomer returns customer details if customer exists in the store
+// @Summary Show details of a customer
+// @Description Get details of a customer
+// @Accept  json
+// @Produce  json
+// @Param login_id path string true "Customer identifier"
+// @Success 200 {array} models.Customer
+// @Failure 400 {string} string "Bad input"
+// @Router /server/api/v1/customers/{login_id} [get]
+// FindCustomer will return a customer based on the input
 func FindCustomer(c *gin.Context) {
 	var customer models.Customer
 
@@ -35,12 +27,14 @@ func FindCustomer(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }
 
-// swagger:route POST /api/v1/customers customer CreateCustomerInput
-// This end point creates a new customer
-// responses:
-//	200: Customer
-//  400: badReq
-
+// @Summary Creates Customer record
+// @Description This end point will record customer details into the database
+// @Accept  json
+// @Produce  json
+// @Param Input body models.CreateCustomerInput true "Input request"
+// @Success 200 {object} models.Customer
+// @Failure 400 {string} string "Bad input"
+// @Router /server/api/v1/customers [post]
 // CreateCustomer will created customer for the fruit store
 func CreateCustomer(c *gin.Context) {
 	// Validate input
@@ -69,7 +63,13 @@ func CreateCustomer(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }
 
-// FindCustomers will retuen all customers exists within the fruitshop
+// @Summary Show details of all customers
+// @Description Get details of all customer
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Customer
+// @Router /server/api/v1/customers [get]
+// FindCustomers will return all customers exists within the fruitshop
 func FindCustomers(c *gin.Context) {
 
 	var customers []models.Customer

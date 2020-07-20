@@ -8,8 +8,6 @@ github.com/PuerkitoBio/urlesc
 ## explicit
 github.com/alecthomas/template
 github.com/alecthomas/template/parse
-# github.com/cpuguy83/go-md2man/v2 v2.0.0
-## explicit
 # github.com/dimfeld/httptreemux/v5 v5.2.2
 github.com/dimfeld/httptreemux/v5
 # github.com/gin-contrib/sse v0.1.0
@@ -35,8 +33,6 @@ github.com/go-openapi/spec
 # github.com/go-openapi/swag v0.19.9
 ## explicit
 github.com/go-openapi/swag
-# github.com/go-playground/assert/v2 v2.0.1
-## explicit
 # github.com/go-playground/locales v0.13.0
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
@@ -69,27 +65,20 @@ github.com/mattn/go-isatty
 # github.com/mattn/go-sqlite3 v1.14.0
 github.com/mattn/go-sqlite3
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
-## explicit
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
-## explicit
 github.com/modern-go/reflect2
-# github.com/pdrum/swagger-automation v0.0.0-20190629163613-c8c7c80ba858
-## explicit
 # github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 ## explicit
 github.com/swaggo/files
 # github.com/swaggo/gin-swagger v1.2.0
 ## explicit
 github.com/swaggo/gin-swagger
-github.com/swaggo/gin-swagger/example/basic/docs
 # github.com/swaggo/swag v1.6.7
 ## explicit
 github.com/swaggo/swag
 # github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
-# github.com/urfave/cli/v2 v2.2.0
-## explicit
 # goa.design/goa/v3 v3.2.0
 ## explicit
 goa.design/goa/v3/http

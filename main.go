@@ -2,14 +2,18 @@ package main
 
 import (
 	"fruitshop/controllers"
+	"fruitshop/docs"
 	"fruitshop/models"
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
 	router := gin.Default()
+	initSwagger(router)
 
 	// initialize DB and load meta data
 	models.ConnectDataBase()
@@ -47,6 +51,18 @@ func main() {
 		panic("Unable to invoke router")
 	}
 
+}
+
+func initSwagger(engine *gin.Engine) {
+	docs.SwaggerInfo.Title = "Fruit Store REST API"
+	docs.SwaggerInfo.Description = "This API is backend service for the fruit store"
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = []string{"http"}
+
+	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 }
 
 //LoadFruitsInventory will load fruits inventory metadata

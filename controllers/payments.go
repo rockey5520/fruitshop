@@ -7,6 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Payment endpoint
+// @Description This end point will update payment details of cart into the database
+// @Accept  json
+// @Produce  json
+// @Param Input body models.Payment true "Payment input request"
+// @Param login_id path string true "Customer identifier"
+// @Success 200 {object} models.Payment
+// @Failure 400 {string} string "Bad input"
+// @Router /server/api/v1/pay/{login_id} [post]
 // Pay method takes the payment and resets cart, cartitems, coupons, discounts
 func Pay(c *gin.Context) {
 

@@ -9,6 +9,35 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// @Summary Show details of a all items in a cart
+// @Description Get details of contents of the cart
+// @Accept  json
+// @Produce  json
+// @Param login_id path string true "Customer identifier"
+// @Success 200 {object} models.CartItem
+// @Failure 400 {string} string "Bad input"
+// @Router /server/api/v1/cartitem/{login_id} [get]
+// GetAllCartList will retuen all of the cart list for a given customer
+func GetAllCartItems(c *gin.Context) {
+
+	var cartItems []models.CartItem
+	customer := models.Customer{}
+	cart := models.Cart{}
+	models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer)
+	models.DB.Where("customer_id = ?", customer.ID).Find(&cart)
+	models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems)
+	c.JSON(http.StatusOK, gin.H{"data": cartItems})
+}
+
+// @Summary Creates/Updated item in the cart
+// @Description This end point will record cart item details into the database
+// @Accept  json
+// @Produce  json
+// @Param Input body models.CartItem true "Input request"
+// @Param login_id path string true "Customer identifier"
+// @Success 200 {object} models.CartItem
+// @Failure 400 {string} string "Bad input"
+// @Router /server/api/v1/cartitem/{login_id} [post]
 // CreateUpdateItemInCart will add users choosen fruits to the cart list
 func CreateUpdateItemInCart(c *gin.Context) {
 	// Bind the input payload to schema for validations

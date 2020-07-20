@@ -9,4 +9,5 @@ fi
 
 
 // executing the application
+$HOME/go/bin/swag init
 go run main.go

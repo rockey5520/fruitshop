@@ -1,3 +1,4 @@
+import { Data } from './../../models/customer.model';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -7,7 +8,7 @@ import { AlertService } from '../../services/alert.service';
 import { UserService } from '../../services/user.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Observable } from 'rxjs';
-import { User } from 'src/app/models/user.model';
+
 
 
 @Component({
@@ -34,20 +35,21 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+
     this.registerForm = this.formBuilder.group({
-      userId: ['', [Validators.required], this.validateEmailNotTaken.bind(this)]
+      loginid: ['', [Validators.required], this.validateEmailNotTaken.bind(this)],
+      firstname: ['', [Validators.required, Validators.minLength(1)]],
+      lastname: ['', [Validators.required, Validators.minLength(1)]]
     });
-  
+
   }
 
 
   validateEmailNotTaken({ value }: AbstractControl): Observable<ValidationErrors | null> {
-    
     return this.userService.getUser(value)
-      .pipe(debounceTime(500), map((user: User) => {
-        console.log(user.userId)
-        if (user.userId !== "") {
+      .pipe(debounceTime(500), map((user: Data) => {
+        console.log("user.loginid ", user.loginid)
+        if (user.loginid !== "") {
           return {
             isExists: true
           };
@@ -70,7 +72,7 @@ export class RegisterComponent implements OnInit {
     }
 
     this.loading = true;
-    console.log(this.registerForm.value)
+    console.log("this.registerForm.value", this.registerForm.value)
     this.userService.register(this.registerForm.value)
       .pipe(first())
       .subscribe(

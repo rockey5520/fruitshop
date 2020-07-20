@@ -1,0 +1,371 @@
+definitions:
+  models.Cart:
+    properties:
+      cartItem:
+        description: CartItem is having has-many relation with Cart
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      coupon:
+        $ref: '#/definitions/models.Coupon'
+        description: Coupon is having has-many relation with Cart
+        type: object
+      customerId:
+        description: Foriegn key for the Cart table coming from the Customer table
+        type: integer
+      id:
+        description: Primary key for the Cart
+        type: integer
+      payment:
+        $ref: '#/definitions/models.Payment'
+        description: Payment is having has-one relation with Cart
+        type: object
+      total:
+        description: Total amount valued for the cart
+        type: number
+    type: object
+  models.CartItem:
+    properties:
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      costperitem:
+        description: Cost per fruit
+        type: number
+      count:
+        description: Number of fruits ordered
+        type: integer
+      id:
+        description: Primary key for the Cart
+        type: integer
+      itemtotal:
+        description: Total cost for this fruits based on number of items
+        type: number
+      name:
+        description: Name of the Fruit
+        type: string
+    type: object
+  models.Coupon:
+    properties:
+      cartid:
+        description: Foriegn key for the Coupon table coming from the Cart table
+        type: integer
+      id:
+        description: Primary key for the Cart
+        type: integer
+      name:
+        description: Name of the coupon
+        type: string
+      status:
+        description: Status of the coupon APPLIED and NOTAPPLIED are the two possible states
+        type: string
+    type: object
+  models.CreateCustomerInput:
+    properties:
+      firstname:
+        description: First name of the customer
+        type: string
+      lastname:
+        description: Last name of the customer
+        type: string
+      loginid:
+        description: Login ID of the customer
+        type: string
+    required:
+    - firstname
+    - lastname
+    - loginid
+    type: object
+  models.Customer:
+    properties:
+      cart:
+        $ref: '#/definitions/models.Cart'
+        description: Cart assosiated to the customer
+        type: object
+      discounts:
+        description: Discounts assosiated to the customer
+        items:
+          $ref: '#/definitions/models.Discount'
+        type: array
+      firstname:
+        description: First name of the customer
+        type: string
+      lastname:
+        description: Last name of the customer
+        type: string
+      loginid:
+        description: Login ID of the customer
+        type: string
+    type: object
+  models.Discount:
+    properties:
+      customerId:
+        description: Foriegn key for the Discount table coming from the Customer table
+        type: integer
+      id:
+        description: Primary key for the Cart
+        type: integer
+      name:
+        description: Name of the coupon
+        type: string
+      status:
+        description: Status of the coupon APPLIED and NOTAPPLIED are the two possible states
+        type: string
+    type: object
+  models.Fruit:
+    properties:
+      id:
+        description: Primary key for the Cart
+        type: integer
+      name:
+        description: Name of the fruit
+        type: string
+      price:
+        description: Price of each fruit
+        type: number
+    type: object
+  models.Payment:
+    properties:
+      amount:
+        description: Amount needs to paid by the customer for the purchase
+        type: number
+      cartId:
+        description: Foriegn key for the Payment table coming from the Cart table
+        type: integer
+      id:
+        description: Primary key for the Cart
+        type: integer
+      string:
+        description: Status of the coupon PAID and NOTPAID are the two possible states
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /server/api/v1/cart/{login_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a cart
+      parameters:
+      - description: Customer identifier
+        in: path
+        name: login_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a cart
+  /server/api/v1/cartitem/{login_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of contents of the cart
+      parameters:
+      - description: Customer identifier
+        in: path
+        name: login_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CartItem'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a all items in a cart
+    post:
+      consumes:
+      - application/json
+      description: This end point will record cart item details into the database
+      parameters:
+      - description: Input request
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/models.CartItem'
+      - description: Customer identifier
+        in: path
+        name: login_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CartItem'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Creates/Updated item in the cart
+  /server/api/v1/customers:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all customer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Customer'
+      summary: Show details of all customers
+    post:
+      consumes:
+      - application/json
+      description: This end point will record customer details into the database
+      parameters:
+      - description: Input request
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateCustomerInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Customer'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Creates Customer record
+  /server/api/v1/customers/{login_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a customer
+      parameters:
+      - description: Customer identifier
+        in: path
+        name: login_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Customer'
+            type: array
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a customer
+  /server/api/v1/fruits:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all fruits
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Fruit'
+            type: array
+      summary: Show details of all fruits
+  /server/api/v1/fruits/{name}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a fruit item
+      parameters:
+      - description: Fruit identifier
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Fruit'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a fruit item
+  /server/api/v1/orangecoupon/{login_id}:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint applied orange 30 percent discount coupon code
+      parameters:
+      - description: Customer identifier
+        in: path
+        name: login_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Coupon'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Applied orange 30 coupon code
+  /server/api/v1/pay/{login_id}:
+    post:
+      consumes:
+      - application/json
+      description: This end point will update payment details of cart into the database
+      parameters:
+      - description: Payment input request
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Payment'
+      - description: Customer identifier
+        in: path
+        name: login_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Payment'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Payment endpoint
+swagger: "2.0"

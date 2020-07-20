@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { FruitModel } from './../../models/fruit.model';
 import { FruitService } from './../../services/fruit.service';
@@ -10,14 +11,25 @@ import { Observable } from 'rxjs';
 })
 export class ShopComponent implements OnInit {
 
-  fruitList: Observable<Array<FruitModel>>
+  //fruitList: Observable<Array<FruitModel>>
+  fruitList: FruitModel[] = []
+
+
 
   constructor(private fruitService: FruitService) {
 
   }
 
   ngOnInit(): void {
-    this.fruitList = this.fruitService.getFruits();
+    this.getFruits()
+  }
+
+  getFruits(): void {
+   this.fruitService.getFruits().subscribe(
+      fruits => this.fruitList = fruits
+    );
+
+    console.log("this.fruitList ", this.fruitList)
   }
 
 }

@@ -1,20 +1,29 @@
 <h2>Register</h2>
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="userId">userId</label>
-        <input type="text" formControlName="userId" class="form-control" [ngClass]="{ 'is-invalid': f.userId.errors }" />
-        <div *ngIf="f.userId.errors" class="invalid-feedback">
-            <div *ngIf="f.userId.errors.required">userId is required</div>
-            <div *ngIf="f.userId.errors.isExists">userId already exists</div>
+    <div class="form-group">
+        <label for="loginid">loginid</label>
+        <input type="text" formControlName="loginid" class="form-control"
+            [ngClass]="{ 'is-invalid': f.loginid.errors }" />
+        <div *ngIf="f.loginid.errors" class="invalid-feedback">
+            <div *ngIf="f.loginid.errors.required">loginid is required</div>
+            <div *ngIf="f.loginid.errors.isExists">loginid already exists</div>
         </div>
     </div>
-   
     <div class="form-group">
-        <button mat-raised-button color="primary" [disabled]="f.userId.errors" class="mr-1">
+        <label for="firstname">firstname</label>
+        <input type="text" formControlName="firstname" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="lastname">lastname</label>
+        <input type="text" formControlName="lastname" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <button mat-raised-button color="primary" [disabled]="f.loginid.errors" class="mr-1">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
             Register
         </button>
-        <a  mat-raised-button routerLink="/login" class="ml-1">Login</a>
+        <a mat-raised-button routerLink="/login" class="ml-1">Login</a>
     </div>
 </form>
 
@@ -29,7 +38,7 @@
 
 
 
-  <!-- <div class="form-group">
+<!-- <div class="form-group">
         <label for="firstName">First Name</label>
         <input type="text" formControlName="firstName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
         <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
@@ -44,7 +53,7 @@
         </div>
     </div> -->
 
-     <!-- <div class="form-group">
+<!-- <div class="form-group">
         <label for="password">Password</label>
         <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
         <div *ngIf="submitted && f.password.errors" class="invalid-feedback">

@@ -20,27 +20,27 @@ func main() {
 	LoadFruitsInventory()
 
 	// Endpoints for customer
-	router.GET("/server/api/v1/customers", controllers.FindCustomers)
-	router.GET("/server/api/v1/customers/:login_id", controllers.FindCustomer)
-	router.POST("/server/api/v1/customers", controllers.CreateCustomer)
+	router.GET("/api/v1/customers", controllers.FindCustomers)
+	router.GET("/api/v1/customers/:login_id", controllers.FindCustomer)
+	router.POST("/api/v1/customers", controllers.CreateCustomer)
 
 	// Endpoints for fruits
-	router.GET("/server/api/v1/fruits", controllers.FindFruits)
-	router.GET("/server/api/v1/fruits/:name", controllers.FindFruit)
+	router.GET("/api/v1/fruits", controllers.FindFruits)
+	router.GET("/api/v1/fruits/:name", controllers.FindFruit)
 
 	// Endpoints for discounts
-	router.GET("/server/api/v1/discounts/:login_id", controllers.FindDiscounts)
+	router.GET("/api/v1/discounts/:login_id", controllers.FindDiscounts)
 
 	// Endpoints for cart
-	router.GET("/server/api/v1/cart/:login_id", controllers.FindCart)
-	router.POST("/server/api/v1/cartitem/:login_id", controllers.CreateUpdateItemInCart)
-	router.GET("/server/api/v1/cartitem/:login_id", controllers.GetAllCartItems)
+	router.GET("/api/v1/cart/:login_id", controllers.FindCart)
+	router.POST("/api/v1/cartitem/:login_id", controllers.CreateUpdateItemInCart)
+	router.GET("/api/v1/cartitem/:login_id", controllers.GetAllCartItems)
 
 	// Endpoints for coupon
-	router.GET("/server/api/v1/orangecoupon/:login_id", controllers.ApplyOrangeCoupon)
+	router.GET("/api/v1/orangecoupon/:login_id", controllers.ApplyOrangeCoupon)
 
 	// Endpoints for coupon
-	router.POST("/server/api/v1/pay/:login_id", controllers.Pay)
+	router.POST("/api/v1/pay/:login_id", controllers.Pay)
 
 	// Use middleware to serve static pages for the website
 	router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))

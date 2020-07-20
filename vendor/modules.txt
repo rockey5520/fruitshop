@@ -10,6 +10,8 @@ github.com/alecthomas/template
 github.com/alecthomas/template/parse
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
 ## explicit
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
 # github.com/dimfeld/httptreemux/v5 v5.2.2
 github.com/dimfeld/httptreemux/v5
 # github.com/gin-contrib/sse v0.1.0
@@ -70,6 +72,11 @@ github.com/mattn/go-sqlite3
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
+# github.com/stretchr/testify v1.5.1
+## explicit
+github.com/stretchr/testify/assert
 # github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 ## explicit
 github.com/swaggo/files

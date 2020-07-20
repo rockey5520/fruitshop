@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 // @Summary Show details of a customer
@@ -25,6 +26,10 @@ func FindCustomer(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": customer})
+}
+
+type AuthMiddleware struct {
+	db *gorm.DB
 }
 
 // @Summary Creates Customer record

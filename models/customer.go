@@ -16,6 +16,7 @@ type Customer struct {
 	Discounts []Discount `gorm:"foreignkey:CustomerId;association_foreignkey:ID"`
 	// Cart assosiated to the customer
 	Cart Cart `gorm:"foreignkey:CustomerId;association_foreignkey:ID"`
+	
 	gorm.Model
 }
 

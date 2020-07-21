@@ -21,14 +21,10 @@ export class UserService {
     }
 
       
-    register(customer: Data) {
-        console.log("customer id ",customer.loginid)
-        console.log("customer firstname ",customer.firstname)
-        
+    register(customer: Data) {        
         return this.http.post(`/server/api/v1/customers`, customer).pipe(map(customer => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(customer));
-            console.log("currentUser",localStorage.getItem("currentUser"))
             //this.currentUserSubject.next(customer)
             return customer;
         }));

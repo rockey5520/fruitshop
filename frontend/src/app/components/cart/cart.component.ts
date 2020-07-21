@@ -75,7 +75,6 @@ export class CartComponent implements OnInit {
       }
     })
     this.authenticationService.update.subscribe((data: boolean) => {
-      console.log("ngon it authentiation subscribe")
       if (data) {
         this.updateUserData();
       }
@@ -84,7 +83,6 @@ export class CartComponent implements OnInit {
   }
 
   updateData() {
-    console.log("current user ", this.currentUser.data.firstname)
     this.cartList = this.cartService.getCartByID(this.currentUser.data.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.count > 0)));
 
@@ -97,12 +95,9 @@ export class CartComponent implements OnInit {
   }
 
   updateDiscountData() {
-    console.log("current user loginid ", this.currentUser.data.Cart.ID)
     this.discountList = this.discountService.getDiscountsByID(this.currentUser.data.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.status == "APPLIED")));
-    console.log("discount list ", this.discountList)
-
-  }
+    }
   
   updateUserData() {  
     this.authenticationService.login(this.currentUser.data.loginid).subscribe((x)=>{
@@ -112,10 +107,8 @@ export class CartComponent implements OnInit {
 
   pay(): void {
     this.paymentService.pay(this.currentUser.data.ID, this.currentUser.data.Cart.ID, this.total).subscribe(() => {
-      console.log("called auth service", this.currentUser)
       this.authenticationService.update.next(true)
     },error => {
-      console.log("error has occured")
       console.error(error)
     })
     

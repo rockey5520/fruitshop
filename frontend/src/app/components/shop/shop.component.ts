@@ -28,8 +28,6 @@ export class ShopComponent implements OnInit {
    this.fruitService.getFruits().subscribe(
       fruits => this.fruitList = fruits
     );
-
-    console.log("this.fruitList ", this.fruitList)
   }
 
 }

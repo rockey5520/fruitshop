@@ -34,9 +34,6 @@ export class CartService {
       "Name": fruit.name,
       "Count": count
     }
-    console.log("post body ", body)
-
-    //return this.http.post(`/api/v1/cartitem`, body, httpOptions)
     return this.http.post(`/server/api/v1/cartitem`, body, httpOptions)
   }
 }

@@ -23,19 +23,17 @@ export class AuthenticationService {
     }
 
     login(loginid){
-        console.log("success",loginid)
         return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                console.log("localStorage.getItem",localStorage.getItem("currentUser"))
+                //console.log("localStorage.getItem",localStorage.getItem("currentUser"))
                 this.currentUserSubject.next(user);
                 return user;
             }));
     }
 
     login2(loginid){
-        console.log("success",loginid)
         return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
     }
 

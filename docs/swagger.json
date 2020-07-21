@@ -437,7 +437,7 @@
                     "type": "integer"
                 },
                 "fruitID": {
-                    "description": "Fruit identifier",
+                    "description": "Fruit identifier\nFruit Fruit `gorm:\"foreignkey:ID;association_foreignkey:ID\"`",
                     "type": "integer"
                 },
                 "id": {

@@ -61,16 +61,25 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
     this.updateData()
     this.updateDiscountData();
+    this.updateUserData();
     this.cartService.update.subscribe((data: boolean) => {
       if (data) {
         this.updateData();
         this.updateDiscountData();
+        this.updateUserData();
       }
     })
 
     this.discountService.update.subscribe((data: boolean) => {
       if (data) {
         this.updateDiscountData();
+        this.updateUserData();
+      }
+    })
+
+    this.authenticationService.update.subscribe((data: boolean) => {
+      if (data) {
+        this.updateUserData();
       }
     })
 
@@ -97,21 +106,24 @@ export class CartComponent implements OnInit {
 
   }
 
-
+  updateUserData() {
+    this.authenticationService.login(this.currentUser.data.loginid)
+  }
 
   pay(): void {
-    this.paymentService.pay(this.currentUser.data.loginid,this.currentUser.data.Cart.ID, this.total).subscribe(() => {
+    this.paymentService.pay(this.currentUser.data.ID, this.currentUser.data.Cart.ID, this.total).subscribe(() => {
+      console.log("called auth service", this.currentUser)
+      this.authenticationService.update.next(true)
       this.cartService.update.next(true)
 
     })
   }
 
   applyDiscount(): void {
-
     this.paymentService.applyDiscount(this.currentUser.data.Cart.ID).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
-      
+
     })
     this.formNotComplete = true;
     setTimeout(() => {

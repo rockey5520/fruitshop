@@ -17,7 +17,7 @@ export class PaymentService {
     this.update = new BehaviorSubject<boolean>(false);
   }
 
-  public pay( loginid:String, cartID: Number,amount: number) {
+  public pay(id:number, cartID: Number,amount: number) {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -25,9 +25,9 @@ export class PaymentService {
     }
 
     const body = {
-      "customerid":loginid,
-      "CartID":cartID,
-      "amount": 19.0
+      "customerid":id,
+      "cartid":cartID,
+      "amount": amount
   }
 
     return this.http.post(`/server/api/v1/pay`, body, httpOptions)

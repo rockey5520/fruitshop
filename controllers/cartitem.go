@@ -67,20 +67,24 @@ func CreateUpdateItemInCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Fruit record not found!"})
 		return
 	}
+	fmt.Println("fruit id ", fruit.ID)
 	//Create/Update/Delete Cart entry based on the count
 	cartItem := models.CartItem{CartID: input.CartId, FruitID: fruit.ID, ItemTotal: fruit.Price * float64(input.Count)}
 	if input.Count > 0 {
 		// Create/update fruit to the cart
 		cartItem.Quantity = input.Count
-		if err := models.DB.Model(&cartItem).Where("cart_id = ? and fruit_id = ?", input.CartId, fruit.ID).First(&cartItem).Error; err != nil {
+		if err := models.DB.Model(&cartItem).Where("cart_id = ? AND fruit_id = ? ", input.CartId, fruit.ID).First(&cartItem).Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
 				models.DB.Create(&cartItem) // create new record from newUser
 			}
 		} else {
-			models.DB.Model(&cartItem).Where("cart_id = ? and fruit_id = ?", input.CartId, fruit.ID).Update("quantity", input.Count).Update("item_total", float64(input.Count)*fruit.Price)
+			models.DB.Model(&cartItem).Where("cart_id = ?  AND fruit_id = ? ", input.CartId, fruit.ID).
+				Update("quantity", input.Count).
+				Update("fruit_id", fruit.ID).
+				Update("item_total", float64(input.Count)*fruit.Price)
 		}
 	} else if input.Count == 0 {
-		models.DB.Where("cart_id = ? and fruit_id = ?", input.CartId, fruit.ID).Delete(&cartItem)
+		models.DB.Where("cart_id = ?", input.CartId).Delete(&cartItem)
 
 	}
 

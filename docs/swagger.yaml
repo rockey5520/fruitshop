@@ -77,7 +77,9 @@ definitions:
         description: Foriegn key for the CartItem table coming from the Cart table
         type: integer
       fruitID:
-        description: Fruit identifier
+        description: |-
+          Fruit identifier
+          Fruit Fruit `gorm:"foreignkey:ID;association_foreignkey:ID"`
         type: integer
       id:
         description: Primary key for the Cart

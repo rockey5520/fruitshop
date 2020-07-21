@@ -24,18 +24,11 @@ func CreateCustomer(c *gin.Context) {
 		return
 	}
 
-	// Create new customer, payment and cart (needs to be removed here and move to pay table)
-	newPayment := models.Payment{
-		Amount: 0.0,
-		Status: "NOTPAID",
-	}
-
 	// update cart to cart array in the customer table
 
 	newcart := models.Cart{
-		Total:   0.0,
-		Status:  "OPEN",
-		Payment: newPayment,
+		Total:  0.0,
+		Status: "OPEN",
 	}
 
 	customer := models.Customer{

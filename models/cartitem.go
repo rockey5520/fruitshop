@@ -9,6 +9,7 @@ type CartItem struct {
 	// Foriegn key for the CartItem table coming from the Cart table
 	CartID uint `gorm:"not null"`
 	// Fruit identifier
+	//Fruit Fruit `gorm:"foreignkey:ID;association_foreignkey:ID"`
 	FruitID uint `gorm:"not null"`
 	// Number of fruits ordered
 	Quantity int `json:"quantity"`

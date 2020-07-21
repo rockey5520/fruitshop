@@ -40,7 +40,7 @@ func main() {
 	router.GET("/api/v1/orangecoupon/:cart_id", controllers.ApplyOrangeCoupon)
 
 	// Endpoints for coupon
-	router.POST("/api/v1/pay/", controllers.Pay)
+	router.POST("/api/v1/pay", controllers.Pay)
 
 	// Use middleware to serve static pages for the website
 	router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))

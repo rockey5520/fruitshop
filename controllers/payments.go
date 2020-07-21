@@ -41,29 +41,26 @@ func Pay(c *gin.Context) {
 		// Set Cart amoun to 0
 		models.DB.Model(&cart).Where("ID = ?", payment.CartID).Update("total", 0).Update("status", "CLOSED")
 
-		var pay models.Payment
-		models.DB.Model(&pay).Where("cart_id = ?", cart.ID).Update("status", "PAID")
+		pay := models.Payment{
+			CartId: payment.CartID,
+			Amount: payment.Amount,
+			Status: "PAID",
+		}
+
+		models.DB.Create(&pay)
+
 		newCart := models.Cart{
 			CustomerId: payment.CustomerID,
 			Total:      0.0,
 			Status:     "OPEN",
 		}
 		models.DB.Create(&newCart)
-		var cart models.Cart
-
-		models.DB.Where("status = ?", "OPEN").Find(&cart)
-		newPayment := models.Payment{
-			CartId: cart.ID,
-			Amount: 0.0,
-			Status: "NOTPAID",
-		}
-		models.DB.Create(&newPayment)
 
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "payment amount mismatched with the cart total"})
 		return
 	}
-	payment.Status = "PAID"
+
 	var customer models.Customer
 	models.DB.Where("ID = ?", payment.CustomerID)
 

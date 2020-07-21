@@ -28,7 +28,7 @@ func Pay(c *gin.Context) {
 
 	// Get cart
 	cart := models.Cart{}
-	if err := models.DB.Where("ID = ? AND status = ?", payment.CartID, "NOTPAID").Find(&cart).Error; err != nil {
+	if err := models.DB.Where("ID = ? AND status = ?", payment.CartID, "OPEN").Find(&cart).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Cart record not found or Payment is made on already paid cart!"})
 		return
 	}
@@ -51,7 +51,7 @@ func Pay(c *gin.Context) {
 		models.DB.Create(&newCart)
 		var cart models.Cart
 
-		models.DB.Where("status = ?", "CLOSED").Find(&cart)
+		models.DB.Where("status = ?", "OPEN").Find(&cart)
 		newPayment := models.Payment{
 			CartId: cart.ID,
 			Amount: 0.0,

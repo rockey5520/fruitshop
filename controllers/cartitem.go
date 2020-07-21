@@ -178,13 +178,13 @@ func ApplyBananaPear30Discount(cartItem models.CartItem) {
 				var fruit models.Fruit
 				models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 				discount := float64(sets*dualItemDiscount.Count_1) / float64(100) * float64(dualItemDiscount.Discount)
-				appliedDualItemDiscount.Savings = discount
+				appliedDualItemDiscount.Savings += discount
 				models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount)
 			} else if cartItem.FruitID == dualItemDiscount.FruitID_2 {
 				var fruit models.Fruit
 				models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 				discount := float64(sets*dualItemDiscount.Count_2) / float64(100) * float64(dualItemDiscount.Discount)
-				appliedDualItemDiscount.Savings = discount
+				appliedDualItemDiscount.Savings += discount
 				models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount)
 			}
 		}

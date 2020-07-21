@@ -100,7 +100,7 @@ export class CartComponent implements OnInit {
 
 
   pay(): void {
-    this.paymentService.pay(this.currentUser.data.loginid, this.total).subscribe(() => {
+    this.paymentService.pay(this.currentUser.data.loginid,this.currentUser.data.Cart.ID, this.total).subscribe(() => {
       this.cartService.update.next(true)
 
     })

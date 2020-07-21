@@ -24,11 +24,13 @@ func CreateCustomer(c *gin.Context) {
 		return
 	}
 
-	// Create new customer, payment and cart
+	// Create new customer, payment and cart (needs to be removed here and move to pay table)
 	newPayment := models.Payment{
 		Amount: 0.0,
 		Status: "NOTPAID",
 	}
+
+	// update cart to cart array in the customer table
 
 	newcart := models.Cart{
 		Total:   0.0,
@@ -47,19 +49,6 @@ func CreateCustomer(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"error": "Customer already exists with the same login id"})
 		return
 	}
-	/* if err := models.DB.Create(&customer).Error; err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "Customer already exists with the same login id"})
-		return
-	} */
-
-	// Loads default discounts for the customer  with default values
-	//LoadDiscountsInventory(customer)
-	//Creates an entry for cart for the customer with default values
-	//CreateCart(customer)
-	// Creates coupon entry for the cart and set with default values
-	//CreateCoupon(customer)
-	// Creates payment entry for the cart and set with default values
-	//CreatePayment(customer)
 
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }

@@ -19,7 +19,6 @@ import (
 // FindCart will fetch the details about the cart of the customer
 func FindCart(c *gin.Context) {
 	cart := models.Cart{}
-
 	models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
 	fmt.Println(cart)
 	c.JSON(http.StatusOK, gin.H{"data": cart})

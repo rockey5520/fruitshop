@@ -134,7 +134,7 @@ func RecalcualtePayments(cartID uint) {
 	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&payment).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
-	models.DB.Model(&payment).Update("amount", totalCost)
+	models.DB.Model(&payment).Where("cart_id = ?", cart.ID).Update("amount", totalCost)
 
 }
 

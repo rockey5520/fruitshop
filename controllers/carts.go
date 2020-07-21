@@ -22,7 +22,10 @@ func FindCart(c *gin.Context) {
 	//models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
 	models.DB.Where("ID = ?", c.Param("cart_id")).
 		Preload("CartItem").
-		Preload("CartItem").
+		Preload("Payment").
+		Preload("AppliedDualItemDiscount").
+		Preload("AppliedSingleItemDiscount").
+		Preload("AppliedSingleItemCoupon").
 		Find(&cart)
 
 	fmt.Println(cart)

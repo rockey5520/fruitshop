@@ -38,7 +38,7 @@ func Pay(c *gin.Context) {
 		var cartItems []models.CartItem
 		models.DB.Find(&cartItems)
 
-		// Set Cart amoun to 0
+		// Set Cart amount to 0
 		models.DB.Model(&cart).Where("ID = ?", payment.CartID).Update("total", 0).Update("status", "CLOSED")
 
 		pay := models.Payment{

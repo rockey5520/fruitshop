@@ -32,6 +32,11 @@ func FindDiscounts(c *gin.Context) {
 	var dualItemDiscount models.DualItemDiscount
 	models.DB.Where("ID = ?", appliedDualItemDiscount.DualItemDiscountID).Find(&dualItemDiscount)
 
+	var appliedSingleItemCoupon models.AppliedSingleItemCoupon
+	models.DB.Where("cart_id = ?", c.Param("cart_id")).Find(&appliedSingleItemCoupon)
+	var singeItemCoupon models.SingleItemCoupon
+	models.DB.Where("ID = ?", appliedSingleItemCoupon.SingleItemCouponID).Find(&singeItemCoupon)
+
 	if singleItemDiscount.Name != "" {
 		s = append(s, models.Discount{
 			Name:   singleItemDiscount.Name,
@@ -41,6 +46,12 @@ func FindDiscounts(c *gin.Context) {
 	if dualItemDiscount.Name != "" {
 		s = append(s, models.Discount{
 			Name:   dualItemDiscount.Name,
+			Status: "APPLIED",
+		})
+	}
+	if singeItemCoupon.Name != "" {
+		s = append(s, models.Discount{
+			Name:   singeItemCoupon.Name,
 			Status: "APPLIED",
 		})
 	}

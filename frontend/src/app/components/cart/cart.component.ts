@@ -108,7 +108,7 @@ export class CartComponent implements OnInit {
 
   applyDiscount(): void {
 
-    this.paymentService.applyDiscount(this.currentUser.data.loginid).subscribe(() => {
+    this.paymentService.applyDiscount(this.currentUser.data.Cart.ID).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
       

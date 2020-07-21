@@ -47,6 +47,7 @@ export class CartComponent implements OnInit {
   totalSavings: number
   seconds1: number
   formNotComplete: boolean = false;
+  myVar : Number
 
 
 
@@ -113,12 +114,11 @@ export class CartComponent implements OnInit {
     this.paymentService.pay(this.currentUser.data.ID, this.currentUser.data.Cart.ID, this.total).subscribe(() => {
       console.log("called auth service", this.currentUser)
       this.authenticationService.update.next(true)
-      
-
     },error => {
       console.log("error has occured")
       console.error(error)
     })
+    
   }
 
   applyDiscount(): void {
@@ -128,6 +128,7 @@ export class CartComponent implements OnInit {
 
     })
     this.formNotComplete = true;
+    
     setTimeout(() => {
       this.cartService.getCartByID(this.currentUser.data.Cart.ID,).subscribe(() => {
         this.cartService.update.next(true)
@@ -138,6 +139,10 @@ export class CartComponent implements OnInit {
       13000);
 
   }
+
+  
+
+  
 
 
 

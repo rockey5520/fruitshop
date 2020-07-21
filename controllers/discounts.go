@@ -111,13 +111,17 @@ func ApplySingleItemCoupon(c *gin.Context, discountCouponCode string) {
 	// configurable timer for the coupon expiry
 	time.Sleep(10 * time.Second)
 
-	var cartItem models.CartItem
-	models.DB.Where("ID = ?", c.Param("cart_id")).First((&cartItem))
-	var fruit models.Fruit
-	models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
-	models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.ID).Update("ItemTotal", float64(cartItem.Quantity)*fruit.Price)
-	RecalcualtePayments(cartItem.CartID)
-	models.DB.Unscoped().Where("cart_id = ?", c.Param("cart_id")).Delete(&appliedItemCoupon)
+	var cart models.Cart
+	models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
+	if cart.Status != "CLOSED" {
+		var cartItem models.CartItem
+		models.DB.Where("ID = ?", c.Param("cart_id")).First((&cartItem))
+		var fruit models.Fruit
+		models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+		models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.ID).Update("ItemTotal", float64(cartItem.Quantity)*fruit.Price)
+		RecalcualtePayments(cartItem.CartID)
+		models.DB.Unscoped().Where("cart_id = ?", c.Param("cart_id")).Delete(&appliedItemCoupon)
+	}
 
 }
 

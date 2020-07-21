@@ -29,7 +29,6 @@ export class FruitcardComponent implements OnInit {
 
   ngOnInit(): void {
     this.count = 0;
-
   }
 
   addToCount(): void {

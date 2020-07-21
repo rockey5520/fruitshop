@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"fruitshop/models"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,38 +12,20 @@ import (
 // @Description Get details of a cart
 // @Accept  json
 // @Produce  json
-// @Param login_id path string true "Customer identifier"
+// @Param cart_id path string true "Customer identifier"
 // @Success 200 {object} models.Cart
 // @Failure 400 {string} string "Bad input"
-// @Router /server/api/v1/cart/{login_id} [get]
+// @Router /server/api/v1/cart/{cart_id} [get]
 // FindCart will fetch the details about the cart of the customer
 func FindCart(c *gin.Context) {
-	customer := models.Customer{}
 	cart := models.Cart{}
 
-	if err := models.DB.Where("login_id = ?", c.Param("login_id")).Find(&customer).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Cart record not found!"})
-		return
-	}
-
-	models.DB.Where("customer_id = ?", customer.ID).Find(&cart)
+	models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
 	fmt.Println(cart)
 	c.JSON(http.StatusOK, gin.H{"data": cart})
-
 }
 
-//CreateCart will create a cart item for the customer
-func CreateCart(customer models.Customer) {
-	models.DB.Where("login_id = ?", customer.LoginId).Find(&customer)
-
-	cart := models.Cart{CustomerId: customer.ID, Total: 0.0}
-
-	if err := models.DB.Create(&cart).Error; err != nil {
-		panic("Unable to create cart")
-	}
-
-}
-
+/*
 //CreateCoupon will create a coupon for a customer with default values
 func CreateCoupon(customer models.Customer) {
 	var cart models.Cart
@@ -134,3 +115,4 @@ func ApplyOrange30Coupon(c *gin.Context) {
 	RecalcualtePayments(cart)
 
 }
+*/

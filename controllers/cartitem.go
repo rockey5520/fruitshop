@@ -113,6 +113,12 @@ func RecalcualtePayments(cartID uint) {
 		fmt.Println("Error ", err)
 	}
 	models.DB.Model(&cart).Update("total", totalCost)
+	var payment models.Payment
+	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&payment).Error; err != nil {
+		fmt.Println("Error ", err)
+	}
+	models.DB.Model(&payment).Update("amount", totalCost)
+
 }
 
 //ApplyBananaPear30Discount applies banana pear 30 percent discount
@@ -264,113 +270,3 @@ func ApplyApple10Discount(cartItem models.CartItem) {
 		}
 	}
 }
-
-/*
-	// Recalcualte the payments
-	var cartItems []models.CartItem
-	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems).Error; err != nil {
-		fmt.Println("Error ", err)
-	}
-	var discounts []models.Discount
-	if err := models.DB.Where("customer_id = ?", customer.ID).Find(&discounts).Error; err != nil {
-		fmt.Println("Error ", err)
-	}
-
-	for _, item := range cartItems {
-		fmt.Println(item.Name)
-		if item.Name == "Apple" {
-			if cartItem.Count >= 7 {
-				ApplyApple10Discount(customer, cart, cartItem, fruit)
-			} else {
-				var discount models.Discount
-				models.DB.Model(&discount).Where("customer_id = ? AND name = ?", cart.CustomerId, "APPLE10").Update("status", "NOTAPPLIED")
-				models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "Apple").Update("item_total", (float64(cartItem.Count) * fruit.Price))
-			}
-		} else if item.Name == "Banana" || item.Name == "Pear" {
-			//Applying pear banana 30% discount
-			ApplyBananaPear30Discount(customer, cart, cartItem, fruit)
-		} else if item.Name == "Orange" {
-			models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "Orange").Update("item_total", (float64(cartItem.Count) * fruit.Price))
-		}
-	}
-
-}
-
-/*
-
-// RecalcualtePayments recalcuates the payment for the cart
-func RecalcualtePayments(cart models.Cart) {
-	// Recalcualte the payments
-
-	var cartItems []models.CartItem
-	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems).Error; err != nil {
-		fmt.Println("Error ", err)
-	}
-	var totalCost float64
-	for _, item := range cartItems {
-		totalCost += item.ItemTotal
-	}
-	models.DB.Model(&cart).Update("total", totalCost)
-}
-
-//ApplyBananaPear30Discount applies banana pear 30 percent discount
-func ApplyBananaPear30Discount(customer models.Customer, cart models.Cart, cartItem models.CartItem, fruit models.Fruit) {
-	var pearCount int
-	var bananaCount int
-	var discountUpdate bool
-
-	var cartItems []models.CartItem
-	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&cartItems).Error; err != nil {
-		fmt.Println("Error ", err)
-	}
-	for _, x := range cartItems {
-		cartItem := x
-		if cartItem.Name == "Pear" {
-			pearCount = cartItem.Count
-
-		} else if cartItem.Name == "Banana" {
-			bananaCount = cartItem.Count
-		}
-	}
-	sets := getSets(pearCount, bananaCount)
-	if sets != 0 {
-		for _, x := range cartItems {
-			cartItem := x
-			if cartItem.Name == "Pear" {
-				var fruit models.Fruit
-				models.DB.Where("name = ?", cartItem.Name).Find(&fruit)
-				discount := float64(sets*4) / float64(100) * float64(30)
-				models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("item_total", (float64(cartItem.Count)*fruit.Price)-discount)
-			} else if cartItem.Name == "Banana" {
-				var fruit models.Fruit
-				models.DB.Where("name = ?", cartItem.Name).Find(&fruit)
-				discount := float64(sets*2) / float64(100) * float64(30)
-				models.DB.Model(&cartItem).Where("cart_id = ?", cart.ID).Update("item_total", (float64(cartItem.Count)*fruit.Price)-discount)
-			}
-		}
-		discountUpdate = true
-	} else {
-		for _, x := range cartItems {
-			cartItem := x
-			if cartItem.Name == "Pear" {
-				models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "Pear").Update("item_total", (float64(cartItem.Count) * fruit.Price))
-			} else if cartItem.Name == "Banana" {
-				models.DB.Model(&cartItem).Where("cart_id = ? AND name = ?", cart.ID, "Banana").Update("item_total", (float64(cartItem.Count) * fruit.Price))
-			}
-		}
-
-	}
-
-	if discountUpdate {
-		var discount models.Discount
-		models.DB.Model(&discount).Where("customer_id = ? AND name = ?", cart.CustomerId, "PEARBANANA").Update("status", "APPLIED")
-	} else {
-		var discount models.Discount
-		models.DB.Model(&discount).Where("customer_id = ? AND name = ?", cart.CustomerId, "PEARBANANA").Update("status", "NOTAPPLIED")
-	}
-
-}
-
-
-
-*/

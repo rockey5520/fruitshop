@@ -269,6 +269,62 @@
                     }
                 }
             }
+        },
+        "/server/api/v1/orangecoupon/{cart_id}": {
+            "get": {
+                "responses": {
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/pay/{cart_id}": {
+            "post": {
+                "description": "This end point will update payment details of cart into the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Payment endpoint",
+                "parameters": [
+                    {
+                        "description": "Payment input request",
+                        "name": "Input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Payment"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Customer identifier",
+                        "name": "cart_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Payment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

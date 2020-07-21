@@ -38,23 +38,12 @@ func main() {
 	// Endpoints for coupon
 	router.GET("/server/api/v1/orangecoupon/:cart_id", controllers.ApplyOrangeCoupon)
 
-	/*
+	// Endpoints for coupon
+	router.POST("/server/api/v1/pay/", controllers.Pay)
 
-
-		// Endpoints for cart
-		c
-
-
-
-		// Endpoints for coupon
-		router.GET("/server/api/v1/orangecoupon/:login_id", controllers.ApplyOrangeCoupon)
-
-		// Endpoints for coupon
-		router.POST("/server/api/v1/pay/:login_id", controllers.Pay)
-
-		// Use middleware to serve static pages for the website
-		router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))
-		router.Use(static.Serve("/download", static.LocalFile("./output", true))) */
+	/* // Use middleware to serve static pages for the website
+	router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))
+	router.Use(static.Serve("/download", static.LocalFile("./output", true))) */
 
 	err := router.Run()
 	if err != nil {

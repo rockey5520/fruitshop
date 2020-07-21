@@ -46,7 +46,7 @@ func FindDiscounts(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param cart_id path string true "Customer identifier"
-// @Success 200 {object} models.Coupon
+
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/orangecoupon/{cart_id} [get]
 //ApplyOrangeCoupon applies discount for oranges

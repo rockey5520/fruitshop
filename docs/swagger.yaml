@@ -359,4 +359,40 @@ paths:
           schema:
             type: string
       summary: Show details of a fruit item
+  /server/api/v1/orangecoupon/{cart_id}:
+    get:
+      responses:
+        "400":
+          description: Bad input
+          schema:
+            type: string
+  /server/api/v1/pay/{cart_id}:
+    post:
+      consumes:
+      - application/json
+      description: This end point will update payment details of cart into the database
+      parameters:
+      - description: Payment input request
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Payment'
+      - description: Customer identifier
+        in: path
+        name: cart_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Payment'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Payment endpoint
 swagger: "2.0"

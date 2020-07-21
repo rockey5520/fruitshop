@@ -9,7 +9,7 @@ type Cart struct {
 	// Primary key, created_at, deleted_at, updated_at for each cart
 	gorm.Model
 	// Foriegn key for the Cart table coming from the Customer table
-	CustomerId uint `gorm:"not null;unique_index"`
+	CustomerId uint `gorm:"not null"`
 	// Total amount valued for the cart
 	Total float64 `json:"total"`
 	// Status of the cart can be either open or closed based on the payment status

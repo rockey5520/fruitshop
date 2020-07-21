@@ -76,10 +76,29 @@ func CreateCustomer(c *gin.Context) {
 func FindCustomer(c *gin.Context) {
 	var customer models.Customer
 
-	if err := models.DB.Where("login_id = ?", c.Param("id")).First(&customer).Error; err != nil {
+	if err := models.DB.Where("ID = ?", c.Param("id")).First(&customer).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer record not found!"})
 		return
 	}
+
+	var cart models.Cart
+	models.DB.Where("customer_id = ? AND status = ?", customer.ID, "OPEN").Find(&cart)
+	var cartItem []models.CartItem
+	models.DB.Where("cart_id = ?", cart.ID).Find(&cartItem)
+	var payment models.Payment
+	models.DB.Where("cart_id = ?", cart.ID).Find(&payment)
+	var appliedDualItemDiscount []models.AppliedDualItemDiscount
+	models.DB.Where("cart_id = ?", cart.ID).Find(&appliedDualItemDiscount)
+	var appliedSingleItemDiscount []models.AppliedSingleItemDiscount
+	models.DB.Where("cart_id = ?", cart.ID).Find(&appliedSingleItemDiscount)
+	var appliedSingleItemCoupon []models.AppliedSingleItemCoupon
+	models.DB.Where("cart_id = ?", cart.ID).Find(&appliedSingleItemCoupon)
+	customer.Cart = cart
+	customer.Cart.CartItem = cartItem
+	customer.Cart.Payment = payment
+	customer.Cart.AppliedDualItemDiscount = appliedDualItemDiscount
+	customer.Cart.AppliedSingleItemCoupon = appliedSingleItemCoupon
+	customer.Cart.AppliedSingleItemDiscount = appliedSingleItemDiscount
 
 	c.JSON(http.StatusOK, gin.H{"data": customer})
 }
@@ -96,10 +115,33 @@ func FindCustomers(c *gin.Context) {
 	var customers []models.Customer
 	models.DB.Find(&customers)
 
+	for _, customer := range customers {
+		var cart models.Cart
+		models.DB.Where("customer_id = ? AND status = ?", customer.ID, "OPEN").Find(&cart)
+		var cartItem []models.CartItem
+		models.DB.Where("cart_id = ?", cart.ID).Find(&cartItem)
+		var payment models.Payment
+		models.DB.Where("cart_id = ?", cart.ID).Find(&payment)
+		var appliedDualItemDiscount []models.AppliedDualItemDiscount
+		models.DB.Where("cart_id = ?", cart.ID).Find(&appliedDualItemDiscount)
+		var appliedSingleItemDiscount []models.AppliedSingleItemDiscount
+		models.DB.Where("cart_id = ?", cart.ID).Find(&appliedSingleItemDiscount)
+		var appliedSingleItemCoupon []models.AppliedSingleItemCoupon
+		models.DB.Where("cart_id = ?", cart.ID).Find(&appliedSingleItemCoupon)
+		customer.Cart = cart
+		customer.Cart.CartItem = cartItem
+		customer.Cart.Payment = payment
+		customer.Cart.AppliedDualItemDiscount = appliedDualItemDiscount
+		customer.Cart.AppliedSingleItemCoupon = appliedSingleItemCoupon
+		customer.Cart.AppliedSingleItemDiscount = appliedSingleItemDiscount
+	}
+
 	c.JSON(http.StatusOK, gin.H{"data": customers})
 }
 
 type PayInput struct {
-	Amount float64 `json:"amount" binding:"required"`
-	Status string  `json:"status"`
+	CustomerID uint    `json:"customerid"`
+	CartID     uint    `json:"cartid"`
+	Amount     float64 `json:"amount" binding:"required"`
+	Status     string  `json:"status"`
 }

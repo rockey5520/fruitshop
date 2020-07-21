@@ -76,7 +76,7 @@ func CreateCustomer(c *gin.Context) {
 func FindCustomer(c *gin.Context) {
 	var customer models.Customer
 
-	if err := models.DB.Where("ID = ?", c.Param("id")).First(&customer).Error; err != nil {
+	if err := models.DB.Where("login_id = ?", c.Param("login_id")).First(&customer).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer record not found!"})
 		return
 	}

@@ -22,7 +22,8 @@ export class AuthenticationService {
 
     login(loginid) {
         console.log("success",loginid)
-        console.log("localStorage.length", localStorage.length)
+        
+        
         return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes

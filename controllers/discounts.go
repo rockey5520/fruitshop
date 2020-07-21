@@ -20,7 +20,7 @@ import (
 
 // FindDiscounts will return all discounts with status as APPLIED available within the fruitshop
 func FindDiscounts(c *gin.Context) {
-	s := make([]string, 0)
+	s := make([]models.Discount, 0)
 
 	var appliedSingleItemDiscount models.AppliedSingleItemDiscount
 	models.DB.Where("cart_id = ?", c.Param("cart_id")).Find(&appliedSingleItemDiscount)
@@ -32,13 +32,20 @@ func FindDiscounts(c *gin.Context) {
 	var dualItemDiscount models.DualItemDiscount
 	models.DB.Where("ID = ?", appliedDualItemDiscount.DualItemDiscountID).Find(&dualItemDiscount)
 
-	s = append(s, singleItemDiscount.Name, dualItemDiscount.Name)
-
-	discountsApplied := models.DiscountsApplied{
-		DiscountNames: s,
+	if singleItemDiscount.Name != "" {
+		s = append(s, models.Discount{
+			Name:   singleItemDiscount.Name,
+			Status: "APPLIED",
+		})
+	}
+	if dualItemDiscount.Name != "" {
+		s = append(s, models.Discount{
+			Name:   dualItemDiscount.Name,
+			Status: "APPLIED",
+		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": discountsApplied})
+	c.JSON(http.StatusOK, gin.H{"data": s})
 }
 
 // @Summary Applied orange 30 coupon code

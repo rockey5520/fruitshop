@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
-
+import { Customer } from './../../models/customer.model';
 import { AlertService} from '../../services/alert.service';
 import { AuthenticationService } from '../../services/authentication.service';
 
@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
     loading = false;
     submitted = false;
     returnUrl: string;
+    currentUser: Customer;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit {
         if (this.authenticationService.currentUserValue) {
             this.router.navigate(['/']);
         }
+        this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
     }
 
     ngOnInit() {
@@ -56,6 +58,7 @@ export class LoginComponent implements OnInit {
         }
 
         this.loading = true;
+        
         this.authenticationService.login(this.f.userId.value)
             .pipe(first())
             .subscribe(

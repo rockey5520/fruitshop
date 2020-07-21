@@ -41,7 +41,7 @@ export class FruitcardComponent implements OnInit {
   }
 
   addToCart(): void {
-    this.cartService.addToCart(this.currentUser.data.loginid, this.fruit, this.count).subscribe(() => {
+    this.cartService.addToCart(this.currentUser.data.Cart.ID, this.fruit, this.count).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
     })

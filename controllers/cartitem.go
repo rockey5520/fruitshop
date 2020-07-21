@@ -25,10 +25,23 @@ type CartItemInput struct {
 // @Router /server/api/v1/cartitem/{cart_id} [get]
 // GetAllCartList will retuen all of the cart list for a given customer
 func GetAllCartItems(c *gin.Context) {
+	s := make([]models.CartItemResponse, 0)
 
 	var cartItems []models.CartItem
 	models.DB.Where("cart_id = ?", c.Param("cart_id")).Find(&cartItems)
-	c.JSON(http.StatusOK, gin.H{"data": cartItems})
+
+	for _, cartItem := range cartItems {
+		var fruit models.Fruit
+		models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+		s = append(s, models.CartItemResponse{
+			Name:        fruit.Name,
+			CostPerItem: fruit.Price,
+			Count:       cartItem.Quantity,
+			ItemTotal:   cartItem.ItemTotal,
+		})
+
+	}
+	c.JSON(http.StatusOK, gin.H{"data": s})
 }
 
 // @Summary Creates/Updated item in the cart
@@ -197,7 +210,7 @@ func ApplyBananaPear30Discount(cartItem models.CartItem) {
 			}
 		}
 	} else {
-		models.DB.Unscoped().Where("cart_id = ?", cartItem.ID).Delete(&appliedDualItemDiscount)
+		models.DB.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedDualItemDiscount)
 	}
 
 }
@@ -266,7 +279,7 @@ func ApplyApple10Discount(cartItem models.CartItem) {
 			var itemCost float64
 			itemCost += float64(cartItem.Quantity) * fruit.Price
 			models.DB.Model(&cartItem).Update("item_total", itemCost)
-			models.DB.Unscoped().Where("cart_id = ?", cartItem.ID).Delete(&appliedSingleItemDiscount)
+			models.DB.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedSingleItemDiscount)
 		}
 	}
 }

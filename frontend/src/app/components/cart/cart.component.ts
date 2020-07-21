@@ -78,7 +78,7 @@ export class CartComponent implements OnInit {
 
   updateData() {
     console.log("current user ", this.currentUser.data.firstname)
-    this.cartList = this.cartService.getCartByID(this.currentUser.data.loginid)
+    this.cartList = this.cartService.getCartByID(this.currentUser.data.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.count > 0)));
 
     this.total = 0;
@@ -90,8 +90,8 @@ export class CartComponent implements OnInit {
   }
 
   updateDiscountData() {
-    console.log("current user loginid ", this.currentUser.data.loginid)
-    this.discountList = this.discountService.getDiscountsByID(this.currentUser.data.loginid)
+    console.log("current user loginid ", this.currentUser.data.Cart.ID)
+    this.discountList = this.discountService.getDiscountsByID(this.currentUser.data.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.status == "APPLIED")));
     console.log("discount list ", this.discountList)
 
@@ -115,7 +115,7 @@ export class CartComponent implements OnInit {
     })
     this.formNotComplete = true;
     setTimeout(() => {
-      this.cartService.getCartByID(this.currentUser.data.loginid,).subscribe(() => {
+      this.cartService.getCartByID(this.currentUser.data.Cart.ID,).subscribe(() => {
         this.cartService.update.next(true)
         this.discountService.update.next(true)
       })

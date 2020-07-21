@@ -17,12 +17,12 @@ export class CartService {
   constructor(private http: HttpClient) {
     this.update = new BehaviorSubject<boolean>(false);
   }
-  public getCartByID(ID: String): Observable<CartItem> {
+  public getCartByID(ID: number): Observable<CartItem> {
     return this.http.get<CartItem>(`/server/api/v1/cartitem/${ID}`)
     
   }
 
-  public addToCart(ID: String, fruit: FruitModel, count: number) {
+  public addToCart(ID: Number, fruit: FruitModel, count: number) {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -30,10 +30,13 @@ export class CartService {
     }
 
     const body = {
+      "cartid": ID,
       "Name": fruit.name,
       "Count": count
     }
+    console.log("post body ", body)
 
-    return this.http.post(`/server/api/v1/cartitem/${ID}`, body, httpOptions)
+    //return this.http.post(`/api/v1/cartitem`, body, httpOptions)
+    return this.http.post(`/server/api/v1/cartitem`, body, httpOptions)
   }
 }

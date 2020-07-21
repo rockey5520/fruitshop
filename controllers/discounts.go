@@ -92,6 +92,7 @@ func ApplyOrange30Coupon(c *gin.Context) {
 			discountCalculated := ((float64(cartItem.Quantity) * fruit.Price) / 100) * float64(singleItemCoupon.Discount)
 			updatedTotalCost := cartItem.ItemTotal - discountCalculated
 			models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("ItemTotal", updatedTotalCost)
+			RecalcualtePayments(cartItem.CartID)
 			appliedItemCoupon.Savings = discountCalculated
 			if err := models.DB.Model(&appliedItemCoupon).
 				Where("cart_id = ?", cartItem.CartID).
@@ -109,12 +110,11 @@ func ApplyOrange30Coupon(c *gin.Context) {
 	time.Sleep(10 * time.Second)
 
 	var cartItem models.CartItem
-	models.DB.Where("ID = ?", c.Param("cart_id")).FirstOrInit((&cartItem))
+	models.DB.Where("ID = ?", c.Param("cart_id")).First((&cartItem))
 	var fruit models.Fruit
 	models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 	models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.ID).Update("ItemTotal", float64(cartItem.Quantity)*fruit.Price)
-	models.DB.Unscoped().Where("cart_id = ?", c.Param("cart_id")).Delete(&appliedItemCoupon)
-
 	RecalcualtePayments(cartItem.CartID)
+	models.DB.Unscoped().Where("cart_id = ?", c.Param("cart_id")).Delete(&appliedItemCoupon)
 
 }

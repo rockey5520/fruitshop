@@ -13,7 +13,7 @@ type Fruit struct {
 	// Price of each fruit
 	Price float64 `json:"price"`
 	// Single Item Discount
-	SingleItemDiscount []SingleItemDiscount
+	SingleItemDiscount []SingleItemDiscount `gorm:"foreignkey:FruitID"`
 	// Single Item Coupon
 	SingleItemCoupon []SingleItemCoupon
 }

@@ -119,6 +119,7 @@ export PATH=$GOBIN:$PATH
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 unset GOBIN && go get -u github.com/swaggo/swag/cmd/swag
+export PATH=$PATH:$GOPATH/bin
 $HOME/go/bin/swag
 apt-get install build-essential
 sudo apt install sqlite

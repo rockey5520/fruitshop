@@ -20,27 +20,27 @@ func main() {
 	loadFruitsAndDiscountsTableMetaData()
 
 	// Endpoints for customer
-	router.GET("/api/v1/customers", controllers.FindCustomers)
-	router.GET("/api/v1/customers/:login_id", controllers.FindCustomer)
-	router.POST("/api/v1/customers", controllers.CreateCustomer)
+	router.GET("/server/api/v1/customers", controllers.FindCustomers)
+	router.GET("/server/api/v1/customers/:login_id", controllers.FindCustomer)
+	router.POST("/server/api/v1/customers", controllers.CreateCustomer)
 
 	// Endpoints for fruits
-	router.GET("/api/v1/fruits", controllers.FindFruits)
-	router.GET("/api/v1/fruits/:name", controllers.FindFruit)
+	router.GET("/server/api/v1/fruits", controllers.FindFruits)
+	router.GET("/server/api/v1/fruits/:name", controllers.FindFruit)
 
 	// Endpoints for cart
-	router.POST("/api/v1/cartitem", controllers.CreateUpdateItemInCart)
-	router.GET("/api/v1/cartitem/:cart_id", controllers.GetAllCartItems)
-	router.GET("/api/v1/cart/:cart_id", controllers.FindCart)
+	router.POST("/server/api/v1/cartitem", controllers.CreateUpdateItemInCart)
+	router.GET("/server/api/v1/cartitem/:cart_id", controllers.GetAllCartItems)
+	router.GET("/server/api/v1/cart/:cart_id", controllers.FindCart)
 
 	// Endpoints for discounts
-	router.GET("/api/v1/discounts/:cart_id", controllers.FindDiscounts)
+	router.GET("/server/api/v1/discounts/:cart_id", controllers.FindDiscounts)
 
 	// Endpoints for coupon
-	router.GET("/api/v1/orangecoupon/:cart_id", controllers.ApplyOrangeCoupon)
+	router.GET("/server/api/v1/orangecoupon/:cart_id", controllers.ApplyOrangeCoupon)
 
 	// Endpoints for coupon
-	router.POST("/api/v1/pay", controllers.Pay)
+	router.POST("/server/api/v1/pay", controllers.Pay)
 
 	// Use middleware to serve static pages for the website
 	router.Use(static.Serve("/", static.LocalFile("./frontend/dist/fruitshop-ui", true)))
@@ -58,7 +58,7 @@ func initSwagger(engine *gin.Engine) {
 	docs.SwaggerInfo.Description = "This API is backend service for the fruit store"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:8080"
-	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.BasePath = "/server/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")

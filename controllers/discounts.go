@@ -226,7 +226,7 @@ func ApplySingleItemDiscount(cartItem models.CartItem, discountCouponCode string
 	var fruit models.Fruit
 	models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 	var singeItemDiscount models.SingleItemDiscount
-	models.DB.Where("fruit_id = ?", fruit.ID).Find(&singeItemDiscount)
+	models.DB.Where("ID = ?", fruit.ID).Find(&singeItemDiscount)
 	appliedSingleItemDiscount := models.AppliedSingleItemDiscount{
 		CartID:               cartItem.CartID,
 		SingleItemDiscountID: singeItemDiscount.ID,

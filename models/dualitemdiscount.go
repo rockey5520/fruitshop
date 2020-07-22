@@ -9,7 +9,8 @@ type DualItemDiscount struct {
 	// Primary key, created_at, deleted_at, updated_at for each discount
 	gorm.Model
 	// Name of the Discount
-	Name string `json:"name"`
+	Name    string `json:"name"`
+	FruitID uint
 	// Foriegn key for the DualItemDiscount table coming from the Fruit table
 	FruitID_1 uint
 	// Foriegn key for the DualItemDiscount table coming from the Fruit table

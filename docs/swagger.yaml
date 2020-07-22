@@ -4,9 +4,13 @@ definitions:
       cartID:
         description: Foriegn key for the CartItem table coming from the Cart table
         type: integer
-      dualItemDiscountID:
-        description: DualItemDiscountID is the primary key from the DualItemDiscount table
-        type: integer
+      dualItemDiscount:
+        description: |-
+          DualItemDiscountID is the primary key from the DualItemDiscount table
+          DualItemDiscountID uint
+        items:
+          $ref: '#/definitions/models.DualItemDiscount'
+        type: array
       savings:
         description: Percentage of the discount needs to be applied
         type: number
@@ -19,9 +23,13 @@ definitions:
       savings:
         description: Percentage of the discount needs to be applied
         type: number
-      singleItemCouponID:
-        description: SingleItemCouponID is the primary key from the SingleItemCouponID table
-        type: integer
+      singleItemCoupon:
+        description: |-
+          SingleItemCouponID is the primary key from the SingleItemCouponID table
+          SingleItemCouponID uint
+        items:
+          $ref: '#/definitions/models.SingleItemCoupon'
+        type: array
     type: object
   models.AppliedSingleItemDiscount:
     properties:
@@ -31,9 +39,13 @@ definitions:
       savings:
         description: Percentage of the discount needs to be applied
         type: number
-      singleItemDiscountID:
-        description: SingleItemDiscountID is the primary key from the DualItemDiscount table
-        type: integer
+      singleItemDiscount:
+        description: |-
+          SingleItemDiscountID is the primary key from the DualItemDiscount table
+          SingleItemDiscountID uint
+        items:
+          $ref: '#/definitions/models.SingleItemDiscount'
+        type: array
     type: object
   models.Cart:
     properties:
@@ -122,8 +134,35 @@ definitions:
         description: Login ID of the customer
         type: string
     type: object
+  models.DualItemDiscount:
+    properties:
+      count1:
+        description: Number of items on which discount needs to be applied
+        type: integer
+      count2:
+        description: Number of items on which discount needs to be applied
+        type: integer
+      discount:
+        description: Percentage of the discount needs to be applied
+        type: integer
+      fruitID:
+        type: integer
+      fruitID_1:
+        description: Foriegn key for the DualItemDiscount table coming from the Fruit table
+        type: integer
+      fruitID_2:
+        description: Foriegn key for the DualItemDiscount table coming from the Fruit table
+        type: integer
+      name:
+        description: Name of the Discount
+        type: string
+    type: object
   models.Fruit:
     properties:
+      dualItemDiscount:
+        items:
+          $ref: '#/definitions/models.DualItemDiscount'
+        type: array
       name:
         description: Name of the fruit
         type: string

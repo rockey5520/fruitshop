@@ -355,9 +355,12 @@ var doc = `{
                     "description": "Foriegn key for the CartItem table coming from the Cart table",
                     "type": "integer"
                 },
-                "dualItemDiscountID": {
-                    "description": "DualItemDiscountID is the primary key from the DualItemDiscount table",
-                    "type": "integer"
+                "dualItemDiscount": {
+                    "description": "DualItemDiscountID is the primary key from the DualItemDiscount table\nDualItemDiscountID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DualItemDiscount"
+                    }
                 },
                 "savings": {
                     "description": "Percentage of the discount needs to be applied",
@@ -376,9 +379,12 @@ var doc = `{
                     "description": "Percentage of the discount needs to be applied",
                     "type": "number"
                 },
-                "singleItemCouponID": {
-                    "description": "SingleItemCouponID is the primary key from the SingleItemCouponID table",
-                    "type": "integer"
+                "singleItemCoupon": {
+                    "description": "SingleItemCouponID is the primary key from the SingleItemCouponID table\nSingleItemCouponID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemCoupon"
+                    }
                 }
             }
         },
@@ -393,9 +399,12 @@ var doc = `{
                     "description": "Percentage of the discount needs to be applied",
                     "type": "number"
                 },
-                "singleItemDiscountID": {
-                    "description": "SingleItemDiscountID is the primary key from the DualItemDiscount table",
-                    "type": "integer"
+                "singleItemDiscount": {
+                    "description": "SingleItemDiscountID is the primary key from the DualItemDiscount table\nSingleItemDiscountID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemDiscount"
+                    }
                 }
             }
         },
@@ -517,9 +526,47 @@ var doc = `{
                 }
             }
         },
+        "models.DualItemDiscount": {
+            "type": "object",
+            "properties": {
+                "count1": {
+                    "description": "Number of items on which discount needs to be applied",
+                    "type": "integer"
+                },
+                "count2": {
+                    "description": "Number of items on which discount needs to be applied",
+                    "type": "integer"
+                },
+                "discount": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "type": "integer"
+                },
+                "fruitID_1": {
+                    "description": "Foriegn key for the DualItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "fruitID_2": {
+                    "description": "Foriegn key for the DualItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the Discount",
+                    "type": "string"
+                }
+            }
+        },
         "models.Fruit": {
             "type": "object",
             "properties": {
+                "dualItemDiscount": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DualItemDiscount"
+                    }
+                },
                 "name": {
                     "description": "Name of the fruit",
                     "type": "string"

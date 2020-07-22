@@ -84,7 +84,7 @@ func CreateUpdateItemInCart(c *gin.Context) {
 				Update("item_total", float64(input.Count)*fruit.Price)
 		}
 	} else if input.Count == 0 {
-		models.DB.Where("cart_id = ?", input.CartId).Delete(&cartItem)
+		models.DB.Where("cart_id = ? AND fruit_id = ?", input.CartId, fruit.ID).Delete(&cartItem)
 
 	}
 

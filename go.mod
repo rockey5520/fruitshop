@@ -8,8 +8,10 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gin-gonic/contrib v0.0.0-20191209060500-d6e26eeaa607
 	github.com/gin-gonic/gin v1.6.3
+	github.com/gmarik/go-erd v0.0.0-20170331193134-80f366849d69 // indirect
 	github.com/jfeliu007/goplantuml v1.5.0 // indirect
 	github.com/jinzhu/gorm v1.9.15
+	github.com/kaishuu0123/erd-go v1.4.6 // indirect
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/spf13/afero v1.3.2 // indirect

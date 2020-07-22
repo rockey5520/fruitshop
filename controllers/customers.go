@@ -25,7 +25,6 @@ func CreateCustomer(c *gin.Context) {
 	}
 
 	// update cart to cart array in the customer table
-
 	newcart := models.Cart{
 		Total:  0.0,
 		Status: "OPEN",

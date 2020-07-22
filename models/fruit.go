@@ -16,4 +16,6 @@ type Fruit struct {
 	SingleItemDiscount []SingleItemDiscount `gorm:"foreignkey:FruitID"`
 	// Single Item Coupon
 	SingleItemCoupon []SingleItemCoupon
+
+	DualItemDiscount []DualItemDiscount `gorm:"foreignkey:FruitID"`
 }

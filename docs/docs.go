@@ -455,12 +455,19 @@ var doc = `{
                 "total": {
                     "description": "Total amount valued for the cart",
                     "type": "number"
+                },
+                "totalsavings": {
+                    "type": "number"
                 }
             }
         },
         "models.CartItem": {
             "type": "object",
             "properties": {
+                "ItemDiscountedTotal": {
+                    "description": "Total discounted cost for this fruits based on number of items",
+                    "type": "number"
+                },
                 "cartID": {
                     "description": "Foriegn key for the CartItem table coming from the Cart table",
                     "type": "integer"

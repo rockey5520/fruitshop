@@ -15,4 +15,6 @@ type CartItem struct {
 	Quantity int `json:"quantity"`
 	// Total cost for this fruits based on number of items
 	ItemTotal float64 `json:"itemtotal"`
+	// Total discounted cost for this fruits based on number of items
+	ItemDiscountedTotal float64 `json:"ItemDiscountedTotal"`
 }

@@ -48,7 +48,7 @@ export class CartComponent implements OnInit {
   seconds1: number
   formNotComplete: boolean = false;
   myVar : Number
-
+  DiscountCouponFruit: string
 
 
   constructor(public cartService: CartService, public paymentService: PaymentService, public authenticationService: AuthenticationService,
@@ -89,7 +89,8 @@ export class CartComponent implements OnInit {
     this.total = 0;
     this.cartList.subscribe((data) => {
       this.total = data.map(item => item.itemtotal).reduce((a, b) => a + b, 0);
-      this.totalSavings = data.map((item) => item.count * item.costperitem).reduce((a, b) => a + b, 0) - this.total
+      this.totalSavings = data.
+      map((item) => item.count * item.costperitem).reduce((a, b) => a + b, 0) - this.total
 
     })
   }
@@ -115,7 +116,8 @@ export class CartComponent implements OnInit {
   }
 
   applyDiscount(): void {
-    this.paymentService.applyDiscount(this.currentUser.data.Cart.ID).subscribe(() => {
+  
+    this.paymentService.applyDiscount(this.currentUser.data.Cart.ID, 4).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
 

@@ -69,7 +69,7 @@ func CreateUpdateItemInCart(c *gin.Context) {
 	}
 	fmt.Println("fruit id ", fruit.ID)
 	//Create/Update/Delete Cart entry based on the count
-	cartItem := models.CartItem{CartID: input.CartId, FruitID: fruit.ID, ItemTotal: fruit.Price * float64(input.Count)}
+	cartItem := models.CartItem{CartID: input.CartId, FruitID: fruit.ID, ItemTotal: fruit.Price * float64(input.Count), ItemDiscountedTotal: 0.0}
 	if input.Count > 0 {
 		// Create/update fruit to the cart
 		cartItem.Quantity = input.Count
@@ -81,7 +81,8 @@ func CreateUpdateItemInCart(c *gin.Context) {
 			models.DB.Model(&cartItem).Where("cart_id = ?  AND fruit_id = ? ", input.CartId, fruit.ID).
 				Update("quantity", input.Count).
 				Update("fruit_id", fruit.ID).
-				Update("item_total", float64(input.Count)*fruit.Price)
+				Update("item_total", float64(input.Count)*fruit.Price).
+				Update("item_discounted_total", 0.0)
 		}
 	} else if input.Count == 0 {
 		models.DB.Where("cart_id = ? AND fruit_id = ?", input.CartId, fruit.ID).Delete(&cartItem)
@@ -107,18 +108,20 @@ func RecalcualtePayments(cartID uint) {
 		fmt.Println("Error ", err)
 	}
 	var totalCost float64
+	var totalDiscountedCost float64
 	for _, item := range cartItems {
 		totalCost += item.ItemTotal
+		totalDiscountedCost += item.ItemDiscountedTotal
 	}
 	var cart models.Cart
 	if err := models.DB.Where("ID = ?", cartID).Find(&cart).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
-	models.DB.Model(&cart).Update("total", totalCost)
-	var payment models.Payment
+	models.DB.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
+	/* var payment models.Payment
 	if err := models.DB.Where("cart_id = ?", cart.ID).Find(&payment).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
-	models.DB.Model(&payment).Where("cart_id = ?", cart.ID).Update("amount", totalCost)
+	models.DB.Model(&payment).Where("cart_id = ?", cart.ID).Update("amount", totalCost) */
 
 }

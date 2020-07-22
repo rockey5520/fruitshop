@@ -33,7 +33,7 @@ export class PaymentService {
     return this.http.post(`/server/api/v1/pay`, body, httpOptions)
   }
 
-  public applyDiscount(userId: number){
-    return this.http.get(`/server/api/v1/orangecoupon/${userId}`)
+  public applyDiscount(cart_id: number, fruit_id:number){
+    return this.http.get(`/server/api/v1/orangecoupon/${cart_id}/${fruit_id}/`)
   }
 }

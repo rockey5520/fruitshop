@@ -11,7 +11,8 @@ type Cart struct {
 	// Foriegn key for the Cart table coming from the Customer table
 	CustomerId uint `gorm:"not null"`
 	// Total amount valued for the cart
-	Total float64 `json:"total"`
+	Total        float64 `json:"total"`
+	TotalSavings float64 `json:"totalsavings"`
 	// Status of the cart can be either open or closed based on the payment status
 	Status string `json:"status"`
 	// CartItem is having has-many relationship with Cart

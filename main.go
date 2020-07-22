@@ -37,7 +37,7 @@ func main() {
 	router.GET("/api/v1/discounts/:cart_id", controllers.FindDiscounts)
 
 	// Endpoints for coupon
-	router.GET("/api/v1/orangecoupon/:cart_id", controllers.ApplyOrangeCoupon)
+	router.GET("/api/v1/orangecoupon/:cart_id/:fruit_id/", controllers.ApplyTimeSensitiveCoupon)
 
 	// Endpoints for coupon
 	router.POST("/api/v1/pay", controllers.Pay)

@@ -11,7 +11,7 @@ type SingleItemCoupon struct {
 	// Name of the Discount
 	Name string `json:"name"`
 	// Foriegn key for the SingleItemDiscount table coming from the Fruit table
-	FruitID int
+	FruitID uint
 	// Percentage of the discount needs to be applied
 	Discount int `json:"discount"`
 }

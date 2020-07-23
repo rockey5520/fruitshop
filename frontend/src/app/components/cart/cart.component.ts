@@ -47,7 +47,8 @@ export class CartComponent implements OnInit {
   totalSavings: number
   seconds1: number
   formNotComplete: boolean = false;
-
+  myVar : Number
+  DiscountCouponFruit: string
 
 
   constructor(public cartService: CartService, public paymentService: PaymentService, public authenticationService: AuthenticationService,
@@ -73,49 +74,58 @@ export class CartComponent implements OnInit {
         this.updateDiscountData();
       }
     })
+    this.authenticationService.update.subscribe((data: boolean) => {
+      if (data) {
+        this.updateUserData();
+      }
+    })
 
   }
 
   updateData() {
-    console.log("current user ", this.currentUser.data.firstname)
-    this.cartList = this.cartService.getCartByID(this.currentUser.data.loginid)
+    this.cartList = this.cartService.getCartByID(this.currentUser.data.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.count > 0)));
 
     this.total = 0;
     this.cartList.subscribe((data) => {
       this.total = data.map(item => item.itemtotal).reduce((a, b) => a + b, 0);
-      this.totalSavings = data.map((item) => item.count * item.costperitem).reduce((a, b) => a + b, 0) - this.total
+      this.totalSavings = data.
+      map((item) => item.count * item.costperitem).reduce((a, b) => a + b, 0) - this.total
 
     })
   }
 
   updateDiscountData() {
-    console.log("current user loginid ", this.currentUser.data.loginid)
-    this.discountList = this.discountService.getDiscountsByID(this.currentUser.data.loginid)
+    this.discountList = this.discountService.getDiscountsByID(this.currentUser.data.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.status == "APPLIED")));
-    console.log("discount list ", this.discountList)
-
+    }
+  
+  updateUserData() {  
+    this.authenticationService.login(this.currentUser.data.loginid).subscribe((x)=>{
+      this.cartService.update.next(true)
+    })
   }
 
-
-
   pay(): void {
-    this.paymentService.pay(this.currentUser.data.loginid, this.total).subscribe(() => {
-      this.cartService.update.next(true)
-
+    this.paymentService.pay(this.currentUser.data.ID, this.currentUser.data.Cart.ID, this.total).subscribe(() => {
+      this.authenticationService.update.next(true)
+    },error => {
+      console.error(error)
     })
+    
   }
 
   applyDiscount(): void {
-
-    this.paymentService.applyDiscount(this.currentUser.data.loginid).subscribe(() => {
+  
+    this.paymentService.applyDiscount(this.currentUser.data.Cart.ID, 4).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
-      
+
     })
     this.formNotComplete = true;
+    
     setTimeout(() => {
-      this.cartService.getCartByID(this.currentUser.data.loginid,).subscribe(() => {
+      this.cartService.getCartByID(this.currentUser.data.Cart.ID,).subscribe(() => {
         this.cartService.update.next(true)
         this.discountService.update.next(true)
       })
@@ -124,6 +134,10 @@ export class CartComponent implements OnInit {
       13000);
 
   }
+
+  
+
+  
 
 
 

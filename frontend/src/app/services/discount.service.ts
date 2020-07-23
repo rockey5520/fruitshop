@@ -19,8 +19,7 @@ export class DiscountService {
         this.update = new BehaviorSubject<boolean>(false);
         
     }
-    public getDiscountsByID(ID: String): Observable<DiscountModel> {
-        console.log("discount ID", ID)
+    public getDiscountsByID(ID: Number): Observable<DiscountModel> {
         return this.http.get<DiscountModel>(`/server/api/v1/discounts/${ID}`);
     }
 

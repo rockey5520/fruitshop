@@ -12,10 +12,10 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param Input body models.Payment true "Payment input request"
-// @Param login_id path string true "Customer identifier"
+// @Param cart_id path string true "Customer identifier"
 // @Success 200 {object} models.Payment
 // @Failure 400 {string} string "Bad input"
-// @Router /server/api/v1/pay/{login_id} [post]
+// @Router /server/api/v1/pay/{cart_id} [post]
 // Pay method takes the payment and resets cart, cartitems, coupons, discounts
 func Pay(c *gin.Context) {
 
@@ -26,42 +26,43 @@ func Pay(c *gin.Context) {
 		return
 	}
 
-	// Get customer
-	var customer models.Customer
-	if err := models.DB.Where("login_id = ?", c.Param("login_id")).First(&customer).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer record not found!"})
+	// Get cart
+	cart := models.Cart{}
+	if err := models.DB.Where("ID = ? AND status = ?", payment.CartID, "OPEN").Find(&cart).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cart record not found or Payment is made on already paid cart!"})
 		return
 	}
 
-	// Get cart
-	cart := models.Cart{}
-	if err := models.DB.Where("customer_id = ?", customer.ID).Find(&cart).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Cart record not found!"})
-		return
-	}
-	if cart.Total == payment.Amount {
+	if cart.Total == payment.Amount && cart.Total != 0 && payment.Amount > 0 {
 		// Empyt cart items table
 		var cartItems []models.CartItem
 		models.DB.Find(&cartItems)
-		for _, item := range cartItems {
-			models.DB.Where("cart_id = ? AND name = ?", cart.ID, item.Name).Delete(&item)
+
+		// Set Cart amount to 0
+		models.DB.Model(&cart).Where("ID = ?", payment.CartID).Update("total", 0).Update("status", "CLOSED")
+
+		pay := models.Payment{
+			CartId: payment.CartID,
+			Amount: payment.Amount,
+			Status: "PAID",
 		}
-		// Set Cart amoun to 0
-		models.DB.Model(&cart).Where("customer_id = ?", customer.ID).Update("total", 0)
-		//update orangecoupon to NOTAPPLIED
-		var coupon models.Coupon
-		models.DB.Model(&coupon).Where("cart_id = ? and name = ?", cart.ID, "ORANGE30").Update("status", "NOTAPPLIED")
-		// discounts table reset to default values
-		var discount models.Discount
-		models.DB.Model(&discount).Where("customer_id = ?", customer.ID).Update("status", "NOTAPPLIED")
-		var pay models.Payment
-		models.DB.Model(&pay).Where("cart_id = ?", cart.ID).Update("status", "PAID")
+
+		models.DB.Create(&pay)
+
+		newCart := models.Cart{
+			CustomerId: payment.CustomerID,
+			Total:      0.0,
+			Status:     "OPEN",
+		}
+		models.DB.Create(&newCart)
 
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "payment amount mismatched with the cart total"})
 		return
 	}
-	payment.Status = "PAID"
 
-	c.JSON(http.StatusOK, gin.H{"data": payment})
+	var customer models.Customer
+	models.DB.Where("ID = ?", payment.CustomerID)
+
+	c.JSON(http.StatusOK, gin.H{"data": customer})
 }

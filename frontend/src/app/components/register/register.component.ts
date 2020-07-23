@@ -48,7 +48,6 @@ export class RegisterComponent implements OnInit {
   validateEmailNotTaken({ value }: AbstractControl): Observable<ValidationErrors | null> {
     return this.userService.getUser(value)
       .pipe(debounceTime(500), map((user: Data) => {
-        console.log("user.loginid ", user.loginid)
         if (user.loginid !== "") {
           return {
             isExists: true
@@ -72,7 +71,6 @@ export class RegisterComponent implements OnInit {
     }
 
     this.loading = true;
-    console.log("this.registerForm.value", this.registerForm.value)
     this.userService.register(this.registerForm.value)
       .pipe(first())
       .subscribe(

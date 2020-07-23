@@ -10,29 +10,31 @@ import { map } from 'rxjs/operators';
 export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<Customer>;
     public currentUser: Observable<Customer>;
+    public update;
 
     constructor(private http: HttpClient) {
         this.currentUserSubject = new BehaviorSubject<Customer>(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
+        this.update = new BehaviorSubject<Boolean>(false)
     }
 
     public get currentUserValue(): Customer {
         return this.currentUserSubject.value;
     }
 
-    login(loginid) {
-        console.log("success",loginid)
-        console.log("localStorage.length", localStorage.length)
+    login(loginid){
         return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                console.log("localStorage.getItem",localStorage.getItem("currentUser"))
-                
                 //console.log("localStorage.getItem",localStorage.getItem("currentUser"))
                 this.currentUserSubject.next(user);
                 return user;
             }));
+    }
+
+    login2(loginid){
+        return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
     }
 
     logout() {

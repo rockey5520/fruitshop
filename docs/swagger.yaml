@@ -1,39 +1,102 @@
 definitions:
+  models.AppliedDualItemDiscount:
+    properties:
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      dualItemDiscount:
+        description: |-
+          DualItemDiscountID is the primary key from the DualItemDiscount table
+          DualItemDiscountID uint
+        items:
+          $ref: '#/definitions/models.DualItemDiscount'
+        type: array
+      savings:
+        description: Percentage of the discount needs to be applied
+        type: number
+    type: object
+  models.AppliedSingleItemCoupon:
+    properties:
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      savings:
+        description: Percentage of the discount needs to be applied
+        type: number
+      singleItemCoupon:
+        description: |-
+          SingleItemCouponID is the primary key from the SingleItemCouponID table
+          SingleItemCouponID uint
+        items:
+          $ref: '#/definitions/models.SingleItemCoupon'
+        type: array
+    type: object
+  models.AppliedSingleItemDiscount:
+    properties:
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      savings:
+        description: Percentage of the discount needs to be applied
+        type: number
+      singleItemDiscount:
+        description: |-
+          SingleItemDiscountID is the primary key from the DualItemDiscount table
+          SingleItemDiscountID uint
+        items:
+          $ref: '#/definitions/models.SingleItemDiscount'
+        type: array
+    type: object
   models.Cart:
     properties:
+      appliedDualItemDiscount:
+        description: AppliedDualItemDiscount is having has-many relationship with Cart
+        items:
+          $ref: '#/definitions/models.AppliedDualItemDiscount'
+        type: array
+      appliedSingleItemCoupon:
+        description: AppliedSingleItemCoupon is having has-many relationship with Cart
+        items:
+          $ref: '#/definitions/models.AppliedSingleItemCoupon'
+        type: array
+      appliedSingleItemDiscount:
+        description: AppliedDualItemDiscount is having has-many relationship with Cart
+        items:
+          $ref: '#/definitions/models.AppliedSingleItemDiscount'
+        type: array
       cartItem:
-        description: CartItem is having has-many relation with Cart
+        description: CartItem is having has-many relationship with Cart
         items:
           $ref: '#/definitions/models.CartItem'
         type: array
-      coupon:
-        $ref: '#/definitions/models.Coupon'
-        description: Coupon is having has-many relation with Cart
-        type: object
       customerId:
         description: Foriegn key for the Cart table coming from the Customer table
-        type: integer
-      id:
-        description: Primary key for the Cart
         type: integer
       payment:
         $ref: '#/definitions/models.Payment'
         description: Payment is having has-one relation with Cart
         type: object
+      status:
+        description: Status of the cart can be either open or closed based on the payment status
+        type: string
       total:
         description: Total amount valued for the cart
+        type: number
+      totalsavings:
         type: number
     type: object
   models.CartItem:
     properties:
+      ItemDiscountedTotal:
+        description: Total discounted cost for this fruits based on number of items
+        type: number
       cartID:
         description: Foriegn key for the CartItem table coming from the Cart table
         type: integer
-      costperitem:
-        description: Cost per fruit
-        type: number
-      count:
-        description: Number of fruits ordered
+      fruitID:
+        description: |-
+          Fruit identifier
+          Fruit Fruit `gorm:"foreignkey:ID;association_foreignkey:ID"`
         type: integer
       id:
         description: Primary key for the Cart
@@ -41,24 +104,9 @@ definitions:
       itemtotal:
         description: Total cost for this fruits based on number of items
         type: number
-      name:
-        description: Name of the Fruit
-        type: string
-    type: object
-  models.Coupon:
-    properties:
-      cartid:
-        description: Foriegn key for the Coupon table coming from the Cart table
+      quantity:
+        description: Number of fruits ordered
         type: integer
-      id:
-        description: Primary key for the Cart
-        type: integer
-      name:
-        description: Name of the coupon
-        type: string
-      status:
-        description: Status of the coupon APPLIED and NOTAPPLIED are the two possible states
-        type: string
     type: object
   models.CreateCustomerInput:
     properties:
@@ -80,13 +128,7 @@ definitions:
     properties:
       cart:
         $ref: '#/definitions/models.Cart'
-        description: Cart assosiated to the customer
         type: object
-      discounts:
-        description: Discounts assosiated to the customer
-        items:
-          $ref: '#/definitions/models.Discount'
-        type: array
       firstname:
         description: First name of the customer
         type: string
@@ -97,32 +139,51 @@ definitions:
         description: Login ID of the customer
         type: string
     type: object
-  models.Discount:
+  models.DualItemDiscount:
     properties:
-      customerId:
-        description: Foriegn key for the Discount table coming from the Customer table
+      count1:
+        description: Number of items on which discount needs to be applied
         type: integer
-      id:
-        description: Primary key for the Cart
+      count2:
+        description: Number of items on which discount needs to be applied
+        type: integer
+      discount:
+        description: Percentage of the discount needs to be applied
+        type: integer
+      fruitID:
+        type: integer
+      fruitID_1:
+        description: Foriegn key for the DualItemDiscount table coming from the Fruit table
+        type: integer
+      fruitID_2:
+        description: Foriegn key for the DualItemDiscount table coming from the Fruit table
         type: integer
       name:
-        description: Name of the coupon
-        type: string
-      status:
-        description: Status of the coupon APPLIED and NOTAPPLIED are the two possible states
+        description: Name of the Discount
         type: string
     type: object
   models.Fruit:
     properties:
-      id:
-        description: Primary key for the Cart
-        type: integer
+      dualItemDiscount:
+        items:
+          $ref: '#/definitions/models.DualItemDiscount'
+        type: array
       name:
         description: Name of the fruit
         type: string
       price:
         description: Price of each fruit
         type: number
+      singleItemCoupon:
+        description: Single Item Coupon
+        items:
+          $ref: '#/definitions/models.SingleItemCoupon'
+        type: array
+      singleItemDiscount:
+        description: Single Item Discount
+        items:
+          $ref: '#/definitions/models.SingleItemDiscount'
+        type: array
     type: object
   models.Payment:
     properties:
@@ -139,11 +200,38 @@ definitions:
         description: Status of the coupon PAID and NOTPAID are the two possible states
         type: string
     type: object
+  models.SingleItemCoupon:
+    properties:
+      discount:
+        description: Percentage of the discount needs to be applied
+        type: integer
+      fruitID:
+        description: Foriegn key for the SingleItemDiscount table coming from the Fruit table
+        type: integer
+      name:
+        description: Name of the Discount
+        type: string
+    type: object
+  models.SingleItemDiscount:
+    properties:
+      count:
+        description: Number of items on which discount needs to be applied
+        type: integer
+      discount:
+        description: Percentage of the discount needs to be applied
+        type: integer
+      fruitID:
+        description: Foriegn key for the SingleItemDiscount table coming from the Fruit table
+        type: integer
+      name:
+        description: Name of the Discount
+        type: string
+    type: object
 info:
   contact: {}
   license: {}
 paths:
-  /server/api/v1/cart/{login_id}:
+  /server/api/v1/cart/{cart_id}:
     get:
       consumes:
       - application/json
@@ -151,7 +239,7 @@ paths:
       parameters:
       - description: Customer identifier
         in: path
-        name: login_id
+        name: cart_id
         required: true
         type: string
       produces:
@@ -166,7 +254,7 @@ paths:
           schema:
             type: string
       summary: Show details of a cart
-  /server/api/v1/cartitem/{login_id}:
+  /server/api/v1/cartitem/{cart_id}:
     get:
       consumes:
       - application/json
@@ -174,7 +262,7 @@ paths:
       parameters:
       - description: Customer identifier
         in: path
-        name: login_id
+        name: cart_id
         required: true
         type: string
       produces:
@@ -189,6 +277,7 @@ paths:
           schema:
             type: string
       summary: Show details of a all items in a cart
+  /server/api/v1/cartitem/{login_id}:
     post:
       consumes:
       - application/json
@@ -253,7 +342,7 @@ paths:
           schema:
             type: string
       summary: Creates Customer record
-  /server/api/v1/customers/{login_id}:
+  /server/api/v1/customers/{id}:
     get:
       consumes:
       - application/json
@@ -261,7 +350,7 @@ paths:
       parameters:
       - description: Customer identifier
         in: path
-        name: login_id
+        name: id
         required: true
         type: string
       produces:
@@ -316,30 +405,14 @@ paths:
           schema:
             type: string
       summary: Show details of a fruit item
-  /server/api/v1/orangecoupon/{login_id}:
+  /server/api/v1/orangecoupon/{cart_id}:
     get:
-      consumes:
-      - application/json
-      description: This endpoint applied orange 30 percent discount coupon code
-      parameters:
-      - description: Customer identifier
-        in: path
-        name: login_id
-        required: true
-        type: string
-      produces:
-      - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Coupon'
         "400":
           description: Bad input
           schema:
             type: string
-      summary: Applied orange 30 coupon code
-  /server/api/v1/pay/{login_id}:
+  /server/api/v1/pay/{cart_id}:
     post:
       consumes:
       - application/json
@@ -353,7 +426,7 @@ paths:
           $ref: '#/definitions/models.Payment'
       - description: Customer identifier
         in: path
-        name: login_id
+        name: cart_id
         required: true
         type: string
       produces:

@@ -25,7 +25,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/server/api/v1/cart/{login_id}": {
+        "/server/api/v1/cart/{cart_id}": {
             "get": {
                 "description": "Get details of a cart",
                 "consumes": [
@@ -39,7 +39,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Customer identifier",
-                        "name": "login_id",
+                        "name": "cart_id",
                         "in": "path",
                         "required": true
                     }
@@ -60,7 +60,7 @@ var doc = `{
                 }
             }
         },
-        "/server/api/v1/cartitem/{login_id}": {
+        "/server/api/v1/cartitem/{cart_id}": {
             "get": {
                 "description": "Get details of contents of the cart",
                 "consumes": [
@@ -74,7 +74,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Customer identifier",
-                        "name": "login_id",
+                        "name": "cart_id",
                         "in": "path",
                         "required": true
                     }
@@ -93,7 +93,9 @@ var doc = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/server/api/v1/cartitem/{login_id}": {
             "post": {
                 "description": "This end point will record cart item details into the database",
                 "consumes": [
@@ -192,7 +194,7 @@ var doc = `{
                 }
             }
         },
-        "/server/api/v1/customers/{login_id}": {
+        "/server/api/v1/customers/{id}": {
             "get": {
                 "description": "Get details of a customer",
                 "consumes": [
@@ -206,7 +208,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Customer identifier",
-                        "name": "login_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -288,32 +290,9 @@ var doc = `{
                 }
             }
         },
-        "/server/api/v1/orangecoupon/{login_id}": {
+        "/server/api/v1/orangecoupon/{cart_id}": {
             "get": {
-                "description": "This endpoint applied orange 30 percent discount coupon code",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Applied orange 30 coupon code",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Customer identifier",
-                        "name": "login_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Coupon"
-                        }
-                    },
                     "400": {
                         "description": "Bad input",
                         "schema": {
@@ -323,7 +302,7 @@ var doc = `{
                 }
             }
         },
-        "/server/api/v1/pay/{login_id}": {
+        "/server/api/v1/pay/{cart_id}": {
             "post": {
                 "description": "This end point will update payment details of cart into the database",
                 "consumes": [
@@ -346,7 +325,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Customer identifier",
-                        "name": "login_id",
+                        "name": "cart_id",
                         "in": "path",
                         "required": true
                     }
@@ -369,27 +348,99 @@ var doc = `{
         }
     },
     "definitions": {
+        "models.AppliedDualItemDiscount": {
+            "type": "object",
+            "properties": {
+                "cartID": {
+                    "description": "Foriegn key for the CartItem table coming from the Cart table",
+                    "type": "integer"
+                },
+                "dualItemDiscount": {
+                    "description": "DualItemDiscountID is the primary key from the DualItemDiscount table\nDualItemDiscountID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DualItemDiscount"
+                    }
+                },
+                "savings": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "number"
+                }
+            }
+        },
+        "models.AppliedSingleItemCoupon": {
+            "type": "object",
+            "properties": {
+                "cartID": {
+                    "description": "Foriegn key for the CartItem table coming from the Cart table",
+                    "type": "integer"
+                },
+                "savings": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "number"
+                },
+                "singleItemCoupon": {
+                    "description": "SingleItemCouponID is the primary key from the SingleItemCouponID table\nSingleItemCouponID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemCoupon"
+                    }
+                }
+            }
+        },
+        "models.AppliedSingleItemDiscount": {
+            "type": "object",
+            "properties": {
+                "cartID": {
+                    "description": "Foriegn key for the CartItem table coming from the Cart table",
+                    "type": "integer"
+                },
+                "savings": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "number"
+                },
+                "singleItemDiscount": {
+                    "description": "SingleItemDiscountID is the primary key from the DualItemDiscount table\nSingleItemDiscountID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemDiscount"
+                    }
+                }
+            }
+        },
         "models.Cart": {
             "type": "object",
             "properties": {
+                "appliedDualItemDiscount": {
+                    "description": "AppliedDualItemDiscount is having has-many relationship with Cart",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AppliedDualItemDiscount"
+                    }
+                },
+                "appliedSingleItemCoupon": {
+                    "description": "AppliedSingleItemCoupon is having has-many relationship with Cart",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AppliedSingleItemCoupon"
+                    }
+                },
+                "appliedSingleItemDiscount": {
+                    "description": "AppliedDualItemDiscount is having has-many relationship with Cart",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AppliedSingleItemDiscount"
+                    }
+                },
                 "cartItem": {
-                    "description": "CartItem is having has-many relation with Cart",
+                    "description": "CartItem is having has-many relationship with Cart",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.CartItem"
                     }
                 },
-                "coupon": {
-                    "description": "Coupon is having has-many relation with Cart",
-                    "type": "object",
-                    "$ref": "#/definitions/models.Coupon"
-                },
                 "customerId": {
                     "description": "Foriegn key for the Cart table coming from the Customer table",
-                    "type": "integer"
-                },
-                "id": {
-                    "description": "Primary key for the Cart",
                     "type": "integer"
                 },
                 "payment": {
@@ -397,8 +448,15 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/models.Payment"
                 },
+                "status": {
+                    "description": "Status of the cart can be either open or closed based on the payment status",
+                    "type": "string"
+                },
                 "total": {
                     "description": "Total amount valued for the cart",
+                    "type": "number"
+                },
+                "totalsavings": {
                     "type": "number"
                 }
             }
@@ -406,16 +464,16 @@ var doc = `{
         "models.CartItem": {
             "type": "object",
             "properties": {
+                "ItemDiscountedTotal": {
+                    "description": "Total discounted cost for this fruits based on number of items",
+                    "type": "number"
+                },
                 "cartID": {
                     "description": "Foriegn key for the CartItem table coming from the Cart table",
                     "type": "integer"
                 },
-                "costperitem": {
-                    "description": "Cost per fruit",
-                    "type": "number"
-                },
-                "count": {
-                    "description": "Number of fruits ordered",
+                "fruitID": {
+                    "description": "Fruit identifier\nFruit Fruit ` + "`" + `gorm:\"foreignkey:ID;association_foreignkey:ID\"` + "`" + `",
                     "type": "integer"
                 },
                 "id": {
@@ -426,30 +484,9 @@ var doc = `{
                     "description": "Total cost for this fruits based on number of items",
                     "type": "number"
                 },
-                "name": {
-                    "description": "Name of the Fruit",
-                    "type": "string"
-                }
-            }
-        },
-        "models.Coupon": {
-            "type": "object",
-            "properties": {
-                "cartid": {
-                    "description": "Foriegn key for the Coupon table coming from the Cart table",
+                "quantity": {
+                    "description": "Number of fruits ordered",
                     "type": "integer"
-                },
-                "id": {
-                    "description": "Primary key for the Cart",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "Name of the coupon",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status of the coupon APPLIED and NOTAPPLIED are the two possible states",
-                    "type": "string"
                 }
             }
         },
@@ -479,16 +516,8 @@ var doc = `{
             "type": "object",
             "properties": {
                 "cart": {
-                    "description": "Cart assosiated to the customer",
                     "type": "object",
                     "$ref": "#/definitions/models.Cart"
-                },
-                "discounts": {
-                    "description": "Discounts assosiated to the customer",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Discount"
-                    }
                 },
                 "firstname": {
                     "description": "First name of the customer",
@@ -504,23 +533,34 @@ var doc = `{
                 }
             }
         },
-        "models.Discount": {
+        "models.DualItemDiscount": {
             "type": "object",
             "properties": {
-                "customerId": {
-                    "description": "Foriegn key for the Discount table coming from the Customer table",
+                "count1": {
+                    "description": "Number of items on which discount needs to be applied",
                     "type": "integer"
                 },
-                "id": {
-                    "description": "Primary key for the Cart",
+                "count2": {
+                    "description": "Number of items on which discount needs to be applied",
+                    "type": "integer"
+                },
+                "discount": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "type": "integer"
+                },
+                "fruitID_1": {
+                    "description": "Foriegn key for the DualItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "fruitID_2": {
+                    "description": "Foriegn key for the DualItemDiscount table coming from the Fruit table",
                     "type": "integer"
                 },
                 "name": {
-                    "description": "Name of the coupon",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status of the coupon APPLIED and NOTAPPLIED are the two possible states",
+                    "description": "Name of the Discount",
                     "type": "string"
                 }
             }
@@ -528,9 +568,11 @@ var doc = `{
         "models.Fruit": {
             "type": "object",
             "properties": {
-                "id": {
-                    "description": "Primary key for the Cart",
-                    "type": "integer"
+                "dualItemDiscount": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DualItemDiscount"
+                    }
                 },
                 "name": {
                     "description": "Name of the fruit",
@@ -539,6 +581,20 @@ var doc = `{
                 "price": {
                     "description": "Price of each fruit",
                     "type": "number"
+                },
+                "singleItemCoupon": {
+                    "description": "Single Item Coupon",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemCoupon"
+                    }
+                },
+                "singleItemDiscount": {
+                    "description": "Single Item Discount",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemDiscount"
+                    }
                 }
             }
         },
@@ -559,6 +615,44 @@ var doc = `{
                 },
                 "string": {
                     "description": "Status of the coupon PAID and NOTPAID are the two possible states",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SingleItemCoupon": {
+            "type": "object",
+            "properties": {
+                "discount": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "description": "Foriegn key for the SingleItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the Discount",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SingleItemDiscount": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "Number of items on which discount needs to be applied",
+                    "type": "integer"
+                },
+                "discount": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "description": "Foriegn key for the SingleItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the Discount",
                     "type": "string"
                 }
             }

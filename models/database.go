@@ -8,13 +8,28 @@ import (
 var DB *gorm.DB
 
 func ConnectDataBase() {
+
 	database, err := gorm.Open("sqlite3", "fruitshop.db")
-	database.LogMode(true)
 
 	if err != nil {
 		panic("Failed to connect to database!")
+
 	}
-	database.AutoMigrate(&Customer{}, &Fruit{}, &Discount{}, &Cart{}, &CartItem{}, &Coupon{}, &Payment{})
+	database.LogMode(true)
+
+	database.AutoMigrate(&Fruit{},
+		&SingleItemDiscount{},
+		&DualItemDiscount{},
+		&SingleItemCoupon{},
+		&AppliedDualItemDiscount{},
+		&AppliedSingleItemCoupon{},
+		&AppliedSingleItemDiscount{},
+		&Payment{},
+		&Cart{},
+		&CartItem{},
+		&Customer{},
+	)
 
 	DB = database
+
 }

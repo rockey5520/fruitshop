@@ -17,7 +17,7 @@ export class PaymentService {
     this.update = new BehaviorSubject<boolean>(false);
   }
 
-  public pay(loginid: string,amount: number) {
+  public pay(id:number, cartID: Number,amount: number) {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -25,14 +25,15 @@ export class PaymentService {
     }
 
     const body = {
-      "cartId": loginid,
+      "customerid":id,
+      "cartid":cartID,
       "amount": amount
-    }
-
-    return this.http.post(`/server/api/v1/pay/${loginid}`, body, httpOptions)
   }
 
-  public applyDiscount(userId: string){
-    return this.http.get(`/server/api/v1/orangecoupon/${userId}`)
+    return this.http.post(`/server/api/v1/pay`, body, httpOptions)
+  }
+
+  public applyDiscount(cart_id: number, fruit_id:number){
+    return this.http.get(`/server/api/v1/orangecoupon/${cart_id}/${fruit_id}/`)
   }
 }

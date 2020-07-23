@@ -13,6 +13,7 @@ func ConnectDataBase() {
 
 	if err != nil {
 		panic("Failed to connect to database!")
+
 	}
 	database.LogMode(true)
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -16,8 +17,14 @@ func main() {
 	initSwagger(router)
 
 	// initialize DB and load meta data
-	models.ConnectDataBase()
-	loadFruitsAndDiscountsTableMetaData()
+	db := models.SetupModels()
+	loadFruitsAndDiscountsTableMetaData(db)
+
+	// Provide db variable to controllers
+	router.Use(func(c *gin.Context) {
+		c.Set("db", db)
+		c.Next()
+	})
 
 	// Endpoints for customer
 	router.GET("/server/api/v1/customers", controllers.FindCustomers)
@@ -65,7 +72,8 @@ func initSwagger(engine *gin.Engine) {
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 }
 
-func loadFruitsAndDiscountsTableMetaData() {
+func loadFruitsAndDiscountsTableMetaData(db *gorm.DB) {
+
 	appleItemDiscount := models.SingleItemDiscount{Count: 7, Discount: 10, Name: "APPLE10"}
 	orangeSingleItemCoupon := models.SingleItemCoupon{
 		Discount: 30,
@@ -94,23 +102,23 @@ func loadFruitsAndDiscountsTableMetaData() {
 		Price: 1,
 	}
 
-	if err := models.DB.Create(&apple).Error; err != nil {
+	if err := db.Create(&apple).Error; err != nil {
 		panic("Unable to create fruit inventory")
 	}
-	if err := models.DB.Create(&banana).Error; err != nil {
+	if err := db.Create(&banana).Error; err != nil {
 		panic("Unable to create fruit inventory")
 	}
-	if err := models.DB.Create(&pear).Error; err != nil {
+	if err := db.Create(&pear).Error; err != nil {
 		panic("Unable to create fruit inventory")
 	}
-	if err := models.DB.Create(&orange).Error; err != nil {
+	if err := db.Create(&orange).Error; err != nil {
 		panic("Unable to create fruit inventory")
 	}
 
 	var pearFromDB models.Fruit
-	models.DB.Where("name = ?", "Pear").First(&pearFromDB)
+	db.Where("name = ?", "Pear").First(&pearFromDB)
 	var bananaFromDB models.Fruit
-	models.DB.Where("name = ?", "Banana").First(&bananaFromDB)
+	db.Where("name = ?", "Banana").First(&bananaFromDB)
 	dualItemDiscount := models.DualItemDiscount{
 		FruitID:   pearFromDB.ID,
 		FruitID_1: pearFromDB.ID,
@@ -120,7 +128,7 @@ func loadFruitsAndDiscountsTableMetaData() {
 		Name:      "PEARBANANA30",
 		Discount:  30,
 	}
-	if err := models.DB.Create(&dualItemDiscount).Error; err != nil {
+	if err := db.Create(&dualItemDiscount).Error; err != nil {
 		panic("Unable to create Single item discount inventory")
 	}
 

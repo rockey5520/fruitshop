@@ -16,7 +16,7 @@ require (
 	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/spf13/afero v1.3.2 // indirect
 	github.com/spf13/cobra v1.0.0 // indirect
-	github.com/spf13/viper v1.7.0 // indirect
+	github.com/spf13/viper v1.7.0
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7

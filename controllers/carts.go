@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 // @Summary Show details of a cart
@@ -18,9 +19,10 @@ import (
 // @Router /server/api/v1/cart/{cart_id} [get]
 // FindCart will fetch the details about the cart of the customer
 func FindCart(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	cart := models.Cart{}
 	//models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
-	models.DB.Where("ID = ?", c.Param("cart_id")).
+	db.Where("ID = ?", c.Param("cart_id")).
 		Preload("CartItem").
 		Preload("Payment").
 		Preload("AppliedDualItemDiscount").

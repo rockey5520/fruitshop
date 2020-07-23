@@ -23,17 +23,17 @@ import (
 // FindDiscounts will return all discounts with status as APPLIED available within the fruitshop
 func FindDiscounts(c *gin.Context) {
 	appliedDiscountsResponseList := make([]models.AppliedDiscountsResponse, 0)
-
+	db := c.MustGet("db").(*gorm.DB)
 	appliedSingleItemDiscount := models.AppliedSingleItemDiscount{}
-	models.DB.Where("cart_id = ?", c.Param("cart_id")).
+	db.Where("cart_id = ?", c.Param("cart_id")).
 		Preload("SingleItemDiscount").
 		Find(&appliedSingleItemDiscount)
 	appliedDualItemDiscount := models.AppliedDualItemDiscount{}
-	models.DB.Where("cart_id = ?", c.Param("cart_id")).
+	db.Where("cart_id = ?", c.Param("cart_id")).
 		Preload("DualItemDiscount").
 		Find(&appliedDualItemDiscount)
 	appliedSingleItemCoupon := models.AppliedSingleItemCoupon{}
-	models.DB.Where("cart_id = ?", c.Param("cart_id")).
+	db.Where("cart_id = ?", c.Param("cart_id")).
 		Preload("SingleItemCoupon").
 		Find(&appliedSingleItemCoupon)
 
@@ -81,17 +81,18 @@ func ApplyTimeSensitiveCoupon(c *gin.Context) {
 }
 
 func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	cart_id, _ := strconv.Atoi(c.Param("cart_id"))
 	fruit_id, _ := strconv.Atoi(c.Param("fruit_id"))
 
 	fruit := models.Fruit{}
-	models.DB.Where("ID = ?", fruit_id).
+	db.Where("ID = ?", fruit_id).
 		Preload("SingleItemCoupon").
 		Find(&fruit)
 
 	//singleItemCouponList := fruit.SingleItemCoupon
 	var singleItemCouponList []models.SingleItemCoupon
-	models.DB.Where("fruit_id = ?", fruit_id).Find(&singleItemCouponList)
+	db.Where("fruit_id = ?", fruit_id).Find(&singleItemCouponList)
 	var interestCoupon models.SingleItemCoupon
 	for _, coupon := range singleItemCouponList {
 		if coupon.FruitID == fruit.ID {
@@ -105,27 +106,27 @@ func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 	}
 
 	var cartItem models.CartItem
-	models.DB.Where("cart_id = ? AND fruit_id = ?", cart_id, fruit_id).Find(&cartItem)
+	db.Where("cart_id = ? AND fruit_id = ?", cart_id, fruit_id).Find(&cartItem)
 
 	/* var fruit models.Fruit
-	models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit) */
+	db.Where("ID = ?", cartItem.FruitID).Find(&fruit) */
 	if cartItem.Quantity > 0 {
 		discountCalculated := ((float64(cartItem.Quantity) * fruit.Price) / 100) * float64(interestCoupon.Discount)
 		updatedTotalCost := cartItem.ItemTotal - discountCalculated
-		models.DB.Model(&cartItem).
+		db.Model(&cartItem).
 			Where("cart_id = ?", cartItem.CartID).
 			Update("ItemTotal", updatedTotalCost).
 			Update("item_discounted_total", discountCalculated)
-		RecalcualtePayments(cartItem.CartID)
+		RecalcualtePayments(cartItem.CartID, c)
 		appliedSingleItemCoupon.Savings = discountCalculated
-		if err := models.DB.Model(&appliedSingleItemCoupon).
+		if err := db.Model(&appliedSingleItemCoupon).
 			Where("cart_id = ?", cartItem.CartID).
 			First(&appliedSingleItemCoupon).Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
-				models.DB.Create(&appliedSingleItemCoupon)
+				db.Create(&appliedSingleItemCoupon)
 			}
 		} else {
-			models.DB.Model(&appliedSingleItemCoupon).
+			db.Model(&appliedSingleItemCoupon).
 				Where("cart_id = ? ", c.Param("cart_id")).
 				Update("savings", discountCalculated)
 		}
@@ -135,46 +136,47 @@ func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 	time.Sleep(10 * time.Second)
 
 	var cart models.Cart
-	models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
+	db.Where("ID = ?", c.Param("cart_id")).Find(&cart)
 	if cart.Status != "CLOSED" {
 		var cartItem models.CartItem
-		models.DB.Where("ID = ?", c.Param("cart_id")).First((&cartItem))
+		db.Where("ID = ?", c.Param("cart_id")).First((&cartItem))
 		var fruit models.Fruit
-		models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
-		models.DB.Model(&cartItem).
+		db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+		db.Model(&cartItem).
 			Where("cart_id = ?", cartItem.ID).
 			Update("ItemTotal", float64(cartItem.Quantity)*fruit.Price).
 			Update("item_discounted_total", 0.0)
-		RecalcualtePayments(cartItem.CartID)
-		models.DB.Unscoped().Where("cart_id = ?", c.Param("cart_id")).Delete(&appliedSingleItemCoupon)
+		RecalcualtePayments(cartItem.CartID, c)
+		db.Unscoped().Where("cart_id = ?", c.Param("cart_id")).Delete(&appliedSingleItemCoupon)
 	}
 
 }
 
 // ApplySingleItemDiscounts applies single fruit discounts based on the single item discounts
-func ApplySingleItemDiscounts(cartItem models.CartItem) {
+func ApplySingleItemDiscounts(cartItem models.CartItem, c *gin.Context) {
 
 	// This applies 10 percent discount for APPLE and the reason i encapsulated is so in future without change in business logic
 	// change to calucate discounts on single unique item discounts so our application can be pushed to production
 	// sooner than to build a new logic for each discount coupon code
-	ApplySingleItemDiscount(cartItem)
+	ApplySingleItemDiscount(cartItem, c)
 
 }
 
 // ApplyDualItemDiscounts applies discount for dual items discounts based on the dual item combo  discounts
-func ApplyDualItemDiscounts(cartItem models.CartItem) {
+func ApplyDualItemDiscounts(cartItem models.CartItem, c *gin.Context) {
 
 	// This applies 30% discount for Banana pear set and the reason i encapsulated is so in future without change in business logic
 	// change to calucate discounts on single unique item discounts so our application can be pushed to production
 	// sooner than to build a new logic for each discount coupon code
-	ApplyDualItemDiscount(cartItem)
+	ApplyDualItemDiscount(cartItem, c)
 
 }
 
 //ApplyApple10Discount applies apple 10 percent discount
-func ApplySingleItemDiscount(cartItem models.CartItem) {
+func ApplySingleItemDiscount(cartItem models.CartItem, c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	fruit := models.Fruit{}
-	models.DB.Where("ID = ?", cartItem.FruitID).
+	db.Where("ID = ?", cartItem.FruitID).
 		Preload("SingleItemDiscount").
 		Find(&fruit)
 
@@ -194,19 +196,19 @@ func ApplySingleItemDiscount(cartItem models.CartItem) {
 				discount := ((float64(cartItem.Quantity) * fruit.Price) / 100) * float64(singleItemDiscount.Discount)
 				calculatedCost = (actualCost - discount)
 				appliedSingleItemDiscount.Savings = discount
-				models.DB.Model(&cartItem).Update("item_total", calculatedCost).Update("item_discounted_total", discount)
-				if err := models.DB.Model(&appliedSingleItemDiscount).
+				db.Model(&cartItem).Update("item_total", calculatedCost).Update("item_discounted_total", discount)
+				if err := db.Model(&appliedSingleItemDiscount).
 					Where("cart_id = ?", cartItem.CartID).
 					First(&appliedSingleItemDiscount).Error; err != nil {
 					if gorm.IsRecordNotFoundError(err) {
-						models.DB.Create(&appliedSingleItemDiscount)
+						db.Create(&appliedSingleItemDiscount)
 					}
 				}
 			} else {
 				var itemCost float64
 				itemCost += float64(cartItem.Quantity) * fruit.Price
-				models.DB.Model(&cartItem).Update("item_total", itemCost)
-				models.DB.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedSingleItemDiscount)
+				db.Model(&cartItem).Update("item_total", itemCost)
+				db.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedSingleItemDiscount)
 			}
 		}
 	}
@@ -214,12 +216,13 @@ func ApplySingleItemDiscount(cartItem models.CartItem) {
 }
 
 //ApplyBananaPear30Discount applies banana pear 30 percent discount
-func ApplyDualItemDiscount(cartItem models.CartItem) {
+func ApplyDualItemDiscount(cartItem models.CartItem, c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//, "fruit_id_1 in (?) or fruit_id_2 in (?)", cartItem.FruitID, cartItem.FruitID
 	var fruit models.Fruit
-	models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+	db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 	var dualItemDiscount []models.DualItemDiscount
-	models.DB.Where("fruit_id_1 = ? or fruit_id_2 = ?", cartItem.FruitID, cartItem.FruitID).Find(&dualItemDiscount)
+	db.Where("fruit_id_1 = ? or fruit_id_2 = ?", cartItem.FruitID, cartItem.FruitID).Find(&dualItemDiscount)
 
 	x := make([]models.DualItemDiscount, 0)
 	for _, dualItemDiscount := range dualItemDiscount {
@@ -233,7 +236,7 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 		var discountUpdate bool
 
 		var cartItems []models.CartItem
-		if err := models.DB.Where("cart_id = ?", cartItem.CartID).Find(&cartItems).Error; err != nil {
+		if err := db.Where("cart_id = ?", cartItem.CartID).Find(&cartItems).Error; err != nil {
 			fmt.Println("Error ", err)
 		}
 		for _, x := range cartItems {
@@ -253,19 +256,19 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 				cartItem := x
 				if cartItem.FruitID == dualItemDiscount.FruitID {
 					var fruit models.Fruit
-					models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+					db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 					discount := float64(sets*dualItemDiscount.Count_1) / float64(100) * float64(dualItemDiscount.Discount)
 					appliedDualItemDiscount.Savings += discount
-					models.DB.Model(&cartItem).
+					db.Model(&cartItem).
 						Where("cart_id = ?", cartItem.CartID).
 						Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount).
 						Update("item_discounted_total", discount)
 				} else if cartItem.FruitID == dualItemDiscount.FruitID_2 {
 					var fruit models.Fruit
-					models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+					db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 					discount := float64(sets*dualItemDiscount.Count_2) / float64(100) * float64(dualItemDiscount.Discount)
 					appliedDualItemDiscount.Savings += discount
-					models.DB.Model(&cartItem).
+					db.Model(&cartItem).
 						Where("cart_id = ?", cartItem.CartID).
 						Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount).
 						Update("item_discounted_total", discount)
@@ -276,12 +279,12 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 			for _, x := range cartItems {
 				cartItem := x
 				if cartItem.FruitID == dualItemDiscount.FruitID {
-					models.DB.Model(&cartItem).
+					db.Model(&cartItem).
 						Where("cart_id = ?", cartItem.CartID).
 						Update("item_total", (float64(cartItem.Quantity)*fruit.Price)).
 						Update("item_discounted_total", 0.0)
 				} else if cartItem.FruitID == dualItemDiscount.FruitID_2 {
-					models.DB.Model(&cartItem).
+					db.Model(&cartItem).
 						Where("cart_id = ?", cartItem.CartID).
 						Update("item_total", (float64(cartItem.Quantity)*fruit.Price)).
 						Update("tem_discounted_total", 0.0)
@@ -292,15 +295,15 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 
 		if discountUpdate {
 			appliedDualItemDiscount.DualItemDiscount = x
-			if err := models.DB.Model(&appliedDualItemDiscount).
+			if err := db.Model(&appliedDualItemDiscount).
 				Where("cart_id = ?", cartItem.CartID).
 				First(&appliedDualItemDiscount).Error; err != nil {
 				if gorm.IsRecordNotFoundError(err) {
-					models.DB.Create(&appliedDualItemDiscount) // create new record from newUser
+					db.Create(&appliedDualItemDiscount) // create new record from newUser
 				}
 			}
 		} else {
-			models.DB.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedDualItemDiscount)
+			db.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedDualItemDiscount)
 		}
 	}
 }
@@ -308,9 +311,9 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 //ApplyBananaPear30Discount applies banana pear 30 percent discount
 /* func ApplyDualItemDiscount(cartItem models.CartItem, discountCouponCode string) {
 	var fruit models.Fruit
-	models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+	db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 	var dualItemDiscount []models.DualItemDiscount
-	models.DB.Where("name = ?", discountCouponCode).Find(&dualItemDiscount)
+	db.Where("name = ?", discountCouponCode).Find(&dualItemDiscount)
 
 	appliedDualItemDiscount := models.AppliedDualItemDiscount{
 		CartID:           cartItem.CartID,
@@ -322,7 +325,7 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 	var discountUpdate bool
 
 	var cartItems []models.CartItem
-	if err := models.DB.Where("cart_id = ?", cartItem.CartID).Find(&cartItems).Error; err != nil {
+	if err := db.Where("cart_id = ?", cartItem.CartID).Find(&cartItems).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
 	for _, x := range cartItems {
@@ -342,16 +345,16 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 			cartItem := x
 			if cartItem.FruitID == dualItemDiscount.FruitID_1 {
 				var fruit models.Fruit
-				models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+				db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 				discount := float64(sets*dualItemDiscount.Count_1) / float64(100) * float64(dualItemDiscount.Discount)
 				appliedDualItemDiscount.Savings += discount
-				models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount)
+				db.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount)
 			} else if cartItem.FruitID == dualItemDiscount.FruitID_2 {
 				var fruit models.Fruit
-				models.DB.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+				db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 				discount := float64(sets*dualItemDiscount.Count_2) / float64(100) * float64(dualItemDiscount.Discount)
 				appliedDualItemDiscount.Savings += discount
-				models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount)
+				db.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount)
 			}
 		}
 		discountUpdate = true
@@ -359,24 +362,24 @@ func ApplyDualItemDiscount(cartItem models.CartItem) {
 		for _, x := range cartItems {
 			cartItem := x
 			if cartItem.FruitID == dualItemDiscount.FruitID_1 {
-				models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity) * fruit.Price))
+				db.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity) * fruit.Price))
 			} else if cartItem.FruitID == dualItemDiscount.FruitID_2 {
-				models.DB.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity) * fruit.Price))
+				db.Model(&cartItem).Where("cart_id = ?", cartItem.CartID).Update("item_total", (float64(cartItem.Quantity) * fruit.Price))
 			}
 		}
 
 	}
 
 	if discountUpdate {
-		if err := models.DB.Model(&appliedDualItemDiscount).
+		if err := db.Model(&appliedDualItemDiscount).
 			Where("cart_id = ?", cartItem.CartID).
 			First(&appliedDualItemDiscount).Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
-				models.DB.Create(&appliedDualItemDiscount) // create new record from newUser
+				db.Create(&appliedDualItemDiscount) // create new record from newUser
 			}
 		}
 	} else {
-		models.DB.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedDualItemDiscount)
+		db.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedDualItemDiscount)
 	}
 
 } */

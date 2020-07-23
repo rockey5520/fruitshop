@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 // @Summary Show details of all fruits
@@ -15,9 +16,10 @@ import (
 // @Router /server/api/v1/fruits [get]
 // FindFruit returns fruit details if fruit exists in the store
 func FindFruit(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	var fruit models.Fruit
 
-	if err := models.DB.Where("name = ?", c.Param("name")).First(&fruit).Error; err != nil {
+	if err := db.Where("name = ?", c.Param("name")).First(&fruit).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Fruit record not found!"})
 		return
 	}
@@ -34,9 +36,9 @@ func FindFruit(c *gin.Context) {
 // @Router /server/api/v1/fruits/{name} [get]
 // FindFruits will retuen all fruits exists within the fruitshop
 func FindFruits(c *gin.Context) {
-
+	db := c.MustGet("db").(*gorm.DB)
 	var fruits []models.Fruit
-	models.DB.Find(&fruits)
+	db.Find(&fruits)
 
 	c.JSON(http.StatusOK, gin.H{"data": fruits})
 }

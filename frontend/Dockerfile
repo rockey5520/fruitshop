@@ -1,21 +1,22 @@
-FROM node:12-alpine
-
+# 1. Build our Angular app
+FROM node:alpine as builder
 
 WORKDIR /app
+COPY package.json package-lock.json ./
+ENV CI=1
+RUN npm ci
 
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+COPY . .
+RUN npm run build -- --prod --output-path=/dist
 
-# install and cache app dependencies
-COPY package.json /app/package.json
-COPY proxy.conf.json /app/proxy.conf.json
 
-RUN npm install -g @angular/cli @angular-devkit/build-angular && npm install
+# 2. Deploy our Angular app to NGINX
+FROM nginx:alpine
 
-EXPOSE 4200
+## Replace the default nginx index page with our Angular app
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=builder /dist /usr/share/nginx/html
 
-# add app
-COPY . /app
+COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
 
-# start app
-CMD npm start
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

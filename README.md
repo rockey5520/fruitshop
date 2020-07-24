@@ -125,3 +125,44 @@ $HOME/go/bin/swag
 apt-get install build-essential
 sudo apt install sqlite
 chmod +x /home/wendel/.vscode/extensions/alexcvzz.vscode-sqlite-0.8.2/bin/sqlite-v3.26.0-linux-x64
+
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+
+docker run -d -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=example --name postgres --network fruitshop --mount source=prosgret-vol,destination=/var/lib/postgresql/data -p 5432:5432 postgres:latest
+
+
+ docker run -d -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=example -e POSTGRES_DB=postgres -e POSTGRES_HOST=postgres -e POSTGRES_PORT=5432 --network fruitshop --name fruitshop_backend -p 8082:8082 fruitshop_backend
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  fruitshop_ui:
+    image: 'fruitshop_ui'
+    ports:
+      - '80:80'
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    env_file:
+      - database.env # configure postgres
+    links:
+      - db
+    depends_on:
+      - db      

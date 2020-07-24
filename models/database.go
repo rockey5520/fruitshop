@@ -7,33 +7,43 @@ package models
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // using postgres sql
-	"github.com/spf13/viper"
-)
+	/*
+		"github.com/spf13/viper"
+	*/)
+
+var db *gorm.DB
+var err error
 
 func SetupModels() *gorm.DB {
 	//db, err := gorm.Open("sqlite3", "test.db")
-	// Enable VIPER to read Environment Variables
-	viper.AutomaticEnv()
-	// To get the value from the config file using key
-	// viper package read .env
-	viper_user := viper.Get("POSTGRES_USER")
-	viper_password := viper.Get("POSTGRES_PASSWORD")
-	viper_db := viper.Get("POSTGRES_DB")
-	viper_host := viper.Get("POSTGRES_HOST")
-	viper_port := viper.Get("POSTGRES_PORT")
-	// https://gobyexample.com/string-formatting
-	prosgret_conname := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", viper_host, viper_port, viper_user, viper_db, viper_password)
-	fmt.Println("conname is\t\t", prosgret_conname)
-	database, err := gorm.Open("postgres", prosgret_conname)
+	user := getEnv("PG_USER", "hugo")
+	password := getEnv("PG_PASSWORD", "")
+	host := getEnv("PG_HOST", "localhost")
+	port := getEnv("PG_PORT", "8080")
+	database := getEnv("PG_DB", "tasks")
+
+	dbinfo := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable",
+		user,
+		password,
+		host,
+		port,
+		database,
+	)
+
+	db, err := gorm.Open("postgres", dbinfo)
+	//"host=db port:5432 user=postgres dbname=postgres password=example sslmode=disable"
+	//database, err :=  gorm.Open( "postgres", "host=db port=5432 user=postgres dbname=postgres sslmode=disable password=example")
+
 	if err != nil {
 		panic("Failed to connect to database!")
 	}
-	database.LogMode(true)
+	db.LogMode(true)
 
-	database.AutoMigrate(&Fruit{},
+	db.AutoMigrate(&Fruit{},
 		&SingleItemDiscount{},
 		&DualItemDiscount{},
 		&SingleItemCoupon{},
@@ -47,34 +57,12 @@ func SetupModels() *gorm.DB {
 	)
 	// Initialise value
 
-	return database
+	return db
 }
 
-//var DB *gorm.DB
-
-/* func ConnectDataBase() {
-
-	database, err := gorm.Open("sqlite3", "fruitshop.db")
-
-	if err != nil {
-		panic("Failed to connect to database!")
-
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
 	}
-	database.LogMode(true)
-
-	database.AutoMigrate(&Fruit{},
-		&SingleItemDiscount{},
-		&DualItemDiscount{},
-		&SingleItemCoupon{},
-		&AppliedDualItemDiscount{},
-		&AppliedSingleItemCoupon{},
-		&AppliedSingleItemDiscount{},
-		&Payment{},
-		&Cart{},
-		&CartItem{},
-		&Customer{},
-	)
-
-	DB = database
-
-} */
+	return fallback
+}

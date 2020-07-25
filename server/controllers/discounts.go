@@ -22,8 +22,11 @@ import (
 
 // FindDiscounts will return all discounts with status as APPLIED available within the fruitshop
 func FindDiscounts(c *gin.Context) {
-	appliedDiscountsResponseList := make([]models.AppliedDiscountsResponse, 0)
 	db := c.MustGet("db").(*gorm.DB)
+	var cart models.Cart
+	db.Where("ID = ?", c.Param("cart_id")).Find(&cart)
+	appliedDiscountsResponseList := make([]models.AppliedDiscountsResponse, 0)
+
 	appliedSingleItemDiscount := models.AppliedSingleItemDiscount{}
 	db.Where("cart_id = ?", c.Param("cart_id")).
 		Preload("SingleItemDiscount").
@@ -33,9 +36,10 @@ func FindDiscounts(c *gin.Context) {
 		Preload("DualItemDiscount").
 		Find(&appliedDualItemDiscount)
 	appliedSingleItemCoupon := models.AppliedSingleItemCoupon{}
-	db.Where("cart_id = ?", c.Param("cart_id")).
-		Preload("SingleItemCoupon").
+	db.Where("cart_id = ?", cart.ID).
 		Find(&appliedSingleItemCoupon)
+	var singeItemCoupon models.SingleItemCoupon
+	db.Where("ID = ?", appliedSingleItemCoupon.SingleItemCouponID).Find(&singeItemCoupon)
 
 	for _, singleItemDiscount := range appliedSingleItemDiscount.SingleItemDiscount {
 		if singleItemDiscount.Name != "" {
@@ -53,15 +57,22 @@ func FindDiscounts(c *gin.Context) {
 			})
 		}
 	}
-	for _, singeItemCoupon := range appliedSingleItemCoupon.SingleItemCoupon {
-		if singeItemCoupon.Name != "" {
-			fmt.Println("singeItemCoupon.Name", singeItemCoupon.Name)
-			appliedDiscountsResponseList = append(appliedDiscountsResponseList, models.AppliedDiscountsResponse{
-				Name:   singeItemCoupon.Name,
-				Status: "APPLIED",
-			})
-		}
+
+	/* 	if singeItemCoupon.Name != "" {
+		s = append(s, models.Discount{
+			Name:   singeItemCoupon.Name,
+			Status: "APPLIED",
+		})
+	} */
+	//for _, singeItemCoupon := range appliedSingleItemCoupon.SingleItemCoupon {
+	if singeItemCoupon.Name != "" {
+		fmt.Println("singeItemCoupon.Name", singeItemCoupon.Name)
+		appliedDiscountsResponseList = append(appliedDiscountsResponseList, models.AppliedDiscountsResponse{
+			Name:   singeItemCoupon.Name,
+			Status: "APPLIED",
+		})
 	}
+	//}
 
 	c.JSON(http.StatusOK, gin.H{"data": appliedDiscountsResponseList})
 }
@@ -99,10 +110,23 @@ func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 			interestCoupon = coupon
 		}
 	}
-
+	fmt.Println("cart_id", cart_id)
+	fmt.Println("uint cart_id", uint(cart_id))
 	appliedSingleItemCoupon := models.AppliedSingleItemCoupon{
-		CartID: uint(cart_id),
+		CartID:             uint(cart_id),
+		SingleItemCouponID: interestCoupon.ID,
 		//SingleItemCoupon: singleItemCouponList,
+	}
+	if err := db.Model(&appliedSingleItemCoupon).
+		Where("cart_id = ?", cart_id).
+		First(&appliedSingleItemCoupon).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			db.Create(&appliedSingleItemCoupon)
+		}
+	} else {
+		db.Model(&appliedSingleItemCoupon).
+			Where("cart_id = ? ", c.Param("cart_id")).
+			Update("single_item_coupon_id", interestCoupon.ID)
 	}
 
 	var cartItem models.CartItem
@@ -147,7 +171,7 @@ func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 			Update("ItemTotal", float64(cartItem.Quantity)*fruit.Price).
 			Update("item_discounted_total", 0.0)
 		RecalcualtePayments(cartItem.CartID, c)
-		db.Unscoped().Where("cart_id = ?", c.Param("cart_id")).Delete(&appliedSingleItemCoupon)
+		db.Unscoped().Where("cart_id = ?", cartItem.CartID).Delete(&appliedSingleItemCoupon)
 	}
 
 }

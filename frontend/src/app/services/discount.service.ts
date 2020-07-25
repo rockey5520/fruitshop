@@ -5,8 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { CartModel } from '../models/cart.model';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { FruitModel } from '../models/fruit.model';
-import { catchError } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
+import { catchError, delay } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +20,7 @@ export class DiscountService {
         
     }
     public getDiscountsByID(ID: Number): Observable<DiscountModel> {
-        return this.http.get<DiscountModel>(`/server/api/v1/discounts/${ID}`);
+        return this.http.get<DiscountModel>(`/server/api/v1/discounts/${ID}`).pipe(delay(400));
     }
 
 }

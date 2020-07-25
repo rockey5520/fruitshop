@@ -55,6 +55,7 @@ func GetAllCartItems(c *gin.Context) {
 // @Router /server/api/v1/cartitem/{login_id} [post]
 // CreateUpdateItemInCart will add users choosen fruits to the cart list
 func CreateUpdateItemInCart(c *gin.Context) {
+	fmt.Println("started")
 	db := c.MustGet("db").(*gorm.DB)
 	// Bind the input payload to schema for validations
 	var input CartItemInput
@@ -68,7 +69,6 @@ func CreateUpdateItemInCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Fruit record not found!"})
 		return
 	}
-	fmt.Println("fruit id ", fruit.ID)
 	//Create/Update/Delete Cart entry based on the count
 	cartItem := models.CartItem{CartID: input.CartId, FruitID: fruit.ID, ItemTotal: fruit.Price * float64(input.Count), ItemDiscountedTotal: 0.0}
 	if input.Count > 0 {
@@ -95,7 +95,7 @@ func CreateUpdateItemInCart(c *gin.Context) {
 	ApplyDualItemDiscounts(cartItem, c)
 	// Recalcuate the payment for the cart
 	RecalcualtePayments(cartItem.CartID, c)
-
+	fmt.Println("ended")
 	c.JSON(http.StatusOK, gin.H{"data": cartItem})
 
 }

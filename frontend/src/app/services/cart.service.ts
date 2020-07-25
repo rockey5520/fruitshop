@@ -4,7 +4,7 @@ import { Injectable, ɵɵresolveBody } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { FruitModel } from '../models/fruit.model';
-import { catchError } from 'rxjs/operators';
+import { catchError, delay } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class CartService {
     this.update = new BehaviorSubject<boolean>(false);
   }
   public getCartByID(ID: number): Observable<CartItem> {
-    return this.http.get<CartItem>(`/server/api/v1/cartitem/${ID}`)
+    return this.http.get<CartItem>(`/server/api/v1/cartitem/${ID}`).pipe(delay(400))
     
   }
 

@@ -1,23 +1,7 @@
 version: '3'
 
 services:
-  fruitshop_backend:
-    image: fruitshop_backend
-    # build: .
-    restart: always
-    depends_on:
-      - postgres
-    links:
-      - postgres
-    environment:
-      - PORT=8080
-      - PG_USER=postgres
-      - PG_PASSWORD=secret
-      - PG_HOST=postgres
-      - PG_PORT=5432
-      - PG_DB=tasks
-    ports:
-      - 8082:8082
+
   postgres:
     image: postgres:10.1-alpine
     restart: always

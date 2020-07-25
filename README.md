@@ -151,18 +151,20 @@ docker run -d -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASS
 
 
 
-
-
-  fruitshop_ui:
-    image: 'fruitshop_ui'
-    ports:
-      - '80:80'
-    environment:
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-    env_file:
-      - database.env # configure postgres
-    links:
-      - db
+  fruitshop_backend:
+    image: fruitshop_backend
+    # build: .
+    restart: always
     depends_on:
-      - db      
+      - postgres
+    links:
+      - postgres
+    environment:
+      - PORT=8080
+      - PG_USER=postgres
+      - PG_PASSWORD=secret
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_DB=tasks
+    ports:
+      - 8081:8081

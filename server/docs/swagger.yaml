@@ -1,0 +1,444 @@
+definitions:
+  models.AppliedDualItemDiscount:
+    properties:
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      dualItemDiscount:
+        description: |-
+          DualItemDiscountID is the primary key from the DualItemDiscount table
+          DualItemDiscountID uint
+        items:
+          $ref: '#/definitions/models.DualItemDiscount'
+        type: array
+      savings:
+        description: Percentage of the discount needs to be applied
+        type: number
+    type: object
+  models.AppliedSingleItemCoupon:
+    properties:
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      savings:
+        description: Percentage of the discount needs to be applied
+        type: number
+      singleItemCoupon:
+        description: |-
+          SingleItemCouponID is the primary key from the SingleItemCouponID table
+          SingleItemCouponID uint
+        items:
+          $ref: '#/definitions/models.SingleItemCoupon'
+        type: array
+    type: object
+  models.AppliedSingleItemDiscount:
+    properties:
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      savings:
+        description: Percentage of the discount needs to be applied
+        type: number
+      singleItemDiscount:
+        description: |-
+          SingleItemDiscountID is the primary key from the DualItemDiscount table
+          SingleItemDiscountID uint
+        items:
+          $ref: '#/definitions/models.SingleItemDiscount'
+        type: array
+    type: object
+  models.Cart:
+    properties:
+      appliedDualItemDiscount:
+        description: AppliedDualItemDiscount is having has-many relationship with Cart
+        items:
+          $ref: '#/definitions/models.AppliedDualItemDiscount'
+        type: array
+      appliedSingleItemCoupon:
+        description: AppliedSingleItemCoupon is having has-many relationship with Cart
+        items:
+          $ref: '#/definitions/models.AppliedSingleItemCoupon'
+        type: array
+      appliedSingleItemDiscount:
+        description: AppliedDualItemDiscount is having has-many relationship with Cart
+        items:
+          $ref: '#/definitions/models.AppliedSingleItemDiscount'
+        type: array
+      cartItem:
+        description: CartItem is having has-many relationship with Cart
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      customerId:
+        description: Foriegn key for the Cart table coming from the Customer table
+        type: integer
+      payment:
+        $ref: '#/definitions/models.Payment'
+        description: Payment is having has-one relation with Cart
+        type: object
+      status:
+        description: Status of the cart can be either open or closed based on the payment status
+        type: string
+      total:
+        description: Total amount valued for the cart
+        type: number
+      totalsavings:
+        type: number
+    type: object
+  models.CartItem:
+    properties:
+      ItemDiscountedTotal:
+        description: Total discounted cost for this fruits based on number of items
+        type: number
+      cartID:
+        description: Foriegn key for the CartItem table coming from the Cart table
+        type: integer
+      fruitID:
+        description: |-
+          Fruit identifier
+          Fruit Fruit `gorm:"foreignkey:ID;association_foreignkey:ID"`
+        type: integer
+      id:
+        description: Primary key for the Cart
+        type: integer
+      itemtotal:
+        description: Total cost for this fruits based on number of items
+        type: number
+      quantity:
+        description: Number of fruits ordered
+        type: integer
+    type: object
+  models.CreateCustomerInput:
+    properties:
+      firstname:
+        description: First name of the customer
+        type: string
+      lastname:
+        description: Last name of the customer
+        type: string
+      loginid:
+        description: Login ID of the customer
+        type: string
+    required:
+    - firstname
+    - lastname
+    - loginid
+    type: object
+  models.Customer:
+    properties:
+      cart:
+        $ref: '#/definitions/models.Cart'
+        type: object
+      firstname:
+        description: First name of the customer
+        type: string
+      lastname:
+        description: Last name of the customer
+        type: string
+      loginid:
+        description: Login ID of the customer
+        type: string
+    type: object
+  models.DualItemDiscount:
+    properties:
+      count1:
+        description: Number of items on which discount needs to be applied
+        type: integer
+      count2:
+        description: Number of items on which discount needs to be applied
+        type: integer
+      discount:
+        description: Percentage of the discount needs to be applied
+        type: integer
+      fruitID:
+        type: integer
+      fruitID_1:
+        description: Foriegn key for the DualItemDiscount table coming from the Fruit table
+        type: integer
+      fruitID_2:
+        description: Foriegn key for the DualItemDiscount table coming from the Fruit table
+        type: integer
+      name:
+        description: Name of the Discount
+        type: string
+    type: object
+  models.Fruit:
+    properties:
+      dualItemDiscount:
+        items:
+          $ref: '#/definitions/models.DualItemDiscount'
+        type: array
+      name:
+        description: Name of the fruit
+        type: string
+      price:
+        description: Price of each fruit
+        type: number
+      singleItemCoupon:
+        description: Single Item Coupon
+        items:
+          $ref: '#/definitions/models.SingleItemCoupon'
+        type: array
+      singleItemDiscount:
+        description: Single Item Discount
+        items:
+          $ref: '#/definitions/models.SingleItemDiscount'
+        type: array
+    type: object
+  models.Payment:
+    properties:
+      amount:
+        description: Amount needs to paid by the customer for the purchase
+        type: number
+      cartId:
+        description: Foriegn key for the Payment table coming from the Cart table
+        type: integer
+      id:
+        description: Primary key for the Cart
+        type: integer
+      string:
+        description: Status of the coupon PAID and NOTPAID are the two possible states
+        type: string
+    type: object
+  models.SingleItemCoupon:
+    properties:
+      discount:
+        description: Percentage of the discount needs to be applied
+        type: integer
+      fruitID:
+        description: Foriegn key for the SingleItemDiscount table coming from the Fruit table
+        type: integer
+      name:
+        description: Name of the Discount
+        type: string
+    type: object
+  models.SingleItemDiscount:
+    properties:
+      count:
+        description: Number of items on which discount needs to be applied
+        type: integer
+      discount:
+        description: Percentage of the discount needs to be applied
+        type: integer
+      fruitID:
+        description: Foriegn key for the SingleItemDiscount table coming from the Fruit table
+        type: integer
+      name:
+        description: Name of the Discount
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /server/api/v1/cart/{cart_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a cart
+      parameters:
+      - description: Customer identifier
+        in: path
+        name: cart_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a cart
+  /server/api/v1/cartitem/{cart_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of contents of the cart
+      parameters:
+      - description: Customer identifier
+        in: path
+        name: cart_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CartItem'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a all items in a cart
+  /server/api/v1/cartitem/{login_id}:
+    post:
+      consumes:
+      - application/json
+      description: This end point will record cart item details into the database
+      parameters:
+      - description: Input request
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/models.CartItem'
+      - description: Customer identifier
+        in: path
+        name: login_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CartItem'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Creates/Updated item in the cart
+  /server/api/v1/customers:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all customer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Customer'
+      summary: Show details of all customers
+    post:
+      consumes:
+      - application/json
+      description: This end point will record customer details into the database
+      parameters:
+      - description: Input request
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateCustomerInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Customer'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Creates Customer record
+  /server/api/v1/customers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a customer
+      parameters:
+      - description: Customer identifier
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Customer'
+            type: array
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a customer
+  /server/api/v1/fruits:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all fruits
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Fruit'
+            type: array
+      summary: Show details of all fruits
+  /server/api/v1/fruits/{name}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a fruit item
+      parameters:
+      - description: Fruit identifier
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Fruit'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Show details of a fruit item
+  /server/api/v1/orangecoupon/{cart_id}:
+    get:
+      responses:
+        "400":
+          description: Bad input
+          schema:
+            type: string
+  /server/api/v1/pay/{cart_id}:
+    post:
+      consumes:
+      - application/json
+      description: This end point will update payment details of cart into the database
+      parameters:
+      - description: Payment input request
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Payment'
+      - description: Customer identifier
+        in: path
+        name: cart_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Payment'
+        "400":
+          description: Bad input
+          schema:
+            type: string
+      summary: Payment endpoint
+swagger: "2.0"

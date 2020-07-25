@@ -1,0 +1,641 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {},
+        "license": {}
+    },
+    "paths": {
+        "/server/api/v1/cart/{cart_id}": {
+            "get": {
+                "description": "Get details of a cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show details of a cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer identifier",
+                        "name": "cart_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Cart"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/cartitem/{cart_id}": {
+            "get": {
+                "description": "Get details of contents of the cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show details of a all items in a cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer identifier",
+                        "name": "cart_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.CartItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/cartitem/{login_id}": {
+            "post": {
+                "description": "This end point will record cart item details into the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Creates/Updated item in the cart",
+                "parameters": [
+                    {
+                        "description": "Input request",
+                        "name": "Input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CartItem"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Customer identifier",
+                        "name": "login_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.CartItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/customers": {
+            "get": {
+                "description": "Get details of all customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show details of all customers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Customer"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "This end point will record customer details into the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Creates Customer record",
+                "parameters": [
+                    {
+                        "description": "Input request",
+                        "name": "Input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateCustomerInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Customer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/customers/{id}": {
+            "get": {
+                "description": "Get details of a customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show details of a customer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer identifier",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Customer"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/fruits": {
+            "get": {
+                "description": "Get details of all fruits",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show details of all fruits",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Fruit"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/fruits/{name}": {
+            "get": {
+                "description": "Get details of a fruit item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show details of a fruit item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Fruit identifier",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Fruit"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/orangecoupon/{cart_id}": {
+            "get": {
+                "responses": {
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/api/v1/pay/{cart_id}": {
+            "post": {
+                "description": "This end point will update payment details of cart into the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Payment endpoint",
+                "parameters": [
+                    {
+                        "description": "Payment input request",
+                        "name": "Input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Payment"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Customer identifier",
+                        "name": "cart_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Payment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.AppliedDualItemDiscount": {
+            "type": "object",
+            "properties": {
+                "cartID": {
+                    "description": "Foriegn key for the CartItem table coming from the Cart table",
+                    "type": "integer"
+                },
+                "dualItemDiscount": {
+                    "description": "DualItemDiscountID is the primary key from the DualItemDiscount table\nDualItemDiscountID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DualItemDiscount"
+                    }
+                },
+                "savings": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "number"
+                }
+            }
+        },
+        "models.AppliedSingleItemCoupon": {
+            "type": "object",
+            "properties": {
+                "cartID": {
+                    "description": "Foriegn key for the CartItem table coming from the Cart table",
+                    "type": "integer"
+                },
+                "savings": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "number"
+                },
+                "singleItemCoupon": {
+                    "description": "SingleItemCouponID is the primary key from the SingleItemCouponID table\nSingleItemCouponID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemCoupon"
+                    }
+                }
+            }
+        },
+        "models.AppliedSingleItemDiscount": {
+            "type": "object",
+            "properties": {
+                "cartID": {
+                    "description": "Foriegn key for the CartItem table coming from the Cart table",
+                    "type": "integer"
+                },
+                "savings": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "number"
+                },
+                "singleItemDiscount": {
+                    "description": "SingleItemDiscountID is the primary key from the DualItemDiscount table\nSingleItemDiscountID uint",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemDiscount"
+                    }
+                }
+            }
+        },
+        "models.Cart": {
+            "type": "object",
+            "properties": {
+                "appliedDualItemDiscount": {
+                    "description": "AppliedDualItemDiscount is having has-many relationship with Cart",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AppliedDualItemDiscount"
+                    }
+                },
+                "appliedSingleItemCoupon": {
+                    "description": "AppliedSingleItemCoupon is having has-many relationship with Cart",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AppliedSingleItemCoupon"
+                    }
+                },
+                "appliedSingleItemDiscount": {
+                    "description": "AppliedDualItemDiscount is having has-many relationship with Cart",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AppliedSingleItemDiscount"
+                    }
+                },
+                "cartItem": {
+                    "description": "CartItem is having has-many relationship with Cart",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CartItem"
+                    }
+                },
+                "customerId": {
+                    "description": "Foriegn key for the Cart table coming from the Customer table",
+                    "type": "integer"
+                },
+                "payment": {
+                    "description": "Payment is having has-one relation with Cart",
+                    "type": "object",
+                    "$ref": "#/definitions/models.Payment"
+                },
+                "status": {
+                    "description": "Status of the cart can be either open or closed based on the payment status",
+                    "type": "string"
+                },
+                "total": {
+                    "description": "Total amount valued for the cart",
+                    "type": "number"
+                },
+                "totalsavings": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.CartItem": {
+            "type": "object",
+            "properties": {
+                "ItemDiscountedTotal": {
+                    "description": "Total discounted cost for this fruits based on number of items",
+                    "type": "number"
+                },
+                "cartID": {
+                    "description": "Foriegn key for the CartItem table coming from the Cart table",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "description": "Fruit identifier\nFruit Fruit `gorm:\"foreignkey:ID;association_foreignkey:ID\"`",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "Primary key for the Cart",
+                    "type": "integer"
+                },
+                "itemtotal": {
+                    "description": "Total cost for this fruits based on number of items",
+                    "type": "number"
+                },
+                "quantity": {
+                    "description": "Number of fruits ordered",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CreateCustomerInput": {
+            "type": "object",
+            "required": [
+                "firstname",
+                "lastname",
+                "loginid"
+            ],
+            "properties": {
+                "firstname": {
+                    "description": "First name of the customer",
+                    "type": "string"
+                },
+                "lastname": {
+                    "description": "Last name of the customer",
+                    "type": "string"
+                },
+                "loginid": {
+                    "description": "Login ID of the customer",
+                    "type": "string"
+                }
+            }
+        },
+        "models.Customer": {
+            "type": "object",
+            "properties": {
+                "cart": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.Cart"
+                },
+                "firstname": {
+                    "description": "First name of the customer",
+                    "type": "string"
+                },
+                "lastname": {
+                    "description": "Last name of the customer",
+                    "type": "string"
+                },
+                "loginid": {
+                    "description": "Login ID of the customer",
+                    "type": "string"
+                }
+            }
+        },
+        "models.DualItemDiscount": {
+            "type": "object",
+            "properties": {
+                "count1": {
+                    "description": "Number of items on which discount needs to be applied",
+                    "type": "integer"
+                },
+                "count2": {
+                    "description": "Number of items on which discount needs to be applied",
+                    "type": "integer"
+                },
+                "discount": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "type": "integer"
+                },
+                "fruitID_1": {
+                    "description": "Foriegn key for the DualItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "fruitID_2": {
+                    "description": "Foriegn key for the DualItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the Discount",
+                    "type": "string"
+                }
+            }
+        },
+        "models.Fruit": {
+            "type": "object",
+            "properties": {
+                "dualItemDiscount": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DualItemDiscount"
+                    }
+                },
+                "name": {
+                    "description": "Name of the fruit",
+                    "type": "string"
+                },
+                "price": {
+                    "description": "Price of each fruit",
+                    "type": "number"
+                },
+                "singleItemCoupon": {
+                    "description": "Single Item Coupon",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemCoupon"
+                    }
+                },
+                "singleItemDiscount": {
+                    "description": "Single Item Discount",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SingleItemDiscount"
+                    }
+                }
+            }
+        },
+        "models.Payment": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "Amount needs to paid by the customer for the purchase",
+                    "type": "number"
+                },
+                "cartId": {
+                    "description": "Foriegn key for the Payment table coming from the Cart table",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "Primary key for the Cart",
+                    "type": "integer"
+                },
+                "string": {
+                    "description": "Status of the coupon PAID and NOTPAID are the two possible states",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SingleItemCoupon": {
+            "type": "object",
+            "properties": {
+                "discount": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "description": "Foriegn key for the SingleItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the Discount",
+                    "type": "string"
+                }
+            }
+        },
+        "models.SingleItemDiscount": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "Number of items on which discount needs to be applied",
+                    "type": "integer"
+                },
+                "discount": {
+                    "description": "Percentage of the discount needs to be applied",
+                    "type": "integer"
+                },
+                "fruitID": {
+                    "description": "Foriegn key for the SingleItemDiscount table coming from the Fruit table",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the Discount",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

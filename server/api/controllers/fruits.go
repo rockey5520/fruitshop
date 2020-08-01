@@ -15,15 +15,21 @@ import (
 // @Success 200 {array} models.Fruit
 // @Router /server/api/v1/fruits [get]
 // FindFruit returns fruit details if fruit exists in the store
-func FindFruit(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
-	var fruit models.Fruit
+func (server *Server) FindFruit(w http.ResponseWriter, r *http.Request) {
 
-	if err := db.Where("name = ?", c.Param("name")).First(&fruit).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Fruit record not found!"})
+	vars := mux.Vars(r)
+	name, err := vars["name"]
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": fruit})
+	fruit := models.Fruit{}
+	fruitFetched, err := fruit.FindFruitByName(server.DB, name)
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	responses.JSON(w, http.StatusOK, fruitGotten)
 }
 
 // @Summary Show details of a fruit item
@@ -35,10 +41,14 @@ func FindFruit(c *gin.Context) {
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/fruits/{name} [get]
 // FindFruits will retuen all fruits exists within the fruitshop
-func FindFruits(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
-	var fruits []models.Fruit
-	db.Find(&fruits)
+func (server *Server) FindFruits(w http.ResponseWriter, r *http.Request) {
 
-	c.JSON(http.StatusOK, gin.H{"data": fruits})
+	fruit := models.Fruit{}
+
+	fruits, err := fruit.FindAllFruits(server.DB)
+	if err != nil {
+		responses.ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
+	responses.JSON(w, http.StatusOK, fruits)
 }

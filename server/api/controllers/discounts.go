@@ -21,18 +21,20 @@ import (
 // @Router /server/api/v1/discounts/{cart_id} [get]
 
 // FindDiscounts will return all discounts with status as APPLIED available within the fruitshop
-func FindDiscounts(c *gin.Context) {
+func (server *Server) FindDiscounts(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	cart_id, err := vars["cart_id"]
 	db := c.MustGet("db").(*gorm.DB)
 	var cart models.Cart
-	db.Where("ID = ?", c.Param("cart_id")).Find(&cart)
+	db.Where("ID = ?", cart_id).Find(&cart)
 	appliedDiscountsResponseList := make([]models.AppliedDiscountsResponse, 0)
 
 	appliedSingleItemDiscount := models.AppliedSingleItemDiscount{}
-	db.Where("cart_id = ?", c.Param("cart_id")).
+	db.Where("cart_id = ?", cart_id).
 		Preload("SingleItemDiscount").
 		Find(&appliedSingleItemDiscount)
 	appliedDualItemDiscount := models.AppliedDualItemDiscount{}
-	db.Where("cart_id = ?", c.Param("cart_id")).
+	db.Where("cart_id = ?", cart_id).
 		Preload("DualItemDiscount").
 		Find(&appliedDualItemDiscount)
 	appliedSingleItemCoupon := models.AppliedSingleItemCoupon{}
@@ -74,7 +76,7 @@ func FindDiscounts(c *gin.Context) {
 	}
 	//}
 
-	c.JSON(http.StatusOK, gin.H{"data": appliedDiscountsResponseList})
+	responses.JSON(w, http.StatusOK, appliedDiscountsResponseList)
 }
 
 // @Summary Applied orange 30 coupon code
@@ -93,7 +95,7 @@ func ApplyTimeSensitiveCoupon(c *gin.Context) {
 
 func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
-	cart_id, _ := strconv.Atoi(c.Param("cart_id"))
+	cart_id, _ := strconv.Atoi(cart_id)
 	fruit_id, _ := strconv.Atoi(c.Param("fruit_id"))
 
 	fruit := models.Fruit{}
@@ -125,7 +127,7 @@ func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 		}
 	} else {
 		db.Model(&appliedSingleItemCoupon).
-			Where("cart_id = ? ", c.Param("cart_id")).
+			Where("cart_id = ? ", cart_id).
 			Update("single_item_coupon_id", interestCoupon.ID)
 	}
 
@@ -151,7 +153,7 @@ func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 			}
 		} else {
 			db.Model(&appliedSingleItemCoupon).
-				Where("cart_id = ? ", c.Param("cart_id")).
+				Where("cart_id = ? ", cart_id).
 				Update("savings", discountCalculated)
 		}
 	}
@@ -160,10 +162,10 @@ func ApplySingleItemTimSensitiveCoupon(c *gin.Context) {
 	time.Sleep(10 * time.Second)
 
 	var cart models.Cart
-	db.Where("ID = ?", c.Param("cart_id")).Find(&cart)
+	db.Where("ID = ?", cart_id).Find(&cart)
 	if cart.Status != "CLOSED" {
 		var cartItem models.CartItem
-		db.Where("ID = ?", c.Param("cart_id")).First((&cartItem))
+		db.Where("ID = ?", cart_id).First((&cartItem))
 		var fruit models.Fruit
 		db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 		db.Model(&cartItem).

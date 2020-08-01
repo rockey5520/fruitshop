@@ -18,18 +18,15 @@ import (
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/cart/{cart_id} [get]
 // FindCart will fetch the details about the cart of the customer
-func FindCart(c *gin.Context) {
+func (server *Server) FindCart(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	cart_id, err := vars["cart_id"]
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
 	db := c.MustGet("db").(*gorm.DB)
 	cart := models.Cart{}
-	//models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
-	db.Where("ID = ?", c.Param("cart_id")).
-		Preload("CartItem").
-		Preload("Payment").
-		Preload("AppliedDualItemDiscount").
-		Preload("AppliedSingleItemDiscount").
-		Preload("AppliedSingleItemCoupon").
-		Find(&cart)
-
-	fmt.Println(cart)
-	c.JSON(http.StatusOK, gin.H{"data": cart})
+	cartFetched, err := cart.FindCartByID(server.DB, cart_id)
+	responses.JSON(w, http.StatusOK, cartFetched)
 }

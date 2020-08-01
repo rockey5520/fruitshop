@@ -18,14 +18,21 @@ import (
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/pay/{cart_id} [post]
 // Pay method takes the payment and resets cart, cartitems, coupons, discounts
-func Pay(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
-	// Validate input
-	var payment PayInput
-	if err := c.ShouldBindJSON(&payment); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (server *Server) Pay(w http.ResponseWriter, r *http.Request) {
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+	}
+
+	payment := models.Payment{}
+	err = json.Unmarshal(body, &payment)
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
+	db := c.MustGet("db").(*gorm.DB)
 
 	// Get cart
 	cart := models.Cart{}
@@ -64,6 +71,6 @@ func Pay(c *gin.Context) {
 
 	var customer models.Customer
 	db.Where("ID = ?", payment.CustomerID)
+	responses.JSON(w, http.StatusOK, customer)
 
-	c.JSON(http.StatusOK, gin.H{"data": customer})
 }

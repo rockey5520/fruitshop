@@ -27,3 +27,22 @@ type Cart struct {
 	AppliedSingleItemCoupon []AppliedSingleItemCoupon `gorm:"foreignkey:CartID;association_foreignkey:ID"`
 	//ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
 }
+
+func (c *Cart) FindCartByID(db *gorm.DB, string cart_id) (*Cart, error) {
+	var err error
+
+	err := db.Where("ID = ?", c.Param("cart_id")).
+		Preload("CartItem").
+		Preload("Payment").
+		Preload("AppliedDualItemDiscount").
+		Preload("AppliedSingleItemDiscount").
+		Preload("AppliedSingleItemCoupon").
+		Find(&c).Error
+	if err != nil {
+		return &Cart{}, err
+	}
+	if gorm.IsRecordNotFoundError(err) {
+		return &Cart{}, errors.New("Cart Not Found")
+	}
+	return c, err
+}

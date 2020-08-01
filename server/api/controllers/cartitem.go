@@ -54,50 +54,16 @@ func GetAllCartItems(c *gin.Context) {
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/cartitem/{login_id} [post]
 // CreateUpdateItemInCart will add users choosen fruits to the cart list
-func CreateUpdateItemInCart(c *gin.Context) {
-	fmt.Println("started")
-	db := c.MustGet("db").(*gorm.DB)
-	// Bind the input payload to schema for validations
-	var input CartItemInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Request) {
 
-	var fruit models.Fruit
-	if err := db.Where("name = ?", input.Name).First(&fruit).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Fruit record not found!"})
-		return
-	}
-	//Create/Update/Delete Cart entry based on the count
-	cartItem := models.CartItem{CartID: input.CartId, FruitID: fruit.ID, ItemTotal: fruit.Price * float64(input.Count), ItemDiscountedTotal: 0.0}
-	if input.Count > 0 {
-		// Create/update fruit to the cart
-		cartItem.Quantity = input.Count
-		if err := db.Model(&cartItem).Where("cart_id = ? AND fruit_id = ? ", input.CartId, fruit.ID).First(&cartItem).Error; err != nil {
-			if gorm.IsRecordNotFoundError(err) {
-				db.Create(&cartItem) // create new record from newUser
-			}
-		} else {
-			db.Model(&cartItem).Where("cart_id = ?  AND fruit_id = ? ", input.CartId, fruit.ID).
-				Update("quantity", input.Count).
-				Update("fruit_id", fruit.ID).
-				Update("item_total", float64(input.Count)*fruit.Price).
-				Update("item_discounted_total", 0.0)
-		}
-	} else if input.Count == 0 {
-		db.Where("cart_id = ? AND fruit_id = ?", input.CartId, fruit.ID).Delete(&cartItem)
-
-	}
-
+	cartItemCreated, err := cartItem.SaveUpdateCartItem(server.DB)
 	// RecalcuateItem payment for the item in the cart
-	ApplySingleItemDiscounts(cartItem, c)
-	ApplyDualItemDiscounts(cartItem, c)
+	ApplySingleItemDiscounts(cartItemCreated, c)
+	ApplyDualItemDiscounts(cartItemCreated, c)
 	// Recalcuate the payment for the cart
-	RecalcualtePayments(cartItem.CartID, c)
-	fmt.Println("ended")
-	c.JSON(http.StatusOK, gin.H{"data": cartItem})
+	RecalcualtePayments(cartItemCreated.CartID, c)
 
+	responses.JSON(w, http.StatusCreated, cartItemCreated)
 }
 
 // RecalcualtePayments recalcuates the payment for the cart
@@ -120,10 +86,4 @@ func RecalcualtePayments(cartID uint, c *gin.Context) {
 		fmt.Println("Error ", err)
 	}
 	db.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
-	/* var payment models.Payment
-	if err := db.Where("cart_id = ?", cart.ID).Find(&payment).Error; err != nil {
-		fmt.Println("Error ", err)
-	}
-	db.Model(&payment).Where("cart_id = ?", cart.ID).Update("amount", totalCost) */
-
 }

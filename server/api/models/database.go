@@ -1,19 +1,12 @@
 package models
 
-/* import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-) */
-
 import (
 	"fmt"
 	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // using postgres sql
-	/*
-		"github.com/spf13/viper"
-	*/)
+)
 
 var db *gorm.DB
 var err error

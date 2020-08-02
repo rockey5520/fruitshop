@@ -17,11 +17,21 @@ func TestSaveCustomer(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Error refreshCustomerTable %v\n", err)
 	}
+	err = refreshCartTable()
+	if err != nil {
+		log.Fatalf("Error refreshCartTable %v\n", err)
+	}
+	newcart := models.Cart{
+		Total:  0.0,
+		Status: "OPEN",
+	}
 	newCustomer := models.Customer{
 		FirstName: "Rakesh",
 		LastName:  "Mothukuri",
 		LoginID:   "rockey5520",
+		Cart:      newcart,
 	}
+
 	savedCustomer, err := newCustomer.SaveCustomer(server.DB)
 	if err != nil {
 		t.Errorf("Error while saving a user: %v\n", err)

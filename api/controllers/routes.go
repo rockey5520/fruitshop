@@ -10,6 +10,16 @@ import (
 
 func (s *Server) initializeRoutes() {
 
+	// Customer routes
+	s.Router.HandleFunc("/customers", middlewares.SetMiddlewareJSON(s.CreateCustomer)).Methods("POST")
+	s.Router.HandleFunc("/customers/{loginid}", middlewares.SetMiddlewareJSON(s.GetCustomer)).Methods("GET")
+
+	// Fruit routes
+	s.Router.HandleFunc("/fruits", middlewares.SetMiddlewareJSON(s.GetFruits)).Methods("GET")
+
+	// CartItem routes
+	s.Router.HandleFunc("/cartitem", middlewares.SetMiddlewareJSON(s.CreateUpdateItemInCart)).Methods("POST")
+
 	// Home Route
 	s.Router.HandleFunc("/", middlewares.SetMiddlewareJSON(s.Home)).Methods("GET")
 
@@ -18,9 +28,6 @@ func (s *Server) initializeRoutes() {
 
 	//Users routes
 	s.Router.HandleFunc("/users", middlewares.SetMiddlewareJSON(s.CreateUser)).Methods("POST")
-
-	s.Router.HandleFunc("/customers", middlewares.SetMiddlewareJSON(s.CreateCustomer)).Methods("POST")
-	s.Router.HandleFunc("/customers/{loginid}", middlewares.SetMiddlewareJSON(s.GetCustomer)).Methods("GET")
 
 	s.Router.HandleFunc("/users", middlewares.SetMiddlewareJSON(s.GetUsers)).Methods("GET")
 	s.Router.HandleFunc("/users/{id}", middlewares.SetMiddlewareJSON(s.GetUser)).Methods("GET")

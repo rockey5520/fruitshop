@@ -57,9 +57,30 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 
 	server.DB.LogMode(true)
 
-	server.DB.DropTableIfExists(&models.User{}, &models.Post{}, &models.Customer{}, &models.Cart{})
+	//database migration
+	server.DB.DropTableIfExists(
+		&models.User{},
+		&models.Post{},
+		&models.Customer{},
+		&models.Cart{},
+		&models.CartItem{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemCoupon{},
+		&models.AppliedSingleItemDiscount{},
+		&models.Payment{},
+	)
 
-	server.DB.Debug().AutoMigrate(&models.User{}, &models.Post{}, &models.Customer{}, &models.Cart{}) //database migration
+	server.DB.Debug().AutoMigrate(
+		&models.User{},
+		&models.Post{},
+		&models.Customer{},
+		&models.Cart{},
+		&models.CartItem{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemCoupon{},
+		&models.AppliedSingleItemDiscount{},
+		&models.Payment{},
+	)
 
 	server.Router = mux.NewRouter()
 

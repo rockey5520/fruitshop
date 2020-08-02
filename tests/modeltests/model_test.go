@@ -17,6 +17,8 @@ var server = controllers.Server{}
 var userInstance = models.User{}
 var postInstance = models.Post{}
 var CustomerInstance = models.Customer{}
+var fruitInstance = models.Fruit{}
+var cartItemInstance = models.CartItem{}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -105,14 +107,50 @@ func refreshCustomerTable() error {
 	return nil
 }
 
+func refreshCartTable() error {
+	err := server.DB.Debug().DropTableIfExists(&models.Cart{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(&models.Cart{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed cart table")
+	log.Printf("refreshCartTable routine OK !!!")
+	return nil
+}
+
+func refreshCartItemTable() error {
+	err := server.DB.Debug().DropTableIfExists(&models.CartItem{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(&models.CartItem{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed CartItem table")
+	log.Printf("refreshCartItemTable routine OK !!!")
+	return nil
+}
+
 func seedOneCustomer() (models.Customer, error) {
 
 	_ = refreshCustomerTable()
+	_ = refreshCartTable()
 
+	newcart := models.Cart{
+		Total:  0.0,
+		Status: "OPEN",
+	}
 	customer := models.Customer{
 		FirstName: "Rakesh",
 		LastName:  "Mothukuri",
 		LoginID:   "rockey5520",
+		Cart:      newcart,
 	}
 
 	err := server.DB.Debug().Model(&models.Customer{}).Create(&customer).Error
@@ -122,6 +160,64 @@ func seedOneCustomer() (models.Customer, error) {
 
 	log.Printf("seedOneCustomer routine OK !!!")
 	return customer, nil
+}
+
+func seedOneCartItem() (models.CartItem, error) {
+
+	_ = refreshCartItemTable()
+
+	newCartItem := models.CartItem{
+		CartID:              1,
+		FruitID:             1,
+		Name:                "Apple",
+		Quantity:            10,
+		ItemTotal:           10,
+		ItemDiscountedTotal: 0.0,
+	}
+
+	err := server.DB.Debug().Model(&models.CartItem{}).Create(&newCartItem).Error
+	if err != nil {
+		log.Fatalf("cannot seed CartItem table: %v", err)
+	}
+
+	log.Printf("seedOneCartItem routine OK !!!")
+	return newCartItem, nil
+}
+
+func seedFruits() error {
+
+	var err error
+	if err != nil {
+		return err
+	}
+	fruits := []models.Fruit{
+		models.Fruit{
+			Name:  "Apple",
+			Price: 1.0,
+		},
+		models.Fruit{
+			Name:  "Pear",
+			Price: 1.0,
+		},
+		models.Fruit{
+			Name:  "Banana",
+			Price: 1.0,
+		},
+		models.Fruit{
+			Name:  "Orange",
+			Price: 1.0,
+		},
+	}
+
+	for i, _ := range fruits {
+		err := server.DB.Model(&models.User{}).Create(&fruits[i]).Error
+		if err != nil {
+			return err
+		}
+	}
+
+	log.Printf("seedUsers routine OK !!!")
+	return nil
 }
 
 func seedOneUser() (models.User, error) {
@@ -141,6 +237,21 @@ func seedOneUser() (models.User, error) {
 
 	log.Printf("seedOneUser routine OK !!!")
 	return user, nil
+}
+
+func refreshFruitTable() error {
+	err := server.DB.Debug().DropTableIfExists(&models.Fruit{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(&models.Fruit{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed Fruit table")
+	log.Printf("refreshFruitTable routine OK !!!")
+	return nil
 }
 
 func seedUsers() error {

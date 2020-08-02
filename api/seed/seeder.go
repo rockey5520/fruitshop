@@ -3,8 +3,9 @@ package seed
 import (
 	"log"
 
-	"github.com/jinzhu/gorm"
 	"fruitshop/api/models"
+
+	"github.com/jinzhu/gorm"
 )
 
 var users = []models.User{
@@ -33,21 +34,93 @@ var posts = []models.Post{
 
 func Load(db *gorm.DB) {
 
-	err := db.Debug().DropTableIfExists(&models.Post{}, &models.User{}).Error
+	err := db.Debug().DropTableIfExists(
+		&models.Post{},
+		&models.User{},
+		&models.Fruit{},
+		&models.SingleItemDiscount{},
+		&models.DualItemDiscount{},
+		&models.SingleItemCoupon{},
+		&models.Payment{},
+		&models.Cart{},
+		&models.CartItem{},
+	).Error
+
 	if err != nil {
 		log.Fatalf("cannot drop table: %v", err)
 	}
-	err = db.Debug().AutoMigrate(&models.User{}, &models.Post{}).Error
+	err = db.Debug().AutoMigrate(
+		&models.Post{},
+		&models.User{},
+		&models.Fruit{},
+		&models.SingleItemDiscount{},
+		&models.DualItemDiscount{},
+		&models.SingleItemCoupon{},
+		&models.Payment{},
+		&models.Cart{},
+		&models.CartItem{}).Error
+
 	if err != nil {
 		log.Fatalf("cannot migrate table: %v", err)
 	}
 
-	/*
-		err = db.Debug().Model(&models.Post{}).AddForeignKey("author_id", "users(id)", "cascade", "cascade").Error
-		if err != nil {
-			log.Fatalf("attaching foreign key error: %v", err)
-		}
-	*/
+	appleItemDiscount := models.SingleItemDiscount{Count: 7, Discount: 10, Name: "APPLE10"}
+	orangeSingleItemCoupon := models.SingleItemCoupon{
+		Discount: 30,
+		Name:     "ORANGE30",
+	}
+	apple := models.Fruit{
+		Name: "Apple",
+		SingleItemDiscount: []models.SingleItemDiscount{
+			appleItemDiscount,
+		},
+		Price: 1,
+	}
+	banana := models.Fruit{
+		Name:  "Banana",
+		Price: 1,
+	}
+	pear := models.Fruit{
+		Name:  "Pear",
+		Price: 1,
+	}
+	orange := models.Fruit{
+		Name: "Orange",
+		SingleItemCoupon: []models.SingleItemCoupon{
+			orangeSingleItemCoupon,
+		},
+		Price: 1,
+	}
+
+	if err := db.Create(&apple).Error; err != nil {
+		panic("Unable to create fruit inventory")
+	}
+	if err := db.Create(&banana).Error; err != nil {
+		panic("Unable to create fruit inventory")
+	}
+	if err := db.Create(&pear).Error; err != nil {
+		panic("Unable to create fruit inventory")
+	}
+	if err := db.Create(&orange).Error; err != nil {
+		panic("Unable to create fruit inventory")
+	}
+
+	var pearFromDB models.Fruit
+	db.Where("name = ?", "Pear").First(&pearFromDB)
+	var bananaFromDB models.Fruit
+	db.Where("name = ?", "Banana").First(&bananaFromDB)
+	dualItemDiscount := models.DualItemDiscount{
+		FruitID:   pearFromDB.ID,
+		FruitID_1: pearFromDB.ID,
+		FruitID_2: bananaFromDB.ID,
+		Count_1:   4,
+		Count_2:   2,
+		Name:      "PEARBANANA30",
+		Discount:  30,
+	}
+	if err := db.Create(&dualItemDiscount).Error; err != nil {
+		panic("Unable to create Single item discount inventory")
+	}
 
 	for i, _ := range users {
 		err = db.Debug().Model(&models.User{}).Create(&users[i]).Error

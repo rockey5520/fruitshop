@@ -2,19 +2,21 @@ package controllers
 
 import (
 	"fmt"
-	"fruitshop/models"
+	"fruitshop/server/api/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
+// CartItemInput is
 type CartItemInput struct {
-	CartId uint   `json:"cartid" binding:"required"`
+	CartID uint   `json:"cartid" binding:"required"`
 	Name   string `json:"name" binding:"required"`
 	Count  int    `json:"count"`
 }
 
+// GetAllCartItems will retuen all of the cart list for a given customer
 // @Summary Show details of a all items in a cart
 // @Description Get details of contents of the cart
 // @Accept  json
@@ -23,7 +25,6 @@ type CartItemInput struct {
 // @Success 200 {object} models.CartItem
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/cartitem/{cart_id} [get]
-// GetAllCartList will retuen all of the cart list for a given customer
 func GetAllCartItems(c *gin.Context) {
 	s := make([]models.CartItemResponse, 0)
 	db := c.MustGet("db").(*gorm.DB)
@@ -44,6 +45,7 @@ func GetAllCartItems(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": s})
 }
 
+// CreateUpdateItemInCart will add users choosen fruits to the cart list
 // @Summary Creates/Updated item in the cart
 // @Description This end point will record cart item details into the database
 // @Accept  json
@@ -53,7 +55,6 @@ func GetAllCartItems(c *gin.Context) {
 // @Success 200 {object} models.CartItem
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/cartitem/{login_id} [post]
-// CreateUpdateItemInCart will add users choosen fruits to the cart list
 func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Request) {
 
 	cartItemCreated, err := cartItem.SaveUpdateCartItem(server.DB)

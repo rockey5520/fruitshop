@@ -1,10 +1,10 @@
 package seed
 
 import (
+	"fruitshop/server/api/models"
 	"log"
 
 	"github.com/jinzhu/gorm"
-	"github.com/victorsteven/fullstack/api/models"
 )
 
 func Load(db *gorm.DB) {

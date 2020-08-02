@@ -1,14 +1,14 @@
 package controllers
 
 import (
-	"fmt"
-	"fruitshop/models"
+	"fruitshop/server/api/models"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
 
+// FindCart will fetch the details about the cart of the customer
 // @Summary Show details of a cart
 // @Description Get details of a cart
 // @Accept  json
@@ -17,7 +17,6 @@ import (
 // @Success 200 {object} models.Cart
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/cart/{cart_id} [get]
-// FindCart will fetch the details about the cart of the customer
 func (server *Server) FindCart(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	cart_id, err := vars["cart_id"]

@@ -1,13 +1,17 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"errors"
+
+	"github.com/jinzhu/gorm"
+)
 
 /*Customer Customer table represents the customer of the fruit store
 swagger:model Customer
 */
 type Customer struct {
 	// Login ID of the customer
-	LoginId string `json:"loginid" gorm:"unique_index"`
+	LoginID string `json:"loginid" gorm:"unique_index"`
 	// First name of the customer
 	FirstName string `json:"firstname"`
 	// Last name of the customer
@@ -17,8 +21,7 @@ type Customer struct {
 	gorm.Model
 }
 
-// Error Bad Request
-// swagger:response badReq
+// H is a type swagger:response badReq
 type H map[string]interface{}
 
 // HTTP status code 200 and Customer model in data
@@ -33,64 +36,65 @@ type swaggCustomerResp struct {
 	}
 }
 
+// Validate is a method
 func (c *Customer) Validate(action string) error {
-	switch strings.ToLower(action) {
-	
-		if c.FirstName == "" {
-			return errors.New("Required FirstName")
-		}
-		if u.LastName == "" {
-			return errors.New("Required LastName")
-		}
-		return nil
+
+	if c.FirstName == "" {
+		return errors.New("Required FirstName")
 	}
+	if c.LastName == "" {
+		return errors.New("Required LastName")
+	}
+	return nil
+
 }
 
+// SaveCustomer is a
 func (c *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 
-	var err error
+	//var err error
 	// update cart to cart array in the customer table
-	newcart := models.Cart{
+	newcart := Cart{
 		Total:  0.0,
 		Status: "OPEN",
 	}
 
-	customer := models.Customer{
-		FirstName: input.FirstName,
-		LastName:  input.LastName,
-		LoginId:   input.LoginId,
+	customer := Customer{
+		FirstName: c.FirstName,
+		LastName:  c.LastName,
+		LoginID:   c.LoginID,
 		Cart:      newcart,
 	}
-	
+
 	if err := db.Create(&customer).Error; err != nil {
 		return &Customer{}, err
-		
+
 	}
 	return c, nil
 }
 
-
-func (c *Customer) FindCustomerByID(db *gorm.DB, uid uint32) (*Customer, error) {
+//FindCustomerByID is a
+func (c *Customer) FindCustomerByID(db *gorm.DB, loginID string) (*Customer, error) {
 	var err error
-	var customer models.Customer
-	db := c.MustGet("db").(*gorm.DB)
-	err := db.Where("login_id = ?", c.Param("login_id")).First(&customer).Error
+	var customer Customer
+	//db = c.MustGet("db").(*gorm.DB)
+	err = db.Where("login_id = ?", loginID).First(&customer).Error
 
 	if gorm.IsRecordNotFoundError(err) {
 		return &Customer{}, errors.New("Customer record Not Found")
 	}
 
-	var cart models.Cart
+	var cart Cart
 	db.Where("customer_id = ? AND status = ?", customer.ID, "OPEN").Find(&cart)
-	var cartItem []models.CartItem
+	var cartItem []CartItem
 	db.Where("cart_id = ?", cart.ID).Find(&cartItem)
-	var payment models.Payment
+	var payment Payment
 	db.Where("cart_id = ?", cart.ID).Find(&payment)
-	var appliedDualItemDiscount []models.AppliedDualItemDiscount
+	var appliedDualItemDiscount []AppliedDualItemDiscount
 	db.Where("cart_id = ?", cart.ID).Find(&appliedDualItemDiscount)
-	var appliedSingleItemDiscount []models.AppliedSingleItemDiscount
+	var appliedSingleItemDiscount []AppliedSingleItemDiscount
 	db.Where("cart_id = ?", cart.ID).Find(&appliedSingleItemDiscount)
-	var appliedSingleItemCoupon []models.AppliedSingleItemCoupon
+	var appliedSingleItemCoupon []AppliedSingleItemCoupon
 	db.Where("cart_id = ?", cart.ID).Find(&appliedSingleItemCoupon)
 	customer.Cart = cart
 	customer.Cart.CartItem = cartItem
@@ -98,12 +102,11 @@ func (c *Customer) FindCustomerByID(db *gorm.DB, uid uint32) (*Customer, error) 
 	customer.Cart.AppliedDualItemDiscount = appliedDualItemDiscount
 	customer.Cart.AppliedSingleItemCoupon = appliedSingleItemCoupon
 	customer.Cart.AppliedSingleItemDiscount = appliedSingleItemDiscount
-	
-	err = db.Debug().Model(Customer{}).Where("id = ?", uid).Take(&u).Error
+
+	err = db.Debug().Model(Customer{}).Where("id = ?", loginID).Take(&c).Error
 	if err != nil {
 		return &Customer{}, err
 	}
-	
+
 	return c, err
 }
-

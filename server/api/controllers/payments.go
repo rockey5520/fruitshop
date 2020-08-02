@@ -1,13 +1,16 @@
 package controllers
 
 import (
-	"fruitshop/models"
+	"encoding/json"
+	"fruitshop/server/api/models"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
+// Pay method takes the payment and resets cart, cartitems, coupons, discounts
 // @Summary Payment endpoint
 // @Description This end point will update payment details of cart into the database
 // @Accept  json
@@ -16,8 +19,7 @@ import (
 // @Param cart_id path string true "Customer identifier"
 // @Success 200 {object} models.Payment
 // @Failure 400 {string} string "Bad input"
-// @Router /server/api/v1/pay/{cart_id} [post]
-// Pay method takes the payment and resets cart, cartitems, coupons, discounts
+// @Router /server/api/v1/pay/{cart_id} [post
 func (server *Server) Pay(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)

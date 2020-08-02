@@ -2,12 +2,12 @@ package api
 
 import (
 	"fmt"
+	"fruitshop/server/api/controllers"
+	"fruitshop/server/api/seed"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/victorsteven/fullstack/api/controllers"
-	"github.com/victorsteven/fullstack/api/seed"
 )
 
 var server = controllers.Server{}

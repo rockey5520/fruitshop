@@ -1,16 +1,6 @@
 package main
 
-import (
-	"fruitshop/controllers"
-	"fruitshop/docs"
-	"fruitshop/models"
-
-	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-)
+import "fruitshop/server/api"
 
 func main() {
 	// router := gin.Default()
@@ -64,14 +54,14 @@ func main() {
 
 }
 
-func initSwagger(engine *gin.Engine) {
-	docs.SwaggerInfo.Title = "Fruit Store REST API"
-	docs.SwaggerInfo.Description = "This API is backend service for the fruit store"
-	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:8081"
-	docs.SwaggerInfo.BasePath = "/server/api/v1"
-	docs.SwaggerInfo.Schemes = []string{"http"}
+// func initSwagger(engine *gin.Engine) {
+// 	docs.SwaggerInfo.Title = "Fruit Store REST API"
+// 	docs.SwaggerInfo.Description = "This API is backend service for the fruit store"
+// 	docs.SwaggerInfo.Version = "1.0"
+// 	docs.SwaggerInfo.Host = "localhost:8081"
+// 	docs.SwaggerInfo.BasePath = "/server/api/v1"
+// 	docs.SwaggerInfo.Schemes = []string{"http"}
 
-	url := ginSwagger.URL("http://localhost:8081/swagger/doc.json")
-	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
-}
+// 	url := ginSwagger.URL("http://localhost:8081/swagger/doc.json")
+// 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+// }

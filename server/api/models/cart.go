@@ -1,6 +1,10 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"errors"
+
+	"github.com/jinzhu/gorm"
+)
 
 /*Cart is asssociated with Customer with Has-many relationship
 swagger:model Cart
@@ -28,10 +32,11 @@ type Cart struct {
 	//ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
 }
 
-func (c *Cart) FindCartByID(db *gorm.DB, string cart_id) (*Cart, error) {
+//FindCartByID is
+func (c *Cart) FindCartByID(db *gorm.DB, cartID string) (*Cart, error) {
 	var err error
 
-	err := db.Where("ID = ?", c.Param("cart_id")).
+	err = db.Where("ID = ?", cartID).
 		Preload("CartItem").
 		Preload("Payment").
 		Preload("AppliedDualItemDiscount").

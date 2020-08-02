@@ -1,6 +1,8 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 /*Fruit is a meta table of fruits in the inventory
 swagger:model Fruit
@@ -20,21 +22,21 @@ type Fruit struct {
 	DualItemDiscount []DualItemDiscount `gorm:"foreignkey:FruitID"`
 }
 
-func (f *Fruit) FindFruitByName(db *gorm.DB, name String) (*Fruit, error) {
+//FindFruitByName is
+func (f *Fruit) FindFruitByName(db *gorm.DB, name string) (*Fruit, error) {
 	var err error
-	var fruit models.Fruit
-	db := c.MustGet("db").(*gorm.DB)
-	err := db.Where("name = ?", c.Param("name")).First(&fruit).Error
+	var fruit Fruit
+	//db = c.MustGet("db").(*gorm.DB)
+	err = db.Where("name = ?", name).First(&fruit).Error
 	if err != nil {
 		return &Fruit{}, err
 	}
-	if gorm.IsRecordNotFoundError(err) {
-		return &User{}, errors.New("User Not Found")
-	}
+
 	return f, err
 
 }
 
+// FindAllFruits is
 func (f *Fruit) FindAllFruits(db *gorm.DB) (*[]Fruit, error) {
 	var err error
 	fruits := []Fruit{}

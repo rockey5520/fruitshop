@@ -1,20 +1,19 @@
 package controllers
 
 import (
-	"fruitshop/models"
+	"fruitshop/server/api/models"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"github.com/gorilla/mux"
 )
 
+// FindFruit returns fruit details if fruit exists in the store
 // @Summary Show details of all fruits
 // @Description Get details of all fruits
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} models.Fruit
 // @Router /server/api/v1/fruits [get]
-// FindFruit returns fruit details if fruit exists in the store
 func (server *Server) FindFruit(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -32,6 +31,7 @@ func (server *Server) FindFruit(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, fruitGotten)
 }
 
+// FindFruits will retuen all fruits exists within the fruitshop
 // @Summary Show details of a fruit item
 // @Description Get details of a fruit item
 // @Accept  json
@@ -40,7 +40,6 @@ func (server *Server) FindFruit(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} models.Fruit
 // @Failure 400 {string} string "Bad input"
 // @Router /server/api/v1/fruits/{name} [get]
-// FindFruits will retuen all fruits exists within the fruitshop
 func (server *Server) FindFruits(w http.ResponseWriter, r *http.Request) {
 
 	fruit := models.Fruit{}

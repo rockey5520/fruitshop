@@ -1,7 +1,5 @@
 package controllers
 
-import "fruitshop/controllers"
-
 func (s *Server) initializeRoutes() {
 
 	// Routes for customer

@@ -6,15 +6,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
 	"fruitshop/api/controllers"
 	"fruitshop/api/models"
+
+	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 )
 
 var server = controllers.Server{}
 var userInstance = models.User{}
 var postInstance = models.Post{}
+var customerInstance = models.Customer{}
 
 func TestMain(m *testing.M) {
 	err := godotenv.Load(os.ExpandEnv("../../.env"))
@@ -64,25 +66,17 @@ func Database() {
 			fmt.Printf("We are connected to the %s database\n", TestDbDriver)
 		}
 		server.DB.Exec("PRAGMA foreign_keys = ON")
+		server.DB.LogMode(true)
 	}
 }
 
 func refreshUserTable() error {
-	/*
-		err := server.DB.DropTableIfExists(&models.User{}).Error
-		if err != nil {
-			return err
-		}
-		err = server.DB.AutoMigrate(&models.User{}).Error
-		if err != nil {
-			return err
-		}
-	*/
-	err := server.DB.DropTableIfExists(&models.Post{}, &models.User{}).Error
+
+	err := server.DB.DropTableIfExists(&models.Post{}, &models.User{}, &models.Customer{}).Error
 	if err != nil {
 		return err
 	}
-	err = server.DB.AutoMigrate(&models.User{}, &models.Post{}).Error
+	err = server.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.Customer{}).Error
 	if err != nil {
 		return err
 	}
@@ -91,6 +85,39 @@ func refreshUserTable() error {
 	return nil
 }
 
+func refreshCustomerTable() error {
+	err := server.DB.Debug().DropTableIfExists(&models.Customer{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(&models.Customer{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed customer table")
+	log.Printf("refreshCustomerTable routine OK !!!")
+	return nil
+}
+
+func seedOneCustomer() (models.Customer, error) {
+
+	_ = refreshCustomerTable()
+
+	customer := models.Customer{
+		FirstName: "Rakesh",
+		LastName:  "Mothukuri",
+		LoginID:   "a",
+	}
+
+	err := server.DB.Debug().Model(&models.Customer{}).Create(&customer).Error
+	if err != nil {
+		log.Fatalf("cannot seed customers table: %v", err)
+	}
+
+	log.Printf("seedOneCustomer routine OK !!!")
+	return customer, nil
+}
 func seedOneUser() (models.User, error) {
 
 	err := refreshUserTable()

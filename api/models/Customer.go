@@ -74,7 +74,7 @@ func (c *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 func (c *Customer) FindCustomerByLoginID(db *gorm.DB, loginID string) (*Customer, error) {
 	var err error
 	var customer Customer
-	//db = c.MustGet("db").(*gorm.DB)
+	//db.W MustGet("db").(*gorm.DB)
 	err = db.Where("login_id = ?", loginID).First(&customer).Error
 
 	if gorm.IsRecordNotFoundError(err) {

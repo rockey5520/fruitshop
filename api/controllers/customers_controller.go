@@ -15,18 +15,24 @@ import (
 
 // CreateCustomer is
 func (server *Server) CreateCustomer(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("I am her ")
-
+	// Reading the request body from http request
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 	}
+	// Creating customer , cart structs and mapping request body to customer and a creating new card with customer ID
 	customer := models.Customer{}
+	newcart := models.Cart{
+		Total:  0.0,
+		Status: "OPEN",
+	}
+	customer.Cart = newcart
 	err = json.Unmarshal(body, &customer)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+	// Customer validation
 	err = customer.Validate("")
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
@@ -35,9 +41,7 @@ func (server *Server) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	createdCustomer, err := customer.SaveCustomer(server.DB)
 
 	if err != nil {
-
 		formattedError := formaterror.FormatError(err.Error())
-
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}

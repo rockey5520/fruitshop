@@ -19,6 +19,10 @@ func TestCreateCustomer(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = refreshCartTable()
+	if err != nil {
+		log.Fatal(err)
+	}
 	samples := []struct {
 		inputJSON    string
 		statusCode   int
@@ -48,7 +52,7 @@ func TestCreateCustomer(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		responseMap := make(map[string]interface{})
-		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
+		err = json.Unmarshal([]byte(rr.Body.Bytes()), &responseMap)
 		if err != nil {
 			fmt.Printf("Cannot convert to json: %v", err)
 		}
@@ -67,6 +71,11 @@ func TestGetCustomerByLoginID(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = refreshCartTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	user, err := seedOneCustomer()
 	if err != nil {
 		log.Fatal(err)

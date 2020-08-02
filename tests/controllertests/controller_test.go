@@ -17,6 +17,7 @@ var server = controllers.Server{}
 var userInstance = models.User{}
 var postInstance = models.Post{}
 var customerInstance = models.Customer{}
+var cartInstance = models.Cart{}
 
 func TestMain(m *testing.M) {
 	err := godotenv.Load(os.ExpandEnv("../../.env"))
@@ -100,14 +101,36 @@ func refreshCustomerTable() error {
 	return nil
 }
 
+func refreshCartTable() error {
+	err := server.DB.Debug().DropTableIfExists(&models.Cart{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(&models.Cart{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed cart table")
+	log.Printf("refreshCartTable routine OK !!!")
+	return nil
+}
+
 func seedOneCustomer() (models.Customer, error) {
 
 	_ = refreshCustomerTable()
+	_ = refreshCartTable()
+
+	newcart := models.Cart{
+		Total:  0.0,
+		Status: "OPEN",
+	}
 
 	customer := models.Customer{
 		FirstName: "Rakesh",
 		LastName:  "Mothukuri",
 		LoginID:   "a",
+		Cart:      newcart,
 	}
 
 	err := server.DB.Debug().Model(&models.Customer{}).Create(&customer).Error

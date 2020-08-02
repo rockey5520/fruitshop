@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -16,8 +17,7 @@ type Customer struct {
 	FirstName string `json:"firstname"`
 	// Last name of the customer
 	LastName string `json:"lastname"`
-	//Cart     Cart   `gorm:"foreignkey:CustomerId;association_foreignkey:ID"`
-
+	Cart     Cart   `gorm:"foreignkey:CustomerId;association_foreignkey:ID"`
 	gorm.Model
 }
 
@@ -49,20 +49,6 @@ func (c *Customer) Validate(action string) error {
 // SaveCustomer is a
 func (c *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 
-	//var err error
-	// update cart to cart array in the customer table
-	// newcart := Cart{
-	// 	Total:  0.0,
-	// 	Status: "OPEN",
-	// }
-
-	// customer := Customer{
-	// 	FirstName: c.FirstName,
-	// 	LastName:  c.LastName,
-	// 	LoginID:   c.LoginID,
-	// 	Cart:      newcart,
-	// }
-
 	if err := db.Create(&c).Error; err != nil {
 		return &Customer{}, err
 
@@ -72,17 +58,14 @@ func (c *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 
 //FindCustomerByID is a
 func (c *Customer) FindCustomerByLoginID(db *gorm.DB, loginID string) (*Customer, error) {
-	var err error
-	var customer Customer
-	//db.W MustGet("db").(*gorm.DB)
-	err = db.Where("login_id = ?", loginID).First(&customer).Error
-
+	err := db.Where("login_id = ?", loginID).First(&c).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return &Customer{}, errors.New("Customer record Not Found")
 	}
-
-	// var cart Cart
-	// db.Where("customer_id = ? AND status = ?", customer.ID, "OPEN").Find(&cart)
+	fmt.Println(c.FirstName)
+	var cart Cart
+	db.Where("customer_id = ? AND status = ?", c.ID, "OPEN").Find(&cart)
+	c.Cart = cart
 	// var cartItem []CartItem
 	// db.Where("cart_id = ?", cart.ID).Find(&cartItem)
 	// var payment Payment

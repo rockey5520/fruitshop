@@ -52,7 +52,7 @@ func (server *Server) GetCustomer(w http.ResponseWriter, r *http.Request) {
 	loginid := vars["loginid"]
 
 	customer := models.Customer{}
-	customerFetched, err := customer.FindCustomerByID(server.DB, loginid)
+	customerFetched, err := customer.FindCustomerByLoginID(server.DB, loginid)
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return

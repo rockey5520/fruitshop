@@ -6,15 +6,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
 	"fruitshop/api/controllers"
 	"fruitshop/api/models"
+
+	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 )
 
 var server = controllers.Server{}
 var userInstance = models.User{}
 var postInstance = models.Post{}
+var CustomerInstance = models.Customer{}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -86,6 +88,40 @@ func refreshUserTable() error {
 	log.Printf("Successfully refreshed table")
 	log.Printf("refreshUserTable routine OK !!!")
 	return nil
+}
+
+func refreshCustomerTable() error {
+	err := server.DB.Debug().DropTableIfExists(&models.Customer{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(&models.Customer{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed customer table")
+	log.Printf("refreshCustomerTable routine OK !!!")
+	return nil
+}
+
+func seedOneCustomer() (models.Customer, error) {
+
+	_ = refreshCustomerTable()
+
+	customer := models.Customer{
+		FirstName: "Rakesh",
+		LastName:  "Mothukuri",
+		LoginID:   "rockey5520",
+	}
+
+	err := server.DB.Debug().Model(&models.Customer{}).Create(&customer).Error
+	if err != nil {
+		log.Fatalf("cannot seed customers table: %v", err)
+	}
+
+	log.Printf("seedOneCustomer routine OK !!!")
+	return customer, nil
 }
 
 func seedOneUser() (models.User, error) {

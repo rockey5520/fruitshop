@@ -71,7 +71,7 @@ func (c *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 }
 
 //FindCustomerByID is a
-func (c *Customer) FindCustomerByID(db *gorm.DB, loginID string) (*Customer, error) {
+func (c *Customer) FindCustomerByLoginID(db *gorm.DB, loginID string) (*Customer, error) {
 	var err error
 	var customer Customer
 	//db = c.MustGet("db").(*gorm.DB)

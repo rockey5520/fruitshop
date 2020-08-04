@@ -14,11 +14,6 @@ import (
 )
 
 var server = controllers.Server{}
-var userInstance = models.User{}
-var postInstance = models.Post{}
-var customerInstance = models.Customer{}
-var cartInstance = models.Cart{}
-var fruitInstance = models.Fruit{}
 
 func TestMain(m *testing.M) {
 	err := godotenv.Load(os.ExpandEnv("../../.env"))
@@ -118,12 +113,20 @@ func refreshFruitTable() error {
 }
 
 func refreshCartTable() error {
-	err := server.DB.Debug().DropTableIfExists(&models.Cart{}).Error
+	err := server.DB.Debug().DropTableIfExists(&models.Cart{},
+		&models.Payment{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemDiscount{},
+		&models.AppliedSingleItemCoupon{}).Error
 	if err != nil {
 		return err
 	}
 
-	err = server.DB.Debug().AutoMigrate(&models.Cart{}).Error
+	err = server.DB.Debug().AutoMigrate(&models.Cart{},
+		&models.Payment{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemDiscount{},
+		&models.AppliedSingleItemCoupon{}).Error
 	if err != nil {
 		return err
 	}
@@ -146,6 +149,27 @@ func refreshCartItemTable() error {
 	log.Printf("refreshCartItemTable routine OK !!!")
 	return nil
 }
+
+func seedOneCart() (models.Cart, error) {
+
+	_ = refreshCartTable()
+
+	newCart := models.Cart{
+		CustomerId:   1,
+		Total:        5,
+		TotalSavings: 2,
+		Status:       "OPEN",
+	}
+
+	err := server.DB.Debug().Model(&models.Cart{}).Create(&newCart).Error
+	if err != nil {
+		log.Fatalf("cannot seed Cart table: %v", err)
+	}
+
+	log.Printf("seedOneCart routine OK !!!")
+	return newCart, nil
+}
+
 func seedOneCartItem() (models.CartItem, error) {
 
 	_ = refreshCartItemTable()

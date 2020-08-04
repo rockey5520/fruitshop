@@ -60,6 +60,7 @@ func TestCreateCartItem(t *testing.T) {
 		if v.statusCode == 201 {
 
 			assert.Equal(t, responseMap["itemtotal"], v.itemtotal)
+
 		}
 	}
 }

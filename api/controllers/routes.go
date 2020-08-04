@@ -20,6 +20,9 @@ func (s *Server) initializeRoutes() {
 	// CartItem routes
 	s.Router.HandleFunc("/cartitem", middlewares.SetMiddlewareJSON(s.CreateUpdateItemInCart)).Methods("POST")
 
+	// Cart route
+	s.Router.HandleFunc("/cart/{cart_id}", middlewares.SetMiddlewareJSON(s.GetCart)).Methods("GET")
+
 	// Home Route
 	s.Router.HandleFunc("/", middlewares.SetMiddlewareJSON(s.Home)).Methods("GET")
 

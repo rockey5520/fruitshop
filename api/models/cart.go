@@ -1,6 +1,8 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Cart struct {
 	// Primary key, created_at, deleted_at, updated_at for each cart
@@ -23,4 +25,18 @@ type Cart struct {
 	// AppliedSingleItemCoupon is having has-many relationship with Cart
 	AppliedSingleItemCoupon []AppliedSingleItemCoupon `gorm:"foreignkey:CartID;association_foreignkey:ID"`
 	//ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
+}
+
+//FindCustomerByID is a
+func (c *Cart) FindCartByCartID(db *gorm.DB, cartID string) (*Cart, error) {
+	//models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
+	err := db.Where("ID = ?", cartID).
+		Preload("CartItem").
+		Preload("Payment").
+		Preload("AppliedDualItemDiscount").
+		Preload("AppliedSingleItemDiscount").
+		Preload("AppliedSingleItemCoupon").
+		Find(&c).Error
+
+	return c, err
 }

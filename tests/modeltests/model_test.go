@@ -19,6 +19,7 @@ var postInstance = models.Post{}
 var CustomerInstance = models.Customer{}
 var fruitInstance = models.Fruit{}
 var cartItemInstance = models.CartItem{}
+var cartInstance = models.Cart{}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -76,6 +77,29 @@ func Database() {
 
 }
 
+func refreshCartTable() error {
+	err := server.DB.Debug().DropTableIfExists(&models.Cart{},
+		&models.Payment{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemDiscount{},
+		&models.AppliedSingleItemCoupon{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(&models.Cart{},
+		&models.Payment{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemDiscount{},
+		&models.AppliedSingleItemCoupon{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed cart table")
+	log.Printf("refreshCartTable routine OK !!!")
+	return nil
+}
+
 func refreshUserTable() error {
 	server.DB.Exec("SET foreign_key_checks=0")
 	err := server.DB.Debug().DropTableIfExists(&models.User{}).Error
@@ -107,21 +131,6 @@ func refreshCustomerTable() error {
 	return nil
 }
 
-func refreshCartTable() error {
-	err := server.DB.Debug().DropTableIfExists(&models.Cart{}).Error
-	if err != nil {
-		return err
-	}
-
-	err = server.DB.Debug().AutoMigrate(&models.Cart{}).Error
-	if err != nil {
-		return err
-	}
-	log.Printf("Successfully refreshed cart table")
-	log.Printf("refreshCartTable routine OK !!!")
-	return nil
-}
-
 func refreshCartItemTable() error {
 	err := server.DB.Debug().DropTableIfExists(&models.CartItem{}).Error
 	if err != nil {
@@ -135,6 +144,26 @@ func refreshCartItemTable() error {
 	log.Printf("Successfully refreshed CartItem table")
 	log.Printf("refreshCartItemTable routine OK !!!")
 	return nil
+}
+
+func seedOneCart() (models.Cart, error) {
+
+	_ = refreshCartTable()
+
+	newCart := models.Cart{
+		CustomerId:   1,
+		Total:        5,
+		TotalSavings: 2,
+		Status:       "OPEN",
+	}
+
+	err := server.DB.Debug().Model(&models.Cart{}).Create(&newCart).Error
+	if err != nil {
+		log.Fatalf("cannot seed Cart table: %v", err)
+	}
+
+	log.Printf("seedOneCart routine OK !!!")
+	return newCart, nil
 }
 
 func seedOneCustomer() (models.Customer, error) {

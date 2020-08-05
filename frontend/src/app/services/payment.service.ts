@@ -34,6 +34,6 @@ export class PaymentService {
   }
 
   public applyDiscount(cart_id: number, fruit_id:number){
-    return this.http.get(`/server/orangecoupon/${cart_id}/${fruit_id}/`)
+    return this.http.get(`/server/orangecoupon/${cart_id}/${fruit_id}`)
   }
 }

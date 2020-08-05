@@ -7,8 +7,9 @@ import { AuthenticationService } from './../../services/authentication.service';
 import { DiscountService } from './../../services/discount.service';
 import { FruitService } from 'src/app/services/fruit.service';
 import { Observable, pipe } from 'rxjs';
-import { Datum } from './../../models/cartitem.model';
+
 import { map } from 'rxjs/operators';
+import { CartItem } from 'src/app/models/cartitem.model';
 
 
 @Component({
@@ -21,7 +22,7 @@ export class FruitcardComponent implements OnInit {
   @Input()
   fruit: FruitModel
   currentUser: Customer;
-  cartList: Observable<Datum[]>;
+  cartList: Observable<CartItem[]>;
 
   count: number;
 

@@ -17,8 +17,11 @@ export class CartService {
   constructor(private http: HttpClient) {
     this.update = new BehaviorSubject<boolean>(false);
   }
-  public getCartByID(ID: number): Observable<CartItem> {
-    return this.http.get<CartItem>(`/server/cartitem/${ID}`).pipe(delay(400))
+
+
+
+  public getCartByID(ID: number): Observable<CartItem[]> {
+    return this.http.get<CartItem[]>(`/server/cartitems/${ID}`).pipe(delay(400))
     
   }
 
@@ -31,8 +34,8 @@ export class CartService {
 
     const body = {
       "cartid": ID,
-      "Name": fruit.name,
-      "Count": count
+      "name": fruit.name,
+      "quantity": count
     }
     return this.http.post(`/server/cartitem`, body, httpOptions)
   }

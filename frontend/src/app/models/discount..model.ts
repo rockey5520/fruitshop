@@ -1,8 +1,16 @@
+
+
+export interface DiscountModel {
+    id:         number;
+    CustomerId: number;
+    name:       string;
+    status:     string;
+}
+
 /* export class DiscountModel {
     name: string
     status: string
-} */
-
+} 
 export interface DiscountModel {
     data: DiscountModelDatum[];
 }
@@ -165,4 +173,4 @@ const typeMap: any = {
         { json: "name", js: "name", typ: "" },
         { json: "status", js: "status", typ: "" },
     ], false),
-};
+};*/

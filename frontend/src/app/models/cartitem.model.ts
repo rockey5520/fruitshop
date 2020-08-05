@@ -1,3 +1,13 @@
+export class CartItem {
+    id:          number;
+    CartID:      number;
+    name:        string;
+    costperitem: number;
+    count:       number;
+    itemtotal:   number;
+}
+
+/*
 export interface CartItem {
     data: Datum[];
 }
@@ -164,4 +174,4 @@ const typeMap: any = {
         { json: "count", js: "count", typ: 0 },
         { json: "itemtotal", js: "itemtotal", typ: 3.14 },
     ], false),
-};
+};*/

@@ -1,9 +1,10 @@
 import { OrderedFruitModel, OrderedFruitModelData } from './../../models/orderedfruit.mode';
 import { FruitModel } from './../../models/fruit.model';
-import { DiscountModel, DiscountModelDatum } from './../../models/discount..model';
-import { Datum } from './../../models/cartitem.model';
+import { DiscountModel} from './../../models/discount..model';
+
 ;
 import { Customer } from './../../models/customer.model';
+
 
 import { Component, OnInit } from '@angular/core';
 
@@ -23,6 +24,7 @@ import { ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { DOCUMENT } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { CartItem } from 'src/app/models/cartitem.model';
 
 
 @Component({
@@ -32,9 +34,10 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CartComponent implements OnInit {
 
-  cartList: Observable<Datum[]>;
+  //cartList: Observable<CartItem[]>;
+  cartList: Observable<Array<CartItem>>;
 
-  discountList: Observable<DiscountModelDatum[]>;
+  discountList: Observable<DiscountModel[]>;
 
 
 
@@ -83,8 +86,9 @@ export class CartComponent implements OnInit {
   }
 
   updateData() {
+  
     this.cartList = this.cartService.getCartByID(this.currentUser.Cart.ID)
-      .pipe(map(item => item.data.filter(item => item.count > 0)));
+      .pipe(map(item => item.filter(item => item.count > 0)));
 
     this.total = 0;
     this.cartList.subscribe((data) => {
@@ -94,10 +98,9 @@ export class CartComponent implements OnInit {
 
     })
   }
-
   updateDiscountData() {
     this.discountList = this.discountService.getDiscountsByID(this.currentUser.Cart.ID)
-      .pipe(map(item => item.data.filter(item => item.status == "APPLIED")));
+      .pipe(map(item => item.filter(item => item.status == "APPLIED")));
     }
   
   updateUserData() {  

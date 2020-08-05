@@ -18,7 +18,7 @@ export class CartService {
     this.update = new BehaviorSubject<boolean>(false);
   }
   public getCartByID(ID: number): Observable<CartItem> {
-    return this.http.get<CartItem>(`/server/api/v1/cartitem/${ID}`).pipe(delay(400))
+    return this.http.get<CartItem>(`/server/cartitem/${ID}`).pipe(delay(400))
     
   }
 
@@ -34,6 +34,6 @@ export class CartService {
       "Name": fruit.name,
       "Count": count
     }
-    return this.http.post(`/server/api/v1/cartitem`, body, httpOptions)
+    return this.http.post(`/server/cartitem`, body, httpOptions)
   }
 }

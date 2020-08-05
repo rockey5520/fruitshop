@@ -20,7 +20,7 @@ export class DiscountService {
         
     }
     public getDiscountsByID(ID: Number): Observable<DiscountModel> {
-        return this.http.get<DiscountModel>(`/server/api/v1/discounts/${ID}`).pipe(delay(400));
+        return this.http.get<DiscountModel>(`/server/discounts/${ID}`).pipe(delay(400));
     }
 
 }

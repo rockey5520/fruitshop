@@ -21,7 +21,7 @@ export class FruitService {
  
 
   getFruits(): Observable<FruitModel[]> {
-    return this.http.get<FruitModel[]>("/server/api/v1/fruits").pipe(tap(_ => this.log('fetched fruits')),
+    return this.http.get<FruitModel[]>("/server/fruits").pipe(tap(_ => this.log('fetched fruits')),
       catchError(this.handleError<FruitModel[]>('data', []))
     );
 

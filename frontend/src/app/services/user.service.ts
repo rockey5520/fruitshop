@@ -22,7 +22,7 @@ export class UserService {
 
       
     register(customer: Data) {        
-        return this.http.post(`/server/api/v1/customers`, customer).pipe(map(customer => {
+        return this.http.post(`/server/customers`, customer).pipe(map(customer => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(customer));
             //this.currentUserSubject.next(customer)
@@ -31,7 +31,7 @@ export class UserService {
     }
 
     getUser(loginId : string){
-        return this.http.get(`/server/api/v1/customers/${loginId}`)
+        return this.http.get(`/server/customers/${loginId}`)
     }
  
 }

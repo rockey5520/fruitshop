@@ -23,7 +23,7 @@ export class AuthenticationService {
     }
 
     login(loginid){
-        return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
+        return this.http.get<any>(`/server/customers/${loginid}`)
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
@@ -34,7 +34,7 @@ export class AuthenticationService {
     }
 
     login2(loginid){
-        return this.http.get<any>(`/server/api/v1/customers/${loginid}`)
+        return this.http.get<any>(`/server/customers/${loginid}`)
     }
 
     logout() {

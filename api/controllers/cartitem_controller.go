@@ -10,6 +10,7 @@ import (
 	"fruitshop/api/responses"
 	"fruitshop/api/utils/formaterror"
 
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
 
@@ -47,6 +48,18 @@ func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Requ
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdCartItem.ID))
 	responses.JSON(w, http.StatusCreated, createdCartItem)
+}
+
+// GetCartItems is
+func (server *Server) GetCartItems(w http.ResponseWriter, r *http.Request) {
+
+	cartItem := models.CartItem{}
+	vars := mux.Vars(r)
+	cartId := vars["cart_id"]
+
+	cartItems := cartItem.FindAllCartItems(server.DB, cartId)
+
+	responses.JSON(w, http.StatusOK, cartItems)
 }
 
 // RecalcualtePayments recalcuates the payment for the cart

@@ -83,7 +83,7 @@ export class CartComponent implements OnInit {
   }
 
   updateData() {
-    this.cartList = this.cartService.getCartByID(this.currentUser.data.Cart.ID)
+    this.cartList = this.cartService.getCartByID(this.currentUser.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.count > 0)));
 
     this.total = 0;
@@ -96,18 +96,18 @@ export class CartComponent implements OnInit {
   }
 
   updateDiscountData() {
-    this.discountList = this.discountService.getDiscountsByID(this.currentUser.data.Cart.ID)
+    this.discountList = this.discountService.getDiscountsByID(this.currentUser.Cart.ID)
       .pipe(map(item => item.data.filter(item => item.status == "APPLIED")));
     }
   
   updateUserData() {  
-    this.authenticationService.login(this.currentUser.data.loginid).subscribe((x)=>{
+    this.authenticationService.login(this.currentUser.loginid).subscribe((x)=>{
       this.cartService.update.next(true)
     })
   }
 
   pay(): void {
-    this.paymentService.pay(this.currentUser.data.ID, this.currentUser.data.Cart.ID, this.total).subscribe(() => {
+    this.paymentService.pay(this.currentUser.ID, this.currentUser.Cart.ID, this.total).subscribe(() => {
       this.authenticationService.update.next(true)
     },error => {
       console.error(error)
@@ -117,7 +117,7 @@ export class CartComponent implements OnInit {
 
   applyDiscount(): void {
   
-    this.paymentService.applyDiscount(this.currentUser.data.Cart.ID, 4).subscribe(() => {
+    this.paymentService.applyDiscount(this.currentUser.Cart.ID, 4).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
 
@@ -125,7 +125,7 @@ export class CartComponent implements OnInit {
     this.formNotComplete = true;
     
     setTimeout(() => {
-      this.cartService.getCartByID(this.currentUser.data.Cart.ID,).subscribe(() => {
+      this.cartService.getCartByID(this.currentUser.Cart.ID,).subscribe(() => {
         this.cartService.update.next(true)
         this.discountService.update.next(true)
       })

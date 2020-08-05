@@ -82,6 +82,27 @@ func (input *CartItem) SaveOrUpdateCartItem(db *gorm.DB) (*CartItem, error) {
 	return &cartItem, nil
 }
 
+// FindAllCartItems is
+func (c *CartItem) FindAllCartItems(db *gorm.DB, cartID string) *[]CartItemResponse {
+	cartItemsArray := make([]CartItemResponse, 0)
+
+	var cartItems []CartItem
+	db.Where("cart_id = ?", cartID).Find(&cartItems)
+
+	for _, cartItem := range cartItems {
+		var fruit Fruit
+		db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
+		cartItemsArray = append(cartItemsArray, CartItemResponse{
+			Name:        fruit.Name,
+			CostPerItem: fruit.Price,
+			Count:       cartItem.Quantity,
+			ItemTotal:   cartItem.ItemTotal,
+		})
+
+	}
+	return &cartItemsArray
+}
+
 // RecalcualtePayments recalcuates the payment for the cart
 func RecalcualtePayments(db *gorm.DB, cartID uint) {
 

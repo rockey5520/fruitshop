@@ -43,14 +43,14 @@ func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Requ
 
 	ApplySingleItemDiscounts(*createdCartItem, server.DB)
 	ApplyDualItemDiscounts(cartItem, server.DB)
-	RecalcualtePayments(cartItem.CartID, server.DB)
+	RecalcualtePayments(server.DB, cartItem.CartID)
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdCartItem.ID))
 	responses.JSON(w, http.StatusCreated, createdCartItem)
 }
 
 // RecalcualtePayments recalcuates the payment for the cart
-func RecalcualtePayments(cartID uint, db *gorm.DB) {
+func RecalcualtePayments(db *gorm.DB, cartID uint) {
 	// Recalcualte the payments
 	var cartItems []models.CartItem
 	if err := db.Where("cart_id = ?", cartID).Find(&cartItems).Error; err != nil {

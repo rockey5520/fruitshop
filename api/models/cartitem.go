@@ -81,3 +81,26 @@ func (input *CartItem) SaveOrUpdateCartItem(db *gorm.DB) (*CartItem, error) {
 	}
 	return &cartItem, nil
 }
+
+// RecalcualtePayments recalcuates the payment for the cart
+func RecalcualtePayments(db *gorm.DB, cartID uint) {
+
+	// Recalcualte the payments
+
+	var cartItems []CartItem
+	if err := db.Where("cart_id = ?", cartID).Find(&cartItems).Error; err != nil {
+		fmt.Println("Error ", err)
+	}
+	var totalCost float64
+	var totalDiscountedCost float64
+	for _, item := range cartItems {
+		totalCost += item.ItemTotal
+		totalDiscountedCost += item.ItemDiscountedTotal
+	}
+	cart := Cart{}
+	if err := db.Where("ID = ?", cartID).Find(&cart).Error; err != nil {
+		fmt.Println("Error ", err)
+	}
+	db.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
+
+}

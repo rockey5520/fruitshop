@@ -26,6 +26,9 @@ func (s *Server) initializeRoutes() {
 	// Discounts routes
 	s.Router.HandleFunc("/discounts/{cart_id}", middlewares.SetMiddlewareJSON(s.GetDiscounts)).Methods("GET")
 
+	// Coupon route
+	s.Router.HandleFunc("/orangecoupon/{cart_id}/{fruit_id}", middlewares.SetMiddlewareJSON(s.ApplyTimeSensitiveCoupon)).Methods("GET")
+
 	// Home Route
 	s.Router.HandleFunc("/", middlewares.SetMiddlewareJSON(s.Home)).Methods("GET")
 

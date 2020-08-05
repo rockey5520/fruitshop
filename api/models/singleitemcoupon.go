@@ -1,6 +1,8 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 /*SingleItemDiscount is asssociated with Fruit with Has-many relationship
 swagger:model Discount

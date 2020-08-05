@@ -97,6 +97,33 @@ func refreshCustomerTable() error {
 	return nil
 }
 
+func refreshDiscountsTable() error {
+	err := server.DB.Debug().DropTableIfExists(
+		&models.SingleItemDiscount{},
+		&models.DualItemDiscount{},
+		&models.SingleItemCoupon{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemCoupon{},
+		&models.AppliedSingleItemDiscount{}).Error
+	if err != nil {
+		return err
+	}
+
+	err = server.DB.Debug().AutoMigrate(
+		&models.SingleItemDiscount{},
+		&models.DualItemDiscount{},
+		&models.SingleItemCoupon{},
+		&models.AppliedDualItemDiscount{},
+		&models.AppliedSingleItemCoupon{},
+		&models.AppliedSingleItemDiscount{}).Error
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully refreshed discounts table")
+	log.Printf("refreshDiscountsTable routine OK !!!")
+	return nil
+}
+
 func refreshFruitTable() error {
 	err := server.DB.Debug().DropTableIfExists(&models.Fruit{}).Error
 	if err != nil {
@@ -168,6 +195,35 @@ func seedOneCart() (models.Cart, error) {
 
 	log.Printf("seedOneCart routine OK !!!")
 	return newCart, nil
+}
+func seedSingleItemDiscount() (models.AppliedSingleItemDiscount, error) {
+
+	_ = refreshDiscountsTable()
+
+	newDiscount := models.AppliedSingleItemDiscount{
+		CartID:  1,
+		Savings: 2.0,
+	}
+
+	newAppleDiscount := models.SingleItemDiscount{
+		FruitID: 1,
+		Count:   7,
+		Name:    "APPLE10",
+		Model: gorm.Model{
+			ID: 1,
+		},
+	}
+	err := server.DB.Debug().Model(&models.SingleItemDiscount{}).Create(&newAppleDiscount).Error
+	if err != nil {
+		log.Fatalf("cannot seed Single item discount table: %v", err)
+	}
+	err = server.DB.Debug().Model(&models.AppliedSingleItemDiscount{}).Create(&newDiscount).Error
+	if err != nil {
+		log.Fatalf("cannot seed Single item discount table: %v", err)
+	}
+
+	log.Printf("seedSingleItemDiscount routine OK !!!")
+	return newDiscount, nil
 }
 
 func seedOneCartItem() (models.CartItem, error) {

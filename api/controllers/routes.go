@@ -23,6 +23,9 @@ func (s *Server) initializeRoutes() {
 	// Cart route
 	s.Router.HandleFunc("/cart/{cart_id}", middlewares.SetMiddlewareJSON(s.GetCart)).Methods("GET")
 
+	// Discounts routes
+	s.Router.HandleFunc("/discounts/{cart_id}", middlewares.SetMiddlewareJSON(s.GetDiscounts)).Methods("GET")
+
 	// Home Route
 	s.Router.HandleFunc("/", middlewares.SetMiddlewareJSON(s.Home)).Methods("GET")
 

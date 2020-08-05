@@ -21,7 +21,7 @@ export class CartService {
 
 
   public getCartByID(ID: number): Observable<CartItem[]> {
-    return this.http.get<CartItem[]>(`/server/cartitems/${ID}`).pipe(delay(400))
+    return this.http.get<CartItem[]>(`/cartitems/${ID}`).pipe(delay(400))
     
   }
 

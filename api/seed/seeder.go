@@ -44,6 +44,7 @@ func Load(db *gorm.DB) {
 		&models.Payment{},
 		&models.Cart{},
 		&models.CartItem{},
+		&models.Payment{},
 	).Error
 
 	if err != nil {
@@ -58,7 +59,8 @@ func Load(db *gorm.DB) {
 		&models.SingleItemCoupon{},
 		&models.Payment{},
 		&models.Cart{},
-		&models.CartItem{}).Error
+		&models.CartItem{},
+		&models.Payment{}).Error
 
 	if err != nil {
 		log.Fatalf("cannot migrate table: %v", err)

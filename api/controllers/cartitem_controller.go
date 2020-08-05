@@ -67,11 +67,11 @@ func RecalcualtePayments(db *gorm.DB, cartID uint) {
 		fmt.Println("Error ", err)
 	}
 	db.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
-	/* var payment models.Payment
-	if err := db.Where("cart_id = ?", cart.ID).Find(&payment).Error; err != nil {
-		fmt.Println("Error ", err)
-	}
-	db.Model(&payment).Where("cart_id = ?", cart.ID).Update("amount", totalCost) */
+	// var payment models.Payment
+	// if err := db.Where("cart_id = ?", cart.ID).Find(&payment).Error; err != nil {
+	// 	fmt.Println("Error ", err)
+	// }
+	// db.Model(&payment).Where("cart_id = ?", cart.ID).Update("amount", totalCost)
 
 }
 

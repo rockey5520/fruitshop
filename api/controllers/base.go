@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"fruitshop/api/models"
+	"fruitshop/api/seed"
 	"log"
 	"net/http"
 
@@ -19,8 +20,8 @@ type Server struct {
 	Router *mux.Router
 }
 
-func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
-
+// InitializeServer initializes selected DB from env file( defaults to sqllite3 ) and starts application on port 8080 using gorilla mux
+func (server *Server) InitializeServer(Dbdriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
 	var err error
 
 	if Dbdriver == "mysql" {
@@ -83,10 +84,12 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 	)
 
 	server.Router = mux.NewRouter()
-
+	seed.Load(server.DB)
 	server.initializeRoutes()
 }
+
 func (server *Server) Run(addr string) {
+	fmt.Println()
 	fmt.Println("Listening to port 8080")
 	log.Fatal(http.ListenAndServe(addr, server.Router))
 }

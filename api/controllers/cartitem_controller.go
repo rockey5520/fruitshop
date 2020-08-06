@@ -14,14 +14,14 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// CreateCustomer is
+// CreateUpdateItemInCart will either create an item in the cart or remove based the quantity provided in the payload
 func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Request) {
 	// Reading the request body from http request
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 	}
-	// Creating customer , cart structs and mapping request body to customer and a creating new card with customer ID
+	// Creating cartItem struct mapped from the request payloads
 	cartItem := models.CartItem{}
 	err = json.Unmarshal(body, &cartItem)
 	if err != nil {
@@ -34,7 +34,7 @@ func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Requ
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-
+	// Save the cart item entry into the database
 	createdCartItem, err := cartItem.SaveOrUpdateCartItem(server.DB)
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())

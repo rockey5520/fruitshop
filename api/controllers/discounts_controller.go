@@ -10,7 +10,7 @@ import (
 )
 
 //GetCustomer is
-func (server *Server) GetDiscounts(w http.ResponseWriter, r *http.Request) {
+func (server *Server) GetAppliedDiscounts(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	cartid := vars["cart_id"]
 	discount := models.Discount{}

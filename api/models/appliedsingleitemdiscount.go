@@ -8,8 +8,10 @@ type AppliedSingleItemDiscount struct {
 	// Foriegn key for the CartItem table coming from the Cart table
 	CartID uint `gorm:"not null"`
 	// SingleItemDiscountID is the primary key from the DualItemDiscount table
-	//SingleItemDiscountID uint
-	SingleItemDiscount []SingleItemDiscount `gorm:"foreignkey:ID;association_foreignkey:ID"`
+	SingleItemDiscountID   uint
+	SingleItemDiscountName string
+	//SingleItemDiscount []SingleItemDiscount `gorm:"foreignkey:ID;association_foreignkey:ID"`
+
 	// Percentage of the discount needs to be applied
 	Savings float64 `json:"savings"`
 }

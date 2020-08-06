@@ -95,8 +95,7 @@ func ApplySingleItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 
 	singeItemDiscount := fruit.SingleItemDiscount
 	appliedSingleItemDiscount := models.AppliedSingleItemDiscount{
-		CartID:             cartItem.CartID,
-		SingleItemDiscount: singeItemDiscount,
+		CartID: cartItem.CartID,
 	}
 
 	for _, singleItemDiscount := range singeItemDiscount {
@@ -108,6 +107,8 @@ func ApplySingleItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 				discount := ((float64(cartItem.Quantity) * fruit.Price) / 100) * float64(singleItemDiscount.Discount)
 				costAfterDiscount = (actualCost - discount)
 				appliedSingleItemDiscount.Savings = discount
+				appliedSingleItemDiscount.SingleItemDiscountID = singleItemDiscount.ID
+				appliedSingleItemDiscount.SingleItemDiscountName = singleItemDiscount.Name
 				db.Model(&cartItem).Update("item_total", costAfterDiscount).Update("item_discounted_total", discount)
 				if err := db.Model(&appliedSingleItemDiscount).
 					Where("cart_id = ?", cartItem.CartID).
@@ -170,6 +171,8 @@ func ApplyDualItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 						db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 						discount := float64(sets*dualItemDiscount.Count_1) / float64(100) * float64(dualItemDiscount.Discount)
 						appliedDualItemDiscount.Savings += discount
+						appliedDualItemDiscount.DualItemDiscountID = dualItemDiscount.ID
+						appliedDualItemDiscount.DualItemDiscountName = dualItemDiscount.Name
 						db.Model(&cartItem).
 							Where("cart_id = ?", cartItem.CartID).
 							Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount).
@@ -179,6 +182,8 @@ func ApplyDualItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 						db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 						discount := float64(sets*dualItemDiscount.Count_2) / float64(100) * float64(dualItemDiscount.Discount)
 						appliedDualItemDiscount.Savings += discount
+						appliedDualItemDiscount.DualItemDiscountID = dualItemDiscount.ID
+						appliedDualItemDiscount.DualItemDiscountName = dualItemDiscount.Name
 						db.Model(&cartItem).
 							Where("cart_id = ?", cartItem.CartID).
 							Update("item_total", (float64(cartItem.Quantity)*fruit.Price)-discount).
@@ -205,7 +210,6 @@ func ApplyDualItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 			}
 		}
 		if discountUpdate {
-			appliedDualItemDiscount.DualItemDiscount = x
 			if err := db.Model(&appliedDualItemDiscount).
 				Where("cart_id = ?", cartItem.CartID).
 				First(&appliedDualItemDiscount).Error; err != nil {

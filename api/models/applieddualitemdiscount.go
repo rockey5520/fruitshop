@@ -13,7 +13,9 @@ type AppliedDualItemDiscount struct {
 	CartID uint `gorm:"not null"`
 	// DualItemDiscountID is the primary key from the DualItemDiscount table
 	//DualItemDiscountID uint
-	DualItemDiscount []DualItemDiscount `gorm:"foreignkey:ID;association_foreignkey:ID"`
+	//DualItemDiscount []DualItemDiscount `gorm:"foreignkey:ID;association_foreignkey:ID"`
+	DualItemDiscountID   uint
+	DualItemDiscountName string
 	// Percentage of the discount needs to be applied
 	Savings float64 `json:"savings"`
 }

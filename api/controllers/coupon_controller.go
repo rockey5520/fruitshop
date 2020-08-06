@@ -35,13 +35,15 @@ func ApplySingleItemTimSensitiveCoupon(db *gorm.DB, cart_id string, fruit_id str
 		Find(&fruit)
 
 	singeItemCoupon := fruit.SingleItemCoupon
+
 	cartID, _ := strconv.Atoi(cart_id)
 	appliedSingleItemCoupon := models.AppliedSingleItemCoupon{
-		CartID:           uint(cartID),
-		SingleItemCoupon: singeItemCoupon,
+		CartID: uint(cartID),
 	}
 
 	for _, singeItemCoupon := range singeItemCoupon {
+		appliedSingleItemCoupon.SingleItemCouponID = singeItemCoupon.ID
+		appliedSingleItemCoupon.SingleItemCouponName = singeItemCoupon.Name
 		var cartItem models.CartItem
 		db.Where("cart_id = ? AND fruit_id = ?", cart_id, fruit_id).Find(&cartItem)
 		if cartItem.Quantity > 0 {

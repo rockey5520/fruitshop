@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -25,44 +23,36 @@ type Discount struct {
 func (u *Discount) FindAllDiscounts(db *gorm.DB, cartID string) *[]Discount {
 
 	appliedDiscountsResponseList := make([]Discount, 0)
-	appliedSingleItemDiscount := AppliedSingleItemDiscount{}
+	appliedSingleItemDiscount := []AppliedSingleItemDiscount{}
 	db.Where("cart_id = ?", cartID).
-		Preload("SingleItemDiscount").
 		Find(&appliedSingleItemDiscount)
-	fmt.Println(appliedSingleItemDiscount.Savings)
-	appliedDualItemDiscount := AppliedDualItemDiscount{}
+
+	appliedDualItemDiscount := []AppliedDualItemDiscount{}
 	db.Where("cart_id = ?", cartID).
-		Preload("DualItemDiscount").
 		Find(&appliedDualItemDiscount)
-	appliedSingleItemCoupon := AppliedSingleItemCoupon{}
+
+	appliedSingleItemCoupon := []AppliedSingleItemCoupon{}
 	db.Where("cart_id = ?", cartID).
-		Preload("SingleItemCoupon").
 		Find(&appliedSingleItemCoupon)
 
-	for _, singleItemDiscount := range appliedSingleItemDiscount.SingleItemDiscount {
-		if singleItemDiscount.Name != "" {
-			appliedDiscountsResponseList = append(appliedDiscountsResponseList, Discount{
-				Name:   singleItemDiscount.Name,
-				Status: "APPLIED",
-			})
-		}
+	for _, singleItemDiscount := range appliedSingleItemDiscount {
+		appliedDiscountsResponseList = append(appliedDiscountsResponseList, Discount{
+			Name:   singleItemDiscount.SingleItemDiscountName,
+			Status: "APPLIED",
+		})
 	}
-	for _, dualItemDiscount := range appliedDualItemDiscount.DualItemDiscount {
-		if dualItemDiscount.Name != "" {
-			appliedDiscountsResponseList = append(appliedDiscountsResponseList, Discount{
-				Name:   dualItemDiscount.Name,
-				Status: "APPLIED",
-			})
-		}
+	for _, dualItemDiscount := range appliedDualItemDiscount {
+		appliedDiscountsResponseList = append(appliedDiscountsResponseList, Discount{
+			Name:   dualItemDiscount.DualItemDiscountName,
+			Status: "APPLIED",
+		})
 	}
-	for _, singeItemCoupon := range appliedSingleItemCoupon.SingleItemCoupon {
-		if singeItemCoupon.Name != "" {
-			fmt.Println("singeItemCoupon.Name", singeItemCoupon.Name)
-			appliedDiscountsResponseList = append(appliedDiscountsResponseList, Discount{
-				Name:   singeItemCoupon.Name,
-				Status: "APPLIED",
-			})
-		}
+
+	for _, singeItemCoupon := range appliedSingleItemCoupon {
+		appliedDiscountsResponseList = append(appliedDiscountsResponseList, Discount{
+			Name:   singeItemCoupon.SingleItemCouponName,
+			Status: "APPLIED",
+		})
 	}
 
 	return &appliedDiscountsResponseList

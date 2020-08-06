@@ -17,4 +17,6 @@ type SingleItemCoupon struct {
 	FruitID uint
 	// Percentage of the discount needs to be applied
 	Discount int `json:"discount"`
+
+	Duration int
 }

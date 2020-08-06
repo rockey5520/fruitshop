@@ -29,7 +29,7 @@ func TestGetDiscounts(t *testing.T) {
 	}
 	req = mux.SetURLVars(req, map[string]string{"cart_id": "1"})
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(server.GetDiscounts)
+	handler := http.HandlerFunc(server.GetAppliedDiscounts)
 	handler.ServeHTTP(rr, req)
 
 	var discounts []models.Discount

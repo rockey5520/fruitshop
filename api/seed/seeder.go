@@ -70,6 +70,7 @@ func Load(db *gorm.DB) {
 	orangeSingleItemCoupon := models.SingleItemCoupon{
 		Discount: 30,
 		Name:     "ORANGE30",
+		Duration: 10,
 	}
 	apple := models.Fruit{
 		Name: "Apple",

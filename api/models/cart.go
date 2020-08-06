@@ -4,6 +4,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+/*
+swagger:model Cart
+*/
+// Cart represents full information of the cart , items added to the cart, Discounts applied and Payment to be made as a single entity.
 type Cart struct {
 	// Primary key, created_at, deleted_at, updated_at for each cart
 	gorm.Model
@@ -27,7 +31,7 @@ type Cart struct {
 	//ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
 }
 
-//FindCustomerByID is a
+//FindCustomerByID fetches information of a cart by cartID
 func (c *Cart) FindCartByCartID(db *gorm.DB, cartID string) (*Cart, error) {
 	//models.DB.Where("ID = ?", c.Param("cart_id")).Find(&cart)
 	err := db.Where("ID = ?", cartID).

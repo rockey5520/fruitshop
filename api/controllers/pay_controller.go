@@ -10,7 +10,7 @@ import (
 	"fruitshop/api/utils/formaterror"
 )
 
-//GetCart is
+//Pay will enable the payment of the money for the given cart
 func (server *Server) Pay(w http.ResponseWriter, r *http.Request) {
 
 	// Reading the request body from http request
@@ -18,19 +18,14 @@ func (server *Server) Pay(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 	}
-	// Creating customer , cart structs and mapping request body to customer and a creating new card with customer ID
-	payment := models.Payment{}
 
+	payment := models.Payment{}
 	err = json.Unmarshal(body, &payment)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
-	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
-		return
-	}
 	customer, err := payment.Pay(server.DB, payment)
 
 	if err != nil {

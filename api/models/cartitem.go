@@ -11,7 +11,7 @@ import (
 CartItem is asssociated with Cart with Has-many relationship
 swagger:model CartItem
 */
-// CartItem is
+// CartItem represents struct of the cartitem added to a cart
 type CartItem struct {
 	// Primary key for the Cart
 	ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
@@ -30,7 +30,7 @@ type CartItem struct {
 	ItemDiscountedTotal float64 `json:"ItemDiscountedTotal"`
 }
 
-// Validate is a method
+// Validates given cartitem payload
 func (c *CartItem) Validate(action string) error {
 
 	if c.Name == "" {
@@ -43,7 +43,7 @@ func (c *CartItem) Validate(action string) error {
 
 }
 
-// SaveOrUpdateCartItem is a
+// SaveOrUpdateCartItem saves the cart item entry to the DB if given quantity is > 0 or removes if quantity is 0
 func (input *CartItem) SaveOrUpdateCartItem(db *gorm.DB) (*CartItem, error) {
 
 	var fruit Fruit
@@ -82,7 +82,7 @@ func (input *CartItem) SaveOrUpdateCartItem(db *gorm.DB) (*CartItem, error) {
 	return &cartItem, nil
 }
 
-// FindAllCartItems is
+// FindAllCartItems returns all items present in a particular cart using cartID
 func (c *CartItem) FindAllCartItems(db *gorm.DB, cartID string) *[]CartItemResponse {
 	cartItemsArray := make([]CartItemResponse, 0)
 
@@ -103,11 +103,9 @@ func (c *CartItem) FindAllCartItems(db *gorm.DB, cartID string) *[]CartItemRespo
 	return &cartItemsArray
 }
 
-// RecalcualtePayments recalcuates the payment for the cart
+// RecalcualtePayments recalcuates the cost of each items total cost and its saving
 func RecalcualtePayments(db *gorm.DB, cartID uint) {
-
 	// Recalcualte the payments
-
 	var cartItems []CartItem
 	if err := db.Where("cart_id = ?", cartID).Find(&cartItems).Error; err != nil {
 		fmt.Println("Error ", err)
@@ -124,4 +122,19 @@ func RecalcualtePayments(db *gorm.DB, cartID uint) {
 	}
 	db.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
 
+}
+
+type CartItemResponse struct {
+	// Primary key for the Cart
+	ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
+	// Foriegn key for the CartItem table coming from the Cart table
+	CartID uint `gorm:"not null"`
+	// Name of the Fruit
+	Name string `json:"name" gorm:"not null;"`
+	// Cost per fruit
+	CostPerItem float64 `json:"costperitem" gorm:"not null;"`
+	// Number of fruits ordered
+	Count int `json:"count"`
+	// Total cost for this fruits based on number of items
+	ItemTotal float64 `json:"itemtotal"`
 }

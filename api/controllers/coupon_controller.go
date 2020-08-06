@@ -82,11 +82,10 @@ func revertCoupons(db *gorm.DB, cart_id string, fruit_id string, appliedSingleIt
 	db.Where("ID = ?", cart_id).Find(&cart)
 	if cart.Status != "CLOSED" {
 		var cartItem models.CartItem
-		db.Where("ID = ?", cart_id).First((&cartItem))
+		db.Where("cart_id = ? AND fruit_id = ?", cart_id, fruit_id).First((&cartItem))
 		var fruit models.Fruit
 		db.Where("ID = ?", cartItem.FruitID).Find(&fruit)
 		db.Model(&cartItem).
-			Where("cart_id = ?", cartItem.ID).
 			Update("ItemTotal", float64(cartItem.Quantity)*fruit.Price).
 			Update("item_discounted_total", 0.0)
 		RecalcualtePayments(db, cartItem.CartID)

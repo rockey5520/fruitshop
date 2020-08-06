@@ -4,10 +4,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-/*SingleItemDiscount is asssociated with Fruit with Has-many relationship
-swagger:model Discount
+/*
+swagger:model SingleItemCoupon
 */
-//SingleItemCoupon is
+//SingleItemCoupon table carries information of all time sensitive coupons with time it expires in seconds
 type SingleItemCoupon struct {
 	// Primary key, created_at, deleted_at, updated_at for each SingleItemCoupon
 	gorm.Model
@@ -17,6 +17,6 @@ type SingleItemCoupon struct {
 	FruitID uint
 	// Percentage of the discount needs to be applied
 	Discount int `json:"discount"`
-
+	// duration coupon needs to expire post applying on the cart item
 	Duration int
 }

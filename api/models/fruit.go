@@ -2,10 +2,10 @@ package models
 
 import "github.com/jinzhu/gorm"
 
-/*Fruit is a meta table of fruits in the inventory
+/*
 swagger:model Fruit
 */
-// Fruit is
+// Fruit is a meta table of fruits in the inventory
 type Fruit struct {
 	// Primary key, created_at, deleted_at, updated_at for each fruit
 	gorm.Model
@@ -21,7 +21,7 @@ type Fruit struct {
 	DualItemDiscount []DualItemDiscount `gorm:"foreignkey:FruitID"`
 }
 
-// FindAllFruits is
+// FindAllFruits fetched all fruits available in the database
 func (f *Fruit) FindAllFruits(db *gorm.DB) (*[]Fruit, error) {
 	var err error
 	fruits := []Fruit{}

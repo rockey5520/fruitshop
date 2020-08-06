@@ -4,10 +4,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-/*Discount is asssociated with Customer with Has-many relationship
+/*
 swagger:model Discount
 */
-// Discount is
+// Discount struct represents the applied discounts in the DB for an given cart
 type Discount struct {
 	// Primary key for the Cart
 	ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
@@ -19,7 +19,7 @@ type Discount struct {
 	Status string `json:"status"`
 }
 
-// FindAllDiscounts isFindAllDiscounts
+// FindAllDiscounts fetch all applied discounts for a cart based on the cartID
 func (u *Discount) FindAllDiscounts(db *gorm.DB, cartID string) *[]Discount {
 
 	appliedDiscountsResponseList := make([]Discount, 0)

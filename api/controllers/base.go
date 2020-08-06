@@ -60,8 +60,6 @@ func (server *Server) InitializeServer(Dbdriver, DbUser, DbPassword, DbPort, DbH
 
 	//database migration
 	server.DB.DropTableIfExists(
-		&models.User{},
-		&models.Post{},
 		&models.Customer{},
 		&models.Cart{},
 		&models.CartItem{},
@@ -72,8 +70,6 @@ func (server *Server) InitializeServer(Dbdriver, DbUser, DbPassword, DbPort, DbH
 	)
 
 	server.DB.Debug().AutoMigrate(
-		&models.User{},
-		&models.Post{},
 		&models.Customer{},
 		&models.Cart{},
 		&models.CartItem{},

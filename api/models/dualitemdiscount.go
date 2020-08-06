@@ -2,10 +2,10 @@ package models
 
 import "github.com/jinzhu/gorm"
 
-/*DualItemDiscount is discount asssociated with combination of fruits
+/*
 swagger:model Discount
 */
-//DualItemDiscount is
+//DualItemDiscount is a meta table represents the information of available dual item discounts
 type DualItemDiscount struct {
 	// Primary key, created_at, deleted_at, updated_at for each discount
 	gorm.Model

@@ -6,11 +6,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-/*Payment is asssociated with Cart with Has-one relationship
+/*
 swagger:model Payment
 */
-// Payment is
-
+// Payment is asssociated with Cart with Has-one relationship
 type Payment struct {
 	// Primary key for the Cart
 	ID         uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
@@ -44,7 +43,7 @@ func (c *Payment) Pay(db *gorm.DB, payment Payment) (*Customer, error) {
 			Amount:     payment.Amount,
 			Status:     "PAID",
 		}
-
+		// This creates creates the payment record in the table and closes the cart
 		db.Create(&pay)
 
 		newCart := Cart{
@@ -52,11 +51,11 @@ func (c *Payment) Pay(db *gorm.DB, payment Payment) (*Customer, error) {
 			Total:      0.0,
 			Status:     "OPEN",
 		}
+		// This creates creates the cart for the customer
 		db.Create(&newCart)
 
 	} else {
 		return &Customer{}, errors.New("payment amount mismatched with the cart total")
-
 	}
 
 	var customer Customer

@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-/*Customer Customer table represents the customer of the fruit store
+/*
 swagger:model Customer
 */
 type Customer struct {
@@ -49,7 +49,6 @@ func (c *Customer) FindCustomerByLoginID(db *gorm.DB, loginID string) (*Customer
 	if gorm.IsRecordNotFoundError(err) {
 		return &Customer{}, errors.New("Customer record Not Found")
 	}
-
 	cart := Cart{}
 	db.Where("customer_id = ? AND status = ?", c.ID, "OPEN").
 		Preload("CartItem").

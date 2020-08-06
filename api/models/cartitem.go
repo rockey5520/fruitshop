@@ -8,7 +8,6 @@ import (
 )
 
 /*
-CartItem is asssociated with Cart with Has-many relationship
 swagger:model CartItem
 */
 // CartItem represents struct of the cartitem added to a cart

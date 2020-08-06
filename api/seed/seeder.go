@@ -8,35 +8,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-var users = []models.User{
-	models.User{
-		Nickname: "Steven victor",
-		Email:    "steven@gmail.com",
-		Password: "password",
-	},
-	models.User{
-		Nickname: "Martin Luther",
-		Email:    "luther@gmail.com",
-		Password: "password",
-	},
-}
-
-var posts = []models.Post{
-	models.Post{
-		Title:   "Title 1",
-		Content: "Hello world 1",
-	},
-	models.Post{
-		Title:   "Title 2",
-		Content: "Hello world 2",
-	},
-}
-
+// Load function loads the required meta information into the DB such as Fruits, single and dual item discounts/coupons
 func Load(db *gorm.DB) {
 
 	err := db.Debug().DropTableIfExists(
-		&models.Post{},
-		&models.User{},
 		&models.Fruit{},
 		&models.SingleItemDiscount{},
 		&models.DualItemDiscount{},
@@ -51,8 +26,6 @@ func Load(db *gorm.DB) {
 		log.Fatalf("cannot drop table: %v", err)
 	}
 	err = db.Debug().AutoMigrate(
-		&models.Post{},
-		&models.User{},
 		&models.Fruit{},
 		&models.SingleItemDiscount{},
 		&models.DualItemDiscount{},
@@ -66,11 +39,25 @@ func Load(db *gorm.DB) {
 		log.Fatalf("cannot migrate table: %v", err)
 	}
 
-	appleItemDiscount := models.SingleItemDiscount{Count: 7, Discount: 10, Name: "APPLE10"}
+	// Apple discount rule
+	appleItemDiscount := models.SingleItemDiscount{
+		Count:    7,
+		Discount: 10,
+		Name:     "APPLE10",
+	}
+
+	// Orange discount rule
 	orangeSingleItemCoupon := models.SingleItemCoupon{
 		Discount: 30,
 		Name:     "ORANGE30",
 		Duration: 10,
+	}
+	orange := models.Fruit{
+		Name: "Orange",
+		SingleItemCoupon: []models.SingleItemCoupon{
+			orangeSingleItemCoupon,
+		},
+		Price: 1,
 	}
 	apple := models.Fruit{
 		Name: "Apple",
@@ -85,13 +72,6 @@ func Load(db *gorm.DB) {
 	}
 	pear := models.Fruit{
 		Name:  "Pear",
-		Price: 1,
-	}
-	orange := models.Fruit{
-		Name: "Orange",
-		SingleItemCoupon: []models.SingleItemCoupon{
-			orangeSingleItemCoupon,
-		},
 		Price: 1,
 	}
 
@@ -123,18 +103,5 @@ func Load(db *gorm.DB) {
 	}
 	if err := db.Create(&dualItemDiscount).Error; err != nil {
 		panic("Unable to create Single item discount inventory")
-	}
-
-	for i, _ := range users {
-		err = db.Debug().Model(&models.User{}).Create(&users[i]).Error
-		if err != nil {
-			log.Fatalf("cannot seed users table: %v", err)
-		}
-		posts[i].AuthorID = users[i].ID
-
-		err = db.Debug().Model(&models.Post{}).Create(&posts[i]).Error
-		if err != nil {
-			log.Fatalf("cannot seed posts table: %v", err)
-		}
 	}
 }

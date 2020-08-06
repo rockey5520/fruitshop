@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//GetCustomer is
+//GetAppliedDiscounts will fetch all the discounts applied on a given cart_id of the customer
 func (server *Server) GetAppliedDiscounts(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	cartid := vars["cart_id"]

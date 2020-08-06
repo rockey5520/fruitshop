@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// CreateCustomer is
+// CreateCustomer will create a new customer entry into the database along with first cart to add items later during purchase
 func (server *Server) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	// Reading the request body from http request
 	body, err := ioutil.ReadAll(r.Body)
@@ -32,12 +32,13 @@ func (server *Server) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	// Customer validation
+	// Customer validation for the payload sent
 	err = customer.Validate("")
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+	// Saves the customer details in the database
 	createdCustomer, err := customer.SaveCustomer(server.DB)
 
 	if err != nil {
@@ -49,7 +50,7 @@ func (server *Server) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusCreated, createdCustomer)
 }
 
-//GetCustomer is
+//GetCustomer will fetch the information about the customer based on the loginid provided which is unique to each customer
 func (server *Server) GetCustomer(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

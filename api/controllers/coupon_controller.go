@@ -25,8 +25,8 @@ func (server *Server) ApplyTimeSensitiveCoupon(w http.ResponseWriter, r *http.Re
 	responses.JSON(w, http.StatusOK, "Applied discount")
 }
 
-// ApplySingleItemTimSensitiveCoupon applies single item coupon (which is orange30) on the the cart item and reverts it
-// after 10 seconds which is the expiry of the coupon
+// ApplySingleItemTimSensitiveCoupon applies single item coupons which are loaded to single_item_coupons tables
+// to the cart item and reverts it based on the time limit set on the coupon when loaded to the database
 func ApplySingleItemTimSensitiveCoupon(db *gorm.DB, cart_id string, fruit_id string) {
 
 	fruit := models.Fruit{}
@@ -67,11 +67,13 @@ func ApplySingleItemTimSensitiveCoupon(db *gorm.DB, cart_id string, fruit_id str
 					Update("savings", discountCalculated)
 			}
 		}
+		// This call will run as a seperate go routine to remove the coupons on cart post the timer expiry
 		go revertCoupons(db, cart_id, fruit_id, appliedSingleItemCoupon, singeItemCoupon.Duration)
 	}
 
 }
 
+// revertCoupons will revert the coupond upon timer expiry as the value sent in the param singeItemCoupon.Duration
 func revertCoupons(db *gorm.DB, cart_id string, fruit_id string, appliedSingleItemCoupon models.AppliedSingleItemCoupon, duration int) {
 	// configurable timer for the coupon expiry
 	time.Sleep(time.Duration(duration) * time.Second)

@@ -12,21 +12,22 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-//GetCustomer is
+//ApplyTimeSensitiveCoupon applied coupon which is time sensitive based( in this use case its orange )
 func (server *Server) ApplyTimeSensitiveCoupon(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	cartid := vars["cart_id"]
-	fruitid := vars["fruit_id"]
+	cart_id := vars["cart_id"]
+	fruit_id := vars["fruit_id"]
 
-	ApplyTimeSensitiveCoupon(server.DB, cartid, fruitid)
+	//ApplyTimeSensitiveCoupon(server.DB, cart_id, fruit_id)
+	go ApplySingleItemTimSensitiveCoupon(server.DB, cart_id, fruit_id)
+
 	responses.JSON(w, http.StatusOK, "Applied discount")
-
 }
 
 //ApplyOrangeCoupon applies discount for oranges
 func ApplyTimeSensitiveCoupon(db *gorm.DB, cart_id string, fruit_id string) {
 	// This coupon will be run as go routine and sleeps for 10 seconds
-	go ApplySingleItemTimSensitiveCoupon(db, cart_id, fruit_id)
+
 }
 
 // ApplySingleItemTimSensitiveCoupon is

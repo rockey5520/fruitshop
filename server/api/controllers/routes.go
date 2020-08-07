@@ -34,7 +34,8 @@ func (s *Server) initializeRoutes() {
 	s.Router.HandleFunc("/server/pay", SetMiddlewareJSON(s.Pay)).Methods("POST")
 
 	// Serves angular application on / endpoint
-	s.Router.PathPrefix("/").Handler(http.FileServer(http.Dir("frontend/dist/fruitshop-ui")))
+	s.Router.PathPrefix("/").Handler(http.FileServer(http.Dir("frontend/dist/fruitshop-ui"))) // for docker
+	//s.Router.PathPrefix("/").Handler(http.FileServer(http.Dir("../frontend/dist/fruitshop-ui"))) // for local
 
 	fmt.Println()
 	fmt.Println("These below are the initialized routes for the application : ")

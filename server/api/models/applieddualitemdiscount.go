@@ -5,7 +5,7 @@ import "github.com/jinzhu/gorm"
 /*
 swagger:model AppliedDualItemDiscount
 */
-// AppliedDualItemDiscount is discount asssociated with combination of fruits which are applied for the cart
+// AppliedDualItemDiscount are active discount applied per cart for discount rules which are in combination of fruits
 type AppliedDualItemDiscount struct {
 	// Primary key, created_at, deleted_at, updated_at for each applied dual item discount
 	gorm.Model
@@ -13,8 +13,8 @@ type AppliedDualItemDiscount struct {
 	CartID uint `gorm:"not null"`
 	// DualItemDiscountID is the primary key from the DualItemDiscount table
 	DualItemDiscountID uint
-	// DualItemDiscountName is the name from the DualItemDiscount table
+	// DualItemDiscountName is the name of the discount( Example : PEARBANANA30 )
 	DualItemDiscountName string
-	// Percentage of the discount needs to be applied
+	// Amount of the savings applied using this coupond
 	Savings float64 `json:"savings"`
 }

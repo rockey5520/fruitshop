@@ -52,7 +52,7 @@ func (server *Server) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 
 //GetCustomer will fetch the information about the customer based on the loginid provided which is unique to each customer
 func (server *Server) GetCustomer(w http.ResponseWriter, r *http.Request) {
-
+	// Reading loginid from request params
 	vars := mux.Vars(r)
 	loginid := vars["loginid"]
 

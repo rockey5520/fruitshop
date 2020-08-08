@@ -12,10 +12,13 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-//ApplyTimeSensitiveCoupon applied coupon which is time sensitive based( in this use case its orange )
-// This function kicks of ApplySingleItemTimSensitiveCoupon function as a routine which it can
-// work on applying the discount using time sensitive coupons
+/*
+ApplyTimeSensitiveCoupon applied coupon which is time sensitive based( in this use case its orange )
+This function kicks of ApplySingleItemTimSensitiveCoupon function as a go routine which it can
+work on applying the discount using time sensitive coupons
+*/
 func (server *Server) ApplyTimeSensitiveCoupon(w http.ResponseWriter, r *http.Request) {
+	// Reading cart_id and fruit_id from request params
 	vars := mux.Vars(r)
 	cart_id := vars["cart_id"]
 	fruit_id := vars["fruit_id"]
@@ -25,8 +28,10 @@ func (server *Server) ApplyTimeSensitiveCoupon(w http.ResponseWriter, r *http.Re
 	responses.JSON(w, http.StatusOK, "Applied discount")
 }
 
-// ApplySingleItemTimSensitiveCoupon applies single item coupons which are loaded to single_item_coupons tables
-// to the cart item and reverts it based on the time limit set on the coupon when loaded to the database
+/*
+ ApplySingleItemTimSensitiveCoupon applies single item coupons which are loaded to single_item_coupons tables
+ to the cart item and reverts it based on the time limit set on the coupon when loaded to the database
+*/
 func ApplySingleItemTimSensitiveCoupon(db *gorm.DB, cart_id string, fruit_id string) {
 
 	fruit := models.Fruit{}

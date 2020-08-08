@@ -40,6 +40,7 @@ func Database(Dbdriver, DbName string) {
 		}
 		server.DB.Exec("PRAGMA foreign_keys = ON")
 	}
+	server.DB.LogMode(true)
 	/*
 		If we every wanted to switch to a different database we can use this switch at variable TestDbDriver reading fron env
 		And execute appropriate DB in respective environments, Such as all acceptance tests cant run on sqllite in-memory db

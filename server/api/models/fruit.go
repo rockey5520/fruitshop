@@ -25,7 +25,7 @@ type Fruit struct {
 func (f *Fruit) FindAllFruits(db *gorm.DB) (*[]Fruit, error) {
 	var err error
 	fruits := []Fruit{}
-	err = db.Debug().Model(&Fruit{}).Limit(100).Find(&fruits).Error
+	err = db.Debug().Model(&Fruit{}).Limit(4).Find(&fruits).Error
 	if err != nil {
 		return &[]Fruit{}, err
 	}

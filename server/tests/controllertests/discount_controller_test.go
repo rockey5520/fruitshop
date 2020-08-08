@@ -2,7 +2,6 @@ package controllertests
 
 import (
 	"encoding/json"
-	"fmt"
 	"fruitshop/api/models"
 	"log"
 	"net/http"
@@ -33,11 +32,10 @@ func TestGetDiscounts(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	var discounts []models.Discount
-	err = json.Unmarshal([]byte(rr.Body.String()), &discounts)
+	err = json.Unmarshal([]byte(rr.Body.Bytes()), &discounts)
 	if err != nil {
 		log.Fatalf("Cannot convert to json: %v\n", err)
 	}
 	assert.Equal(t, rr.Code, http.StatusOK)
-	fmt.Println(discounts)
 	assert.Equal(t, len(discounts), 1)
 }

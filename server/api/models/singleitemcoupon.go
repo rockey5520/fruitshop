@@ -17,6 +17,6 @@ type SingleItemCoupon struct {
 	FruitID uint
 	// Percentage of the discount needs to be applied
 	Discount int `json:"discount"`
-	// duration coupon needs to expire post applying on the cart item
+	// duration coupon needs to expire post applying on the cart item (in seconds)
 	Duration int
 }

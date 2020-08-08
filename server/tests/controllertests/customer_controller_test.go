@@ -110,15 +110,13 @@ func TestGetCustomerByLoginID(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		responseMap := make(map[string]interface{})
-		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
+		err = json.Unmarshal([]byte(rr.Body.Bytes()), &responseMap)
 		if err != nil {
 			log.Fatalf("Cannot convert to json: %v", err)
 		}
-		fmt.Println(rr.Code)
 		assert.Equal(t, rr.Code, v.statusCode)
 
 		if v.statusCode == 201 {
-
 			assert.Equal(t, user.FirstName, responseMap["firstname"])
 			assert.Equal(t, user.LastName, responseMap["lastname"])
 		}

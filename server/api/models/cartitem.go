@@ -16,10 +16,9 @@ type CartItem struct {
 	ID uint `json:"id" gorm:"primary_key;AUTO_INCREMENT;not null"`
 	// Foriegn key for the CartItem table coming from the Cart table
 	CartID uint `gorm:"not null"`
-	// Fruit identifier
-	//Fruit Fruit `gorm:"foreignkey:ID;association_foreignkey:ID"`
+	// FruitID is represents the ID of the fruit added to cart
 	FruitID uint `gorm:"not null"`
-	//Fruit Fruit `gorm:"foreignkey:ID;association_foreignkey:ID"`
+	// Name of the fruit
 	Name string `json:"name" gorm:"not null"`
 	// Number of fruits ordered
 	Quantity int `json:"quantity"`
@@ -27,19 +26,6 @@ type CartItem struct {
 	ItemTotal float64 `json:"itemtotal"`
 	// Total discounted cost for this fruits based on number of items
 	ItemDiscountedTotal float64 `json:"ItemDiscountedTotal"`
-}
-
-// Validates given cartitem payload
-func (c *CartItem) Validate(action string) error {
-
-	if c.Name == "" {
-		return errors.New("Required name")
-	}
-	if c.Quantity < 0 {
-		return errors.New("Required valid Quantity")
-	}
-	return nil
-
 }
 
 // SaveOrUpdateCartItem saves the cart item entry to the DB if given quantity is > 0 or removes if quantity is 0
@@ -102,25 +88,39 @@ func (c *CartItem) FindAllCartItems(db *gorm.DB, cartID string) *[]CartItemRespo
 	return &cartItemsArray
 }
 
-// RecalcualtePayments recalcuates the cost of each items total cost and its saving
+// Validates given cartitem payload
+func (c *CartItem) Validate(action string) error {
+	if c.Name == "" {
+		return errors.New("Required name")
+	}
+	if c.Quantity < 0 {
+		return errors.New("Required valid Quantity")
+	}
+	return nil
+}
+
+// RecalcualtePayments recalcuates the cart value and its saving based on the cart items
 func RecalcualtePayments(db *gorm.DB, cartID uint) {
-	// Recalcualte the payments
+	// Fetch all items in a given cart
 	var cartItems []CartItem
 	if err := db.Where("cart_id = ?", cartID).Find(&cartItems).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
+
+	// calcuate the total cost of the cartitems and total discounts applied
 	var totalCost float64
 	var totalDiscountedCost float64
 	for _, item := range cartItems {
 		totalCost += item.ItemTotal
 		totalDiscountedCost += item.ItemDiscountedTotal
 	}
-	cart := Cart{}
+	var cart Cart
 	if err := db.Where("ID = ?", cartID).Find(&cart).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
-	db.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
 
+	// Update Cart table with total cost and total savings
+	db.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
 }
 
 type CartItemResponse struct {

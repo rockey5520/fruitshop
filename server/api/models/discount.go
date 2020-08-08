@@ -19,7 +19,7 @@ type Discount struct {
 	Status string `json:"status"`
 }
 
-// FindAllDiscounts fetch all applied discounts for a cart based on the cartID
+// FindAllDiscounts fetch all applied discounts for a cart based on the cartID ( this is simple fetch and create array and return type function and no computes made)
 func (u *Discount) FindAllDiscounts(db *gorm.DB, cartID string) *[]Discount {
 
 	appliedDiscountsResponseList := make([]Discount, 0)

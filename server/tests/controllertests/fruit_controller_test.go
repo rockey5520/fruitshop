@@ -30,7 +30,7 @@ func TestGetFruits(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	var fruits []models.Fruit
-	err = json.Unmarshal([]byte(rr.Body.String()), &fruits)
+	err = json.Unmarshal([]byte(rr.Body.Bytes()), &fruits)
 	if err != nil {
 		log.Fatalf("Cannot convert to json: %v\n", err)
 	}

@@ -19,7 +19,10 @@ func TestCreateCartItem(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	seedFruits()
+	_, err = seedFruits()
+	if err != nil {
+		log.Fatal(err)
+	}
 	samples := []struct {
 		inputJSON    string
 		statusCode   int

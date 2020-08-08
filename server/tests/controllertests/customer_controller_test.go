@@ -122,3 +122,53 @@ func TestGetCustomerByLoginID(t *testing.T) {
 		}
 	}
 }
+
+func TestGetCustomerByLoginIDNotAvailable(t *testing.T) {
+
+	err := refreshCustomerTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = refreshCartTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	samples := []struct {
+		inputJSON    string
+		statusCode   int
+		firstname    string
+		lastname     string
+		loginid      string
+		errorMessage string
+	}{
+		{
+			inputJSON:    `{"firstname":"Rakesh", "lastname": "mothukuri", "loginid": "a"}`,
+			statusCode:   400,
+			firstname:    "Rakesh",
+			lastname:     "mothukuri",
+			loginid:      "a",
+			errorMessage: "",
+		},
+	}
+
+	for _, v := range samples {
+
+		req, err := http.NewRequest("GET", "/customers", nil)
+		if err != nil {
+			t.Errorf("This is the error: %v\n", err)
+		}
+		req = mux.SetURLVars(req, map[string]string{"loginid": v.loginid})
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(server.GetCustomer)
+		handler.ServeHTTP(rr, req)
+
+		responseMap := make(map[string]interface{})
+		err = json.Unmarshal([]byte(rr.Body.Bytes()), &responseMap)
+		if err != nil {
+			log.Fatalf("Cannot convert to json: %v", err)
+		}
+		assert.Equal(t, rr.Code, v.statusCode)
+
+	}
+}

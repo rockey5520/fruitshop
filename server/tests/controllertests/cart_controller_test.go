@@ -61,3 +61,43 @@ func TestGetCartByCartID(t *testing.T) {
 		}
 	}
 }
+
+func TestGetCartByCartIDNotAvailble(t *testing.T) {
+
+	err := refreshCartTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	userSample := []struct {
+		statusCode   int
+		status       string
+		total        float64
+		totalsavings float64
+	}{
+		{
+			statusCode: 400,
+			status:     "OPEN",
+		},
+	}
+	for _, v := range userSample {
+
+		req, err := http.NewRequest("GET", "/carts", nil)
+		if err != nil {
+			t.Errorf("This is the error: %v\n", err)
+		}
+		req = mux.SetURLVars(req, map[string]string{"cart_id": "1"})
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(server.GetCart)
+		handler.ServeHTTP(rr, req)
+
+		responseMap := make(map[string]interface{})
+		err = json.Unmarshal([]byte(rr.Body.Bytes()), &responseMap)
+		if err != nil {
+			log.Fatalf("Cannot convert to json: %v", err)
+		}
+
+		fmt.Println(responseMap)
+		assert.Equal(t, rr.Code, v.statusCode)
+	}
+}

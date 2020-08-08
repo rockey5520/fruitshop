@@ -51,7 +51,7 @@ func Database(Dbdriver, DbName string) {
 }
 
 func refreshCartTable() error {
-	err := server.DB.Debug().DropTableIfExists(&models.Cart{},
+	err := server.DB.DropTableIfExists(&models.Cart{},
 		&models.CartItem{},
 		&models.Payment{},
 		&models.AppliedDualItemDiscount{},
@@ -61,7 +61,7 @@ func refreshCartTable() error {
 		return err
 	}
 
-	err = server.DB.Debug().AutoMigrate(&models.Cart{},
+	err = server.DB.AutoMigrate(&models.Cart{},
 		&models.CartItem{},
 		&models.Payment{},
 		&models.AppliedDualItemDiscount{},
@@ -75,12 +75,12 @@ func refreshCartTable() error {
 }
 
 func refreshCustomerTable() error {
-	err := server.DB.Debug().DropTableIfExists(&models.Customer{}).Error
+	err := server.DB.DropTableIfExists(&models.Customer{}).Error
 	if err != nil {
 		return err
 	}
 
-	err = server.DB.Debug().AutoMigrate(&models.Customer{}).Error
+	err = server.DB.AutoMigrate(&models.Customer{}).Error
 	if err != nil {
 		return err
 	}
@@ -89,12 +89,12 @@ func refreshCustomerTable() error {
 }
 
 func refreshCartItemTable() error {
-	err := server.DB.Debug().DropTableIfExists(&models.CartItem{}).Error
+	err := server.DB.DropTableIfExists(&models.CartItem{}).Error
 	if err != nil {
 		return err
 	}
 
-	err = server.DB.Debug().AutoMigrate(&models.CartItem{}).Error
+	err = server.DB.AutoMigrate(&models.CartItem{}).Error
 	if err != nil {
 		return err
 	}
@@ -113,7 +113,7 @@ func seedOneCart() (models.Cart, error) {
 		Status:       "OPEN",
 	}
 
-	err := server.DB.Debug().Model(&models.Cart{}).Create(&newCart).Error
+	err := server.DB.Model(&models.Cart{}).Create(&newCart).Error
 	if err != nil {
 		log.Fatalf("cannot seed Cart table: %v", err)
 	}
@@ -138,7 +138,7 @@ func seedOneCustomer() (models.Customer, error) {
 		Cart:      newcart,
 	}
 
-	err := server.DB.Debug().Model(&models.Customer{}).Create(&customer).Error
+	err := server.DB.Model(&models.Customer{}).Create(&customer).Error
 	if err != nil {
 		log.Fatalf("cannot seed customers table: %v", err)
 	}
@@ -160,7 +160,7 @@ func seedOneCartItem() (models.CartItem, error) {
 		ItemDiscountedTotal: 0.0,
 	}
 
-	err := server.DB.Debug().Model(&models.CartItem{}).Create(&newCartItem).Error
+	err := server.DB.Model(&models.CartItem{}).Create(&newCartItem).Error
 	if err != nil {
 		log.Fatalf("cannot seed CartItem table: %v", err)
 	}
@@ -206,12 +206,12 @@ func seedFruits() error {
 }
 
 func refreshFruitTable() error {
-	err := server.DB.Debug().DropTableIfExists(&models.Fruit{}).Error
+	err := server.DB.DropTableIfExists(&models.Fruit{}).Error
 	if err != nil {
 		return err
 	}
 
-	err = server.DB.Debug().AutoMigrate(&models.Fruit{}).Error
+	err = server.DB.AutoMigrate(&models.Fruit{}).Error
 	if err != nil {
 		return err
 	}

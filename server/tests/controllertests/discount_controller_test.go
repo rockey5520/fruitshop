@@ -39,3 +39,28 @@ func TestGetDiscounts(t *testing.T) {
 	assert.Equal(t, rr.Code, http.StatusOK)
 	assert.Equal(t, len(discounts), 1)
 }
+
+func TestGetDiscountsNoDiscountAvailble(t *testing.T) {
+
+	err := refreshDiscountsTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req, err := http.NewRequest("GET", "/discounts", nil)
+	if err != nil {
+		t.Errorf("this is the error: %v\n", err)
+	}
+	req = mux.SetURLVars(req, map[string]string{"cart_id": "1"})
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(server.GetAppliedDiscounts)
+	handler.ServeHTTP(rr, req)
+
+	var discounts []models.Discount
+	err = json.Unmarshal([]byte(rr.Body.Bytes()), &discounts)
+	if err != nil {
+		log.Fatalf("Cannot convert to json: %v\n", err)
+	}
+	assert.Equal(t, rr.Code, http.StatusOK)
+	assert.Equal(t, len(discounts), 0)
+}

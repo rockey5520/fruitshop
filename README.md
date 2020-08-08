@@ -77,8 +77,8 @@ Architecture diagrams.
   - You can download the docker image I have prebuilt to your computer and run below command to the start the application and navigate to URL  http://localhost:8080 in your browser(incognito mode).
 
     - ```shell
-      dockepull docker.pkg.github.com/rockey5520/fruitshop/fruitshop:2
-      docker run -p 8080:8080 -it docker.pkg.github.com/rockey5520/fruitshop/fruitshop:2
+      dockepull docker.pkg.github.com/rockey5520/fruitshop/fruitshop:4
+      docker run -p 8080:8080 -it docker.pkg.github.com/rockey5520/fruitshop/fruitshop:4
       ```
 
 - **Option 3 : Build and Run the image from the source code** (lengthier process)

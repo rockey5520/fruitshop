@@ -6,6 +6,7 @@ import (
 	"fruitshop/api/seed"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -69,10 +70,13 @@ func (server *Server) InitializeServer(Dbdriver, DbName string) {
 
 }
 
-func (server *Server) Run(addr string) {
+func (server *Server) Run(addr string, start time.Time) {
 	fmt.Println()
+	elapsed := time.Since(start)
+	log.Printf("Application took %s to start", elapsed)
 	fmt.Println("Listening to port 8080")
 	log.Fatal(http.ListenAndServe(addr, server.Router))
+
 }
 
 /*

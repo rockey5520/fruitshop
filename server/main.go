@@ -1,9 +1,12 @@
 package main
 
-import "fruitshop/api"
+import (
+	"fruitshop/api"
+	"time"
+)
 
 func main() {
-
-	api.Run()
+	start := time.Now()
+	api.Run(start)
 
 }

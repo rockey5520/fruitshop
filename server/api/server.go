@@ -2,6 +2,7 @@ package api
 
 import (
 	"fruitshop/api/controllers"
+	"time"
 )
 
 var server = controllers.Server{}
@@ -11,9 +12,9 @@ var server = controllers.Server{}
 	to the InitializeServer function to load right DB for each use case( such as unit testing, acceptance testing, Integration testing and production)
 */
 //Run function will initialize server on port 8080 and spin up the DB to store the application data.
-func Run() {
+func Run(start time.Time) {
 	server.InitializeServer("sqlite3", "fruitshop.sqlite")
-	server.Run(":8080")
+	server.Run(":8080", start)
 }
 
 /*

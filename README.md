@@ -125,6 +125,11 @@ $HOME/go/bin/swag
 apt-get install build-essential
 sudo apt install sqlite
 chmod +x /home/wendel/.vscode/extensions/alexcvzz.vscode-sqlite-0.8.2/bin/sqlite-v3.26.0-linux-x64
+go test -v ./...
+
+docker build -t gcr.io/cinemo-285713/fruitshop .
+docker push gcr.io/cinemo-285713/fruitshop
+gcloud run deploy fruitshop --image gcr.io/cinemo-285713/fruitshop:latest --project cinemo-285713
 
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)

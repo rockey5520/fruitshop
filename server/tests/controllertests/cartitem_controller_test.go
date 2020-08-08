@@ -15,10 +15,11 @@ import (
 func TestCreateCartItem(t *testing.T) {
 
 	err := refreshCartItemTable()
+
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	seedFruits()
 	samples := []struct {
 		inputJSON    string
 		statusCode   int

@@ -15,9 +15,6 @@ export class FruitService {
 
   constructor(private http: HttpClient) { }
 
-  //fruits: Observable<Array<FruitModel>>
-
-
  
 
   getFruits(): Observable<FruitModel[]> {

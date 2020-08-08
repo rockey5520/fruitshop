@@ -25,7 +25,6 @@ export class UserService {
         return this.http.post(`/server/customers`, customer).pipe(map(customer => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(customer));
-            //this.currentUserSubject.next(customer)
             return customer;
         }));
     }

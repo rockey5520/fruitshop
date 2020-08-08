@@ -34,16 +34,10 @@ import { CartItem } from 'src/app/models/cartitem.model';
 })
 export class CartComponent implements OnInit {
 
-  //cartList: Observable<CartItem[]>;
   cartList: Observable<Array<CartItem>>;
-
   discountList: Observable<DiscountModel[]>;
-
-
-
   displayedColumns: string[] = ['name', 'costPerItem', 'count', 'totalCost'];
   cartdisplayedColumns: string[] = ['name', 'status'];
-
   total: number;
   currentUser: Customer;
   cartId: string
@@ -54,20 +48,24 @@ export class CartComponent implements OnInit {
   DiscountCouponFruit: string
 
 
-  constructor(public cartService: CartService, public paymentService: PaymentService, public authenticationService: AuthenticationService,
-    public discountService: DiscountService, @Inject(DOCUMENT) document, private httpclient: HttpClient) {
+  constructor(public cartService: CartService,
+    public paymentService: PaymentService,
+    public authenticationService: AuthenticationService,
+    public discountService: DiscountService,
+    @Inject(DOCUMENT) document,
+    private httpclient: HttpClient) 
+    {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
     document.getElementById('countdown');
-
   }
 
 
   ngOnInit(): void {
-    this.updateData()
+    this.updateCartList()
     this.updateDiscountData();
     this.cartService.update.subscribe((data: boolean) => {
       if (data) {
-        this.updateData();
+        this.updateCartList();
         this.updateDiscountData();
       }
     })
@@ -85,7 +83,7 @@ export class CartComponent implements OnInit {
 
   }
 
-  updateData() {
+  updateCartList() {
   
     this.cartList = this.cartService.getCartByID(this.currentUser.Cart.ID)
       .pipe(map(item => item.filter(item => item.count > 0)));

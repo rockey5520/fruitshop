@@ -16,9 +16,6 @@ import { RegisterComponent } from './components/register/register.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-// used to create fake backend
-//import { fakeBackendProvider } from './_helpers';
-
 import { ErrorInterceptor } from '../app/helpers/error.interceptor';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -51,9 +48,6 @@ import { RegisterPageComponent } from './pages/register-page/register-page.compo
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-
-    // provider used to create fake backend
-    //fakeBackendProvider
   ],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,6 @@
 <p align="center">
     <a href=""">
-        <img height=400 src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQWvuFYj4jQjctg_BrTDkaKWgK0G7Pm3hSGKQ&usqp=CAU">
+        <img height=600 src="https://res.cloudinary.com/rockey5520/image/upload/v1596896057/fruitstore/fruit-market-1534355_m2c0av.jpg">
     </a>
     <br><u>A Fruit store built using Angular 10 for font end and Golang for backend api</u>
 </p>
@@ -70,6 +70,7 @@ Architecture diagrams.
 - **Option 1** : **Deployed service**
 
   - I have deployed this application on [Google cloud run](https://cloud.google.com/run) and to access the service enter the following URL into browser(incognito mode) and register as a new user to  login to the website. Website URL : https://fruitshop-p5kl2n3awa-nn.a.run.app
+  - ![](https://res.cloudinary.com/rockey5520/image/upload/v1596896322/fruitstore/couldrun-fruitshop_ro5mtr.jpg)
 
 - **Option 2 : Running prebuild docker image on your computer**
 
@@ -117,7 +118,9 @@ In Angular Observable is used to link the components so that changes are applied
 
 - Angular 10
 - Golang 1.14.6
-- SqlLite
+- SqlLite ( code is written for Postgres, Mysql as well to switch to a different database)
+- GORM ( ORM library)
+- Gorilla MUX (HTTP router)
 - Docker
 
 **Interesting Parts of the application**
@@ -126,9 +129,27 @@ In Angular Observable is used to link the components so that changes are applied
   - I have used docker multistage builds for this implementation which helped docker image size a so small that everything just fitted in **26MB** which is amazing when you want you application to be rapidly sent across for deployments
 - **Angular + Go**
   - Instead of hosting frontend as a standalone application along side Go server and establishing connectivity between those, I found many advantages by mounting the production distribution folder of angular application and used Golang HTTP Fileserver to mount and redirected calls to index.html () 
+- **Blazing fast**
+  - Application is blazing fast due the fact that 
+    - There is no extra network call to frontend application
+    - Go application is built and loaded to image as a binary (binary images are slightly faster than go run)
+    - Smaller Docker images(26mb) from faster pull and speedy application start
 - **open for extension closed for modification** 
   - I have ensured the application is open for extending new functionalities but closed for modification, This is particularly resembles in the way discount rules are applied. Discount Rules are stored in database and programmed the logic to apply discounts by fetching conditions from DB. This gives a flexibility to add/update/delete discount rules without rebuilding the application. Every time there is a change to one of discount rule we will only update in the database as meta information and backend application will apply with the existing logic built for the new discounts as well as existing discount without modifying the core logic.
-- 
+
+
+
+**Entity Relationship diagram**
+
+![](https://res.cloudinary.com/rockey5520/image/upload/v1596895926/fruitstore/Entitiy_relationship_diagram_vmxdck.jpg)
+
+
+
+**Sequence diagram**
+
+![](https://res.cloudinary.com/rockey5520/image/upload/v1596895779/fruitstore/Sequence_diagram_vmfwgu.jpg)
+
+
 
 
 

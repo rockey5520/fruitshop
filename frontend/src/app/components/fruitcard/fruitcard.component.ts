@@ -7,8 +7,9 @@ import { AuthenticationService } from './../../services/authentication.service';
 import { DiscountService } from './../../services/discount.service';
 import { FruitService } from 'src/app/services/fruit.service';
 import { Observable, pipe } from 'rxjs';
-import { Datum } from './../../models/cartitem.model';
+
 import { map } from 'rxjs/operators';
+import { CartItem } from 'src/app/models/cartitem.model';
 
 
 @Component({
@@ -21,7 +22,7 @@ export class FruitcardComponent implements OnInit {
   @Input()
   fruit: FruitModel
   currentUser: Customer;
-  cartList: Observable<Datum[]>;
+  cartList: Observable<CartItem[]>;
 
   count: number;
 
@@ -51,9 +52,11 @@ export class FruitcardComponent implements OnInit {
   }
 
   addToCart(): void {
-    this.cartService.addToCart(this.currentUser.data.Cart.ID, this.fruit, this.count).subscribe(() => {
+    this.cartService.addToCart(this.currentUser.Cart.ID, this.fruit, this.count).subscribe(() => {
+      
       this.cartService.update.next(true)
       this.discountService.update.next(true)
     })
   }
+
 }

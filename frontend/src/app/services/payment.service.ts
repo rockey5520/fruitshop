@@ -30,10 +30,10 @@ export class PaymentService {
       "amount": amount
   }
 
-    return this.http.post(`/server/api/v1/pay`, body, httpOptions)
+    return this.http.post(`/server/pay`, body, httpOptions)
   }
 
   public applyDiscount(cart_id: number, fruit_id:number){
-    return this.http.get(`/server/api/v1/orangecoupon/${cart_id}/${fruit_id}/`)
+    return this.http.get(`/server/orangecoupon/${cart_id}/${fruit_id}`)
   }
 }

@@ -9,7 +9,7 @@
 
 **Overview :** This project is to build an Fruit store with both front end and back end parts of the application. Angular 10 is used to build front end part and Golang is used for building RESTFul API serving data from in-memory DB.
 
-**Observation:** When tried to attemp the same exact backend with Java, Go outperformed in performance and time taken for each api request. i have let the logging enabled while application running to have a little information about where the program control is going for each call and track the time take for each call to optimize further more
+**Observation:** When tried to attempt the same exact backend with Java, Go outperformed in performance and time taken for each api request. i have let the logging enabled while application running to have a little information about where the program control is going for each call and track the time take for each call to optimize further more
 
 **Project Rules**
 
@@ -64,28 +64,31 @@ Architecture diagrams.
 - - Total price.
   - Total savings.
 
-**Pre Requisite**
+**Several ways to run the application**
 
-```shell
-1. Node v12.18.2 installed
-2. go1.14.4 installed
-3. goa design installed https://github.com/goadesign/goa
-4. Running Linux distro or MacOS
-```
+- **Option 1** : **Deployed service**
 
-**Build and Run Command**
+  - I have deployed this application on [Google cloud run](https://cloud.google.com/run) and to access the service enter the following URL into browser(incognito mode) and register as a new user to  login to the website. Website URL : https://fruitshop-p5kl2n3awa-nn.a.run.app
 
-```sh
-chmod +x buildandrun.sh
-chmod +x gobuild.sh
-./build.sh
-```
+- **Option 2 : Running prebuild docker image on your computer**
 
-Now if the build and run is completed successfully application starts up and you would see a screen something like this
+  - You can download the docker image I have prebuilt to your computer and run below command to the start the application and navigate to URL  http://localhost:8080 in your browser(incognito mode).
 
-![](https://res.cloudinary.com/rockey5520/image/upload/v1594848905/fruitstore/successfulbuild_mgcpqc.png)
+    - ```shell
+      dockepull docker.pkg.github.com/rockey5520/fruitshop/fruitshop:2
+      docker run -p 8080:8080 -it docker.pkg.github.com/rockey5520/fruitshop/fruitshop:2
+      ```
 
+- **Option 3 : Build and Run the image from the source code** (lengthier process)
 
+  - ```shell
+    git clone https://github.com/rockey5520/fruitshop.git
+    cd fruitshop
+    docker build -t fruitshop .
+    docker run -p 8080:8080 -it fruitshop
+    ```
+
+    
 
 To see the application, launch incognito mode in a browser you like and go to `http://localhost:8080`and this should present you a login form as below
 
@@ -101,27 +104,33 @@ Upon login you should see a shopping cart something like below
 
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594851723/fruitstore/discounts_applied_zvonn5.jpg)
 
+
+
 Here you can use self explanatory descriptions to add fruits to carts and discounts earlier mentioned will be applied automatically but for 30% discount on oranges , one need to click on `ORANGE 30 Discount coupn`  to apply which is valid for only 10 seconds post the time discount will removed from the cart. 
 
-In Angular Observable is used to link the components so that changes are applied across other components when there is a change to one. Discount coupon table is not in requirement but i left it there so it sits as a nice help to check if the discounts and coupons active for a particular user.
+In Angular Observable is used to link the components so that changes are applied across other components when there is a change to one. Discount coupon table is not in requirement but I left it there so it sits as a nice help to check if the discounts and coupons active for a particular user.
 
 
 
-While there is so much more this site can evolve, I am going to see next if i can implement websockets in Golang to inform angular about changes in the backend. If you made it until here , wow!! you had lots of patience , Please feel free to drop me a message if you have any questions
+**Tech Stack**
+
+- Angular 10
+- Golang 1.14.6
+- SqlLite
+- Docker
+
+**Interesting Parts of the application**
+
+- **Docker builds**
+  - I have used docker multistage builds for this implementation which helped docker image size a so small that everything just fitted in **26MB** which is amazing when you want you application to be rapidly sent across for deployments
+- **Angular + Go**
+  - Instead of hosting frontend as a standalone application along side Go server and establishing connectivity between those, I found many advantages by mounting the production distribution folder of angular application and used Golang HTTP Fileserver to mount and redirected calls to index.html () 
+- **open for extension closed for modification** 
+  - I have ensured the application is open for extending new functionalities but closed for modification, This is particularly resembles in the way discount rules are applied. Discount Rules are stored in database and programmed the logic to apply discounts by fetching conditions from DB. This gives a flexibility to add/update/delete discount rules without rebuilding the application. Every time there is a change to one of discount rule we will only update in the database as meta information and backend application will apply with the existing logic built for the new discounts as well as existing discount without modifying the core logic.
+- 
+
+
+
+
 
 Wondering why branch named `main` instead of `master` ? Reason is after the following tweet from github ceo https://twitter.com/natfriedman/status/1271253144442253312 i am trying to use less racially charged words. Not that this will resolve every problem related to racial injustice,  However i believe it's always good to have the know-how and the tools to be able to change the names we use. That goes for branch names as well. :)
-
-
-Useful commands :
-
-export GOBIN=$PWD/bin
-export PATH=$GOBIN:$PATH
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$HOME/bin:/usr/local/bin:$PATH
-unset GOBIN && go get -u github.com/swaggo/swag/cmd/swag
-export PATH=$PATH:$GOPATH/bin
-go-plantuml generate -d . -o graph.puml.
-$HOME/go/bin/swag
-apt-get install build-essential
-sudo apt install sqlite
-chmod +x /home/wendel/.vscode/extensions/alexcvzz.vscode-sqlite-0.8.2/bin/sqlite-v3.26.0-linux-x64

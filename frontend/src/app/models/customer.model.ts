@@ -1,25 +1,4 @@
-/* export class User {
-    ID: string;
-    userId: string;
-
-} */
-
-/* export interface CustomerModel {
-    id: number;
-    loginid: string;
-    firstname: string;
-    lastname: string;
-}
-
-export interface RootObject {
-    customer: CustomerModel;
-}
- */
 export interface Customer {
-    data: Data;
-}
-
-export interface Data {
     loginid:   string;
     firstname: string;
     lastname:  string;
@@ -37,17 +16,19 @@ export interface Cart {
     DeletedAt:                 null;
     CustomerId:                number;
     total:                     number;
+    totalsavings:              number;
     status:                    string;
-    CartItem:                  any[];
+    CartItem:                  null;
     Payment:                   Payment;
-    AppliedDualItemDiscount:   any[];
-    AppliedSingleItemDiscount: any[];
-    AppliedSingleItemCoupon:   any[];
+    AppliedDualItemDiscount:   null;
+    AppliedSingleItemDiscount: null;
+    AppliedSingleItemCoupon:   null;
 }
 
 export interface Payment {
-    id:     number;
-    CartId: number;
-    amount: number;
-    string: string;
+    id:         number;
+    customerid: number;
+    cartid:     number;
+    amount:     number;
+    string:     string;
 }

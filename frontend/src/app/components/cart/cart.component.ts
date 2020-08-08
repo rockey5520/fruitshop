@@ -1,9 +1,10 @@
 import { OrderedFruitModel, OrderedFruitModelData } from './../../models/orderedfruit.mode';
 import { FruitModel } from './../../models/fruit.model';
-import { DiscountModel, DiscountModelDatum } from './../../models/discount..model';
-import { Datum } from './../../models/cartitem.model';
+import { DiscountModel} from './../../models/discount..model';
+
 ;
 import { Customer } from './../../models/customer.model';
+
 
 import { Component, OnInit } from '@angular/core';
 
@@ -23,6 +24,7 @@ import { ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { DOCUMENT } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { CartItem } from 'src/app/models/cartitem.model';
 
 
 @Component({
@@ -32,15 +34,10 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CartComponent implements OnInit {
 
-  cartList: Observable<Datum[]>;
-
-  discountList: Observable<DiscountModelDatum[]>;
-
-
-
+  cartList: Observable<Array<CartItem>>;
+  discountList: Observable<DiscountModel[]>;
   displayedColumns: string[] = ['name', 'costPerItem', 'count', 'totalCost'];
   cartdisplayedColumns: string[] = ['name', 'status'];
-
   total: number;
   currentUser: Customer;
   cartId: string
@@ -51,20 +48,24 @@ export class CartComponent implements OnInit {
   DiscountCouponFruit: string
 
 
-  constructor(public cartService: CartService, public paymentService: PaymentService, public authenticationService: AuthenticationService,
-    public discountService: DiscountService, @Inject(DOCUMENT) document, private httpclient: HttpClient) {
+  constructor(public cartService: CartService,
+    public paymentService: PaymentService,
+    public authenticationService: AuthenticationService,
+    public discountService: DiscountService,
+    @Inject(DOCUMENT) document,
+    private httpclient: HttpClient) 
+    {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
     document.getElementById('countdown');
-
   }
 
 
   ngOnInit(): void {
-    this.updateData()
+    this.updateCartList()
     this.updateDiscountData();
     this.cartService.update.subscribe((data: boolean) => {
       if (data) {
-        this.updateData();
+        this.updateCartList();
         this.updateDiscountData();
       }
     })
@@ -82,9 +83,10 @@ export class CartComponent implements OnInit {
 
   }
 
-  updateData() {
-    this.cartList = this.cartService.getCartByID(this.currentUser.data.Cart.ID)
-      .pipe(map(item => item.data.filter(item => item.count > 0)));
+  updateCartList() {
+  
+    this.cartList = this.cartService.getCartByID(this.currentUser.Cart.ID)
+      .pipe(map(item => item.filter(item => item.count > 0)));
 
     this.total = 0;
     this.cartList.subscribe((data) => {
@@ -94,20 +96,19 @@ export class CartComponent implements OnInit {
 
     })
   }
-
   updateDiscountData() {
-    this.discountList = this.discountService.getDiscountsByID(this.currentUser.data.Cart.ID)
-      .pipe(map(item => item.data.filter(item => item.status == "APPLIED")));
+    this.discountList = this.discountService.getDiscountsByID(this.currentUser.Cart.ID)
+      .pipe(map(item => item.filter(item => item.status == "APPLIED")));
     }
   
   updateUserData() {  
-    this.authenticationService.login(this.currentUser.data.loginid).subscribe((x)=>{
+    this.authenticationService.login(this.currentUser.loginid).subscribe((x)=>{
       this.cartService.update.next(true)
     })
   }
 
   pay(): void {
-    this.paymentService.pay(this.currentUser.data.ID, this.currentUser.data.Cart.ID, this.total).subscribe(() => {
+    this.paymentService.pay(this.currentUser.ID, this.currentUser.Cart.ID, this.total).subscribe(() => {
       this.authenticationService.update.next(true)
     },error => {
       console.error(error)
@@ -117,7 +118,7 @@ export class CartComponent implements OnInit {
 
   applyDiscount(): void {
   
-    this.paymentService.applyDiscount(this.currentUser.data.Cart.ID, 4).subscribe(() => {
+    this.paymentService.applyDiscount(this.currentUser.Cart.ID, 4).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
 
@@ -125,7 +126,7 @@ export class CartComponent implements OnInit {
     this.formNotComplete = true;
     
     setTimeout(() => {
-      this.cartService.getCartByID(this.currentUser.data.Cart.ID,).subscribe(() => {
+      this.cartService.getCartByID(this.currentUser.Cart.ID,).subscribe(() => {
         this.cartService.update.next(true)
         this.discountService.update.next(true)
       })

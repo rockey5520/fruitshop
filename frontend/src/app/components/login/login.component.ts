@@ -35,11 +35,8 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
-            userId: ['', Validators.required]/* ,
-            password: ['', Validators.required] */
+            userId: ['', Validators.required] ,
         });
-
-        // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
@@ -68,8 +65,6 @@ export class LoginComponent implements OnInit {
                 error => {
                     this.alertService.error(error);
                     this.loading = false;
-                });
-
-                
+                });   
     }
 }

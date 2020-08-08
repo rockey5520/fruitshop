@@ -90,7 +90,13 @@ Architecture diagrams.
     docker run -p 8080:8080 -it fruitshop
     ```
 
-    
+
+**Running unit tests**
+
+```shell
+cd fruitshop/server
+go test -v ./...
+```
 
 To see the application, launch incognito mode in a browser you like and go to `http://localhost:8080`and this should present you a login form as below
 

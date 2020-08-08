@@ -35,7 +35,7 @@ func (c *Payment) Pay(db *gorm.DB, payment Payment) (*Customer, error) {
 		db.Find(&cartItems)
 
 		// Set Cart amount to 0
-		db.Model(&cart).Where("ID = ?", payment.CartId).Update("total", 0).Update("status", "CLOSED")
+		db.Model(&cart).Where("ID = ?", payment.CartId).Update("status", "CLOSED")
 
 		pay := Payment{
 			CustomerID: payment.CustomerID,

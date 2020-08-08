@@ -41,33 +41,36 @@ func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Requ
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
-
+	// Applying business rules( such as single item discounts for Apple, and dual item discounts for Pear and Banana)
 	ApplySingleItemDiscounts(*createdCartItem, server.DB)
 	ApplyDualItemDiscounts(cartItem, server.DB)
+
+	// Recalculate Cart value , Discounts post adding/deleting item from cart and applying business rules
 	RecalcualtePayments(server.DB, cartItem.CartID)
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdCartItem.ID))
 	responses.JSON(w, http.StatusCreated, createdCartItem)
 }
 
-// GetCartItems fetched all items in a given cart id
+// GetCartItems fetches all items in a given cart id
 func (server *Server) GetCartItems(w http.ResponseWriter, r *http.Request) {
-
-	cartItem := models.CartItem{}
+	// Reading cart_id from request params
 	vars := mux.Vars(r)
 	cart_id := vars["cart_id"]
-
+	cartItem := models.CartItem{}
 	cartItems := cartItem.FindAllCartItems(server.DB, cart_id)
-
 	responses.JSON(w, http.StatusOK, cartItems)
 }
 
 // RecalcualtePayments recalcuates the cart value and its saving based on the cart items
 func RecalcualtePayments(db *gorm.DB, cartID uint) {
+	// Fetch all items in a given cart
 	var cartItems []models.CartItem
 	if err := db.Where("cart_id = ?", cartID).Find(&cartItems).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
+
+	// calcuate the total cost of the cartitems and total discounts applied
 	var totalCost float64
 	var totalDiscountedCost float64
 	for _, item := range cartItems {
@@ -78,16 +81,20 @@ func RecalcualtePayments(db *gorm.DB, cartID uint) {
 	if err := db.Where("ID = ?", cartID).Find(&cart).Error; err != nil {
 		fmt.Println("Error ", err)
 	}
+
+	// Update Cart table with total cost and total savings
 	db.Model(&cart).Update("total", totalCost).Update("total_savings", totalDiscountedCost)
 }
 
-// ApplySingleItemDiscounts applies all single item discounts based on the discounts added to the table(single_item_discounts),
-// for this instance there is only on coupon which APPLE10. This feature is implemented in this way so that in future if we ever
-// wanted to add new single item discounts we can update the single_item_discounts table and no need to update the business logic
-// around how to calculate the discount as the single_item_discounts table carries the business rule information such as
-// quantity, discount percentage and fruit to the discount needs to be applied.
+/*
+   ApplySingleItemDiscounts applies all single item discounts based on the discounts added to the meta table(single_item_discounts),
+   at this point of time there is only on coupon which APPLE10. I have implemented this feature in this way so that in future if we ever
+   wanted to add new single item discounts we can update the single_item_discounts table and no need to update the business logic
+   around how to calculate the discount as the single_item_discounts table carries the business rule information such as
+   quantity, discount percentage and fruit to the discount needs to be applied and this function works like magic
+*/
 func ApplySingleItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
-	// Preloading the available discounts of the given fruit
+	// Preloading the available discounts for a given fruit
 	fruit := models.Fruit{}
 	db.Where("ID = ?", cartItem.FruitID).
 		Preload("SingleItemDiscount").
@@ -98,6 +105,14 @@ func ApplySingleItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 		CartID: cartItem.CartID,
 	}
 
+	/*
+		For each discount rule loaded to the table we will check if the given cartitem can satisfy the conditions stated
+		and updated the appliedSingleItemDiscount table with the information that discount is applied and also updates the
+		CartItem table with updated cost and savings calculated due the discount rules. When an Item is ammended in cart
+		this function again removes entry in appliedSingleItemDiscount table and corrects the total cost according to the
+		price set in the fruits table
+
+	*/
 	for _, singleItemDiscount := range singeItemDiscount {
 		if cartItem.FruitID == singleItemDiscount.FruitID {
 			if cartItem.Quantity >= singleItemDiscount.Count {
@@ -124,11 +139,13 @@ func ApplySingleItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 	}
 }
 
-// ApplyDualItemDiscounts applies all dual item discounts based on the discounts added to the table(dual_item_discounts),
-// for this instance there is only on coupon which PEARBANANA30. This feature is implemented in this way so that in future if we ever
-// wanted to add new double item discounts we can update the dual_item_discounts table and no need to update the business logic
-// around how to calculate the discount as the dual_item_discounts table carries the business rule information such as
-// quantity, discount percentage and fruits  to the discount needs to be applied.
+/*
+    For each discount rule loaded to the table we will check if the given cartitem can satisfy the conditions stated
+	and updated the appliedDualItemDiscount table with the information that discount is applied and also updates the
+	CartItem table with updated cost and savings calculated due the discount rules. When an Item is ammended in cart
+	this function again removes entry in appliedDualItemDiscount table and corrects the total cost according to the
+	price set in the fruits table
+*/
 func ApplyDualItemDiscounts(cartItem models.CartItem, db *gorm.DB) {
 	var fruit models.Fruit
 	db.Where("ID = ?", cartItem.FruitID).Find(&fruit)

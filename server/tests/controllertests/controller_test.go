@@ -15,14 +15,16 @@ import (
 var server = controllers.Server{}
 
 func TestMain(m *testing.M) {
-	// err := godotenv.Load(os.ExpandEnv("../../.env"))
-	// if err != nil {
-	// 	log.Fatalf("Error getting env %v\n", err)
-	// }
+
 	Database("sqlite3", "fruitshop.sqlite")
 
 	os.Exit(m.Run())
 
+	// possibility to load environment varables from a .env file and pass then to Database() function
+	/*err := godotenv.Load(os.ExpandEnv("../../.env"))
+	if err != nil {
+		log.Fatalf("Error getting env %v\n", err)
+	}*/
 }
 
 func Database(Dbdriver, DbName string) {
@@ -30,30 +32,8 @@ func Database(Dbdriver, DbName string) {
 	var err error
 
 	TestDbDriver := Dbdriver
-	//TestDbDriver := os.Getenv("TestDbDriver")
 
-	// if TestDbDriver == "mysql" {
-	// 	DBURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", os.Getenv("TestDbUser"), os.Getenv("TestDbPassword"), os.Getenv("TestDbHost"), os.Getenv("TestDbPort"), os.Getenv("TestDbName"))
-	// 	server.DB, err = gorm.Open(TestDbDriver, DBURL)
-	// 	if err != nil {
-	// 		fmt.Printf("Cannot connect to %s database\n", TestDbDriver)
-	// 		log.Fatal("This is the error:", err)
-	// 	} else {
-	// 		fmt.Printf("We are connected to the %s database\n", TestDbDriver)
-	// 	}
-	// }
-	// if TestDbDriver == "postgres" {
-	// 	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", os.Getenv("TestDbHost"), os.Getenv("TestDbPort"), os.Getenv("TestDbUser"), os.Getenv("TestDbName"), os.Getenv("TestDbPassword"))
-	// 	server.DB, err = gorm.Open(TestDbDriver, DBURL)
-	// 	if err != nil {
-	// 		fmt.Printf("Cannot connect to %s database\n", TestDbDriver)
-	// 		log.Fatal("This is the error:", err)
-	// 	} else {
-	// 		fmt.Printf("We are connected to the %s database\n", TestDbDriver)
-	// 	}
-	// }
 	if TestDbDriver == "sqlite3" {
-		//DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
 		testDbName := os.Getenv("TestDbName")
 		server.DB, err = gorm.Open(TestDbDriver, testDbName)
 		if err != nil {
@@ -65,6 +45,34 @@ func Database(Dbdriver, DbName string) {
 		server.DB.Exec("PRAGMA foreign_keys = ON")
 		server.DB.LogMode(true)
 	}
+	/*
+			// If we every wanted to switch to a different database we can use this switch at variable TestDbDriver reading fron env
+			// And execute appropriate DB in respective environments, Such as all acceptance tests cant run on sqllite in-memory db
+			// integration tests and production calls can be switched to mysql or prostgres.
+		    // Here GORM gives us a very good flexibility to switch to multiple databases without changing the code.
+					TestDbDriver := os.Getenv("TestDbDriver")
+
+				if TestDbDriver == "mysql" {
+					DBURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", os.Getenv("TestDbUser"), os.Getenv("TestDbPassword"), os.Getenv("TestDbHost"), os.Getenv("TestDbPort"), os.Getenv("TestDbName"))
+					server.DB, err = gorm.Open(TestDbDriver, DBURL)
+					if err != nil {
+						fmt.Printf("Cannot connect to %s database\n", TestDbDriver)
+						log.Fatal("This is the error:", err)
+					} else {
+						fmt.Printf("We are connected to the %s database\n", TestDbDriver)
+					}
+				}
+				if TestDbDriver == "postgres" {
+					DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", os.Getenv("TestDbHost"), os.Getenv("TestDbPort"), os.Getenv("TestDbUser"), os.Getenv("TestDbName"), os.Getenv("TestDbPassword"))
+					server.DB, err = gorm.Open(TestDbDriver, DBURL)
+					if err != nil {
+						fmt.Printf("Cannot connect to %s database\n", TestDbDriver)
+						log.Fatal("This is the error:", err)
+					} else {
+						fmt.Printf("We are connected to the %s database\n", TestDbDriver)
+					}
+				}
+	*/
 }
 
 func refreshCustomerTable() error {

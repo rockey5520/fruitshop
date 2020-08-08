@@ -9,7 +9,7 @@ import (
 )
 
 // Load function loads the required meta information into the DB such as Fruits, single and dual item discounts/coupons
-func Load(db *gorm.DB) {
+func LoadTablesAndBusinessRules(db *gorm.DB) {
 
 	err := db.Debug().DropTableIfExists(
 		&models.Fruit{},
@@ -39,11 +39,19 @@ func Load(db *gorm.DB) {
 		log.Fatalf("cannot migrate table: %v", err)
 	}
 
+	// Below section is essentially loading the table with meta information such as fruits, their prices, and discount rules tables
 	// Apple discount rule
 	appleItemDiscount := models.SingleItemDiscount{
 		Count:    7,
 		Discount: 10,
 		Name:     "APPLE10",
+	}
+	apple := models.Fruit{
+		Name: "Apple",
+		SingleItemDiscount: []models.SingleItemDiscount{
+			appleItemDiscount,
+		},
+		Price: 1,
 	}
 
 	// Orange discount rule
@@ -59,13 +67,7 @@ func Load(db *gorm.DB) {
 		},
 		Price: 1,
 	}
-	apple := models.Fruit{
-		Name: "Apple",
-		SingleItemDiscount: []models.SingleItemDiscount{
-			appleItemDiscount,
-		},
-		Price: 1,
-	}
+
 	banana := models.Fruit{
 		Name:  "Banana",
 		Price: 1,

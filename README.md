@@ -132,15 +132,24 @@ In Angular Observable is used to link the components so that changes are applied
 **Interesting Parts of the application**
 
 - **Docker builds**
+  
   - I have used docker multistage builds for this implementation which helped docker image size a so small that everything just fitted in **26MB** which is amazing when you want you application to be rapidly sent across for deployments
 - **Angular + Go**
+  
   - Instead of hosting frontend as a standalone application along side Go server and establishing connectivity between those, I found many advantages by mounting the production distribution folder of angular application and used Golang HTTP Fileserver to mount and redirected calls to index.html () 
 - **Blazing fast**
   - Application is blazing fast due the fact that 
     - There is no extra network call to frontend application
+    
     - Go application is built and loaded to image as a binary (binary images are slightly faster than go run)
-    - Smaller Docker images(26mb) from faster pull and speedy application start
+    
+    - Smaller Docker images(26mb) from faster pull and **speedy application start (around 250 milli seconds**)
+    
+    - ![](https://res.cloudinary.com/rockey5520/image/upload/v1596920226/fruitstore/Application_start_time_pwicrl.jpg)
+    
+      
 - **open for extension closed for modification** 
+  
   - I have ensured the application is open for extending new functionalities but closed for modification, This is particularly resembles in the way discount rules are applied. Discount Rules are stored in database and programmed the logic to apply discounts by fetching conditions from DB. This gives a flexibility to add/update/delete discount rules without rebuilding the application. Every time there is a change to one of discount rule we will only update in the database as meta information and backend application will apply with the existing logic built for the new discounts as well as existing discount without modifying the core logic.
 
 

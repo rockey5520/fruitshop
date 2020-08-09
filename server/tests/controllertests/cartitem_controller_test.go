@@ -166,7 +166,7 @@ func TestDeleteCartItem(t *testing.T) {
 				"name": "Apple",
 				"quantity": 0
 			}`,
-			statusCode:   201,
+			statusCode:   200,
 			CartID:       1,
 			FruitID:      1,
 			quantity:     4,
@@ -190,7 +190,7 @@ func TestDeleteCartItem(t *testing.T) {
 			fmt.Printf("Cannot convert to json: %v", err)
 		}
 		assert.Equal(t, rr.Code, v.statusCode)
-		if v.statusCode == 201 {
+		if v.statusCode == 200 {
 			assert.NotEqual(t, responseMap["quantity"], v.quantity)
 
 		}

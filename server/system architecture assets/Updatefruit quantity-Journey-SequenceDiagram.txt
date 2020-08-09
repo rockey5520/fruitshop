@@ -1,13 +1,15 @@
 title Update item in the cart
 
-User->CartComponent.ts:Add fruit to the cart
+User->FruitcardComponent.ts:Add fruit to the cart
+activate User
+FruitcardComponent.ts -> cartitem_controller.go/UpdateItemInCart:Makes a PUT request to "/server/cartitem"
+activate FruitcardComponent.ts
+database Database
+cartitem_controller.go/UpdateItemInCart->cartitem_controller.go/UpdateItemInCart:Apply Discount and\nRecalculate payments
+cartitem_controller.go/UpdateItemInCart -> Database: Update fruit entry to the DB for the respective cartid
+activate cartitem_controller.go/UpdateItemInCart
+cartitem_controller.go/UpdateItemInCart <- Database: updated fruit record
+activate Database
+FruitcardComponent.ts <- cartitem_controller.go/UpdateItemInCart: "204" Updated
 
-CartComponent.ts -> cartitem_controller.go/CreateUpdateItemInCart:Makes a POST request to "/server/cartitem"
-
-cartitem_controller.go/CreateUpdateItemInCart -> Database: Update fruit entry to the DB for the respective cartid
-
-cartitem_controller.go/CreateUpdateItemInCart <- Database: updated fruit record
-
-CartComponent.ts <- cartitem_controller.go/CreateUpdateItemInCart: "201" Created
-
-User <- CartComponent.ts: Updates the cart item table
+User <- FruitcardComponent.ts: Updates the cart item table

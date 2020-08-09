@@ -1,0 +1,15 @@
+title Delete item in the cart
+
+User->FruitcardComponent.ts:Add fruit to the cart
+activate User
+FruitcardComponent.ts -> cartitem_controller.go/DeleteItemInCart:Makes a DELETE request to "/cartitem/{cart_id}/{fruitname}"
+activate FruitcardComponent.ts
+database Database
+cartitem_controller.go/DeleteItemInCart->cartitem_controller.go/DeleteItemInCart:Apply Discount and\nRecalculate payments
+cartitem_controller.go/DeleteItemInCart -> Database: Delete fruit entry from the DB for the respective cartid
+activate cartitem_controller.go/DeleteItemInCart
+cartitem_controller.go/DeleteItemInCart <- Database: delete fruit record
+activate Database
+FruitcardComponent.ts <- cartitem_controller.go/DeleteItemInCart: "200" OK
+
+User <- FruitcardComponent.ts: Delete the cart item from table

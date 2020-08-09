@@ -88,7 +88,7 @@ func (server *Server) UpdateItemInCart(w http.ResponseWriter, r *http.Request) {
 	RecalcualtePayments(server.DB, cartItem.CartID)
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdCartItem.ID))
-	responses.JSON(w, http.StatusCreated, createdCartItem)
+	responses.JSON(w, http.StatusNoContent, createdCartItem)
 }
 
 // DeleteItemInCart will remove based the quantity provided in the payload
@@ -123,7 +123,7 @@ func (server *Server) DeleteItemInCart(w http.ResponseWriter, r *http.Request) {
 	RecalcualtePayments(server.DB, cartItem.CartID)
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdCartItem.ID))
-	responses.JSON(w, http.StatusCreated, createdCartItem)
+	responses.JSON(w, http.StatusOK, createdCartItem)
 }
 
 // GetCartItems fetches all items in a given cart id

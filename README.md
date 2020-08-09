@@ -147,7 +147,7 @@ In Angular Observable is used to link the components so that changes are applied
     
     - ![](https://res.cloudinary.com/rockey5520/image/upload/v1596920226/fruitstore/Application_start_time_pwicrl.jpg)
     
-      
+  
 - **open for extension closed for modification** 
   
   - I have ensured the application is open for extending new functionalities but closed for modification, This is particularly resembles in the way discount rules are applied. Discount Rules are stored in database and programmed the logic to apply discounts by fetching conditions from DB. This gives a flexibility to add/update/delete discount rules without rebuilding the application. Every time there is a change to one of discount rule we will only update in the database as meta information and backend application will apply with the existing logic built for the new discounts as well as existing discount without modifying the core logic.
@@ -156,7 +156,7 @@ In Angular Observable is used to link the components so that changes are applied
 
 **Entity Relationship diagram**
 
-![](https://res.cloudinary.com/rockey5520/image/upload/v1596895926/fruitstore/Entitiy_relationship_diagram_vmxdck.jpg)
+![](https://res.cloudinary.com/rockey5520/image/upload/v1597008008/fruitstore/Entity_relation_ship_diagram_dorxfr.jpg)
 
 
 

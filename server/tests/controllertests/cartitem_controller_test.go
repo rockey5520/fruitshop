@@ -166,7 +166,7 @@ func TestDeleteCartItem(t *testing.T) {
 				"name": "Apple",
 				"quantity": 0
 			}`,
-			statusCode:   201,
+			statusCode:   200,
 			CartID:       1,
 			FruitID:      1,
 			quantity:     4,

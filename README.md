@@ -98,6 +98,26 @@ cd fruitshop/server
 go test -v ./...
 ```
 
+
+
+**Endpoints**
+
+| Method | Path                                      | Description                                                  |
+| ------ | ----------------------------------------- | ------------------------------------------------------------ |
+| POST   | /server/customers                         | Saves new customer                                           |
+| GET    | /server/customers/{loginid}               | Returns customer record                                      |
+| GET    | /server/fruits                            | Fetched fruits available in the inventory                    |
+| POST   | /server/cartitem                          | Adds new fruit entry to the cart                             |
+| PUT    | /server/cartitem                          | Updated the Quantity of the fruit item in the cart if available |
+| DELETE | /server/cartitem/{cart_id}/{fruitname}    | Deletes fruit entry in the cart                              |
+| GET    | /server/cartitems/{cart_id}               | Fetched all items in a given cart                            |
+| GET    | /server/cart/{cart_id}                    | Fectes cart details                                          |
+| GET    | /server/discounts/{cart_id}               | Fetches all applied discounts a specific cart                |
+| GET    | /server/orangecoupon/{cart_id}/{fruit_id} | Applies RANGE30 coupon to the cart and gets updated total and discounts |
+| POST   | /server/pay                               | Takes the payment for the cart                               |
+
+
+
 To see the application, launch incognito mode in a browser you like and go to `http://localhost:8080`and this should present you a login form as below
 
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594849128/fruitstore/loginform_tzxsg1.jpg)
@@ -147,7 +167,7 @@ In Angular Observable is used to link the components so that changes are applied
     
     - ![](https://res.cloudinary.com/rockey5520/image/upload/v1596920226/fruitstore/Application_start_time_pwicrl.jpg)
     
-      
+  
 - **open for extension closed for modification** 
   
   - I have ensured the application is open for extending new functionalities but closed for modification, This is particularly resembles in the way discount rules are applied. Discount Rules are stored in database and programmed the logic to apply discounts by fetching conditions from DB. This gives a flexibility to add/update/delete discount rules without rebuilding the application. Every time there is a change to one of discount rule we will only update in the database as meta information and backend application will apply with the existing logic built for the new discounts as well as existing discount without modifying the core logic.

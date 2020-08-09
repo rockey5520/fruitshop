@@ -98,6 +98,26 @@ cd fruitshop/server
 go test -v ./...
 ```
 
+
+
+**Endpoints**
+
+| Method | Path                                      | Description                                                  |
+| ------ | ----------------------------------------- | ------------------------------------------------------------ |
+| POST   | /server/customers                         | Saves new customer                                           |
+| GET    | /server/customers/{loginid}               | Returns customer record                                      |
+| GET    | /server/fruits                            | Fetched fruits available in the inventory                    |
+| POST   | /server/cartitem                          | Adds new fruit entry to the cart                             |
+| PUT    | /server/cartitem                          | Updated the Quantity of the fruit item in the cart if available |
+| DELETE | /server/cartitem/{cart_id}/{fruitname}    | Deletes fruit entry in the cart                              |
+| GET    | /server/cartitems/{cart_id}               | Fetched all items in a given cart                            |
+| GET    | /server/cart/{cart_id}                    | Fectes cart details                                          |
+| GET    | /server/discounts/{cart_id}               | Fetches all applied discounts a specific cart                |
+| GET    | /server/orangecoupon/{cart_id}/{fruit_id} | Applies RANGE30 coupon to the cart and gets updated total and discounts |
+| POST   | /server/pay                               | Takes the payment for the cart                               |
+
+
+
 To see the application, launch incognito mode in a browser you like and go to `http://localhost:8080`and this should present you a login form as below
 
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594849128/fruitstore/loginform_tzxsg1.jpg)

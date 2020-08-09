@@ -1,0 +1,13 @@
+title Add item to the cart
+
+User->CartComponent.ts:Add fruit to the cart
+
+CartComponent.ts -> cartitem_controller.go/CreateUpdateItemInCart:Makes a POST request to "/server/cartitem"
+
+cartitem_controller.go/CreateUpdateItemInCart -> Database: Save fruit entry to the DB for the respective cartid
+
+cartitem_controller.go/CreateUpdateItemInCart <- Database: saved fruit record
+
+CartComponent.ts <- cartitem_controller.go/CreateUpdateItemInCart: "201" Created
+
+User <- CartComponent.ts: Updates the cart item table

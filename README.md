@@ -160,11 +160,25 @@ In Angular Observable is used to link the components so that changes are applied
 
 
 
-**Sequence diagram**
+**Sequence diagrams**
 
-![](https://res.cloudinary.com/rockey5520/image/upload/v1596895779/fruitstore/Sequence_diagram_vmfwgu.jpg)
+- **Registration Journey**
+
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978941/fruitstore/Registration-Journey-SequenceDiagram_md4ncf.png)
+
+- **Login Journey**
+
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978940/fruitstore/Login-Journey-SequenceDiagram_awbu5p.png)
 
 
+
+- **Add Fruit Journey**
+
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978940/fruitstore/Add_Fruit-Journey-SequenceDiagram_n2eqai.png)
+
+- **Update Fruit**
+
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978940/fruitstore/Update_Fruit_Quantity-Journey-SequenceDiagram_jwq1ez.png)
 
 
 

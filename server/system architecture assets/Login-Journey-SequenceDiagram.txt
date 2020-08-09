@@ -1,0 +1,13 @@
+title Login journey
+
+User->LoginComponent.ts:Fills loginid
+
+LoginComponent.ts -> customers_controller.go/GetCustomer:Makes a GET request to "/server/customers" \nwith path param "loginid"
+
+customers_controller.go/GetCustomer -> Database: Query DB for the customer
+
+customers_controller.go/GetCustomer <- Database: fetched customer record
+
+LoginComponent.ts <- customers_controller.go/GetCustomer: "200" OK
+
+User <- LoginComponent.ts: Lets customer to the fruitshop home page

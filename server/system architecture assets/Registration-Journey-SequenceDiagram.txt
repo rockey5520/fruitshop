@@ -1,0 +1,13 @@
+title Registration journey
+
+User->RegisterComponent.ts:Fills loginid, Firstname and Lastname
+
+RegisterComponent.ts -> customers_controller.go/CreateCustomer: Makes a POST request to "/server/customers"
+
+customers_controller.go/CreateCustomer -> Database: Saves valid request to the Database
+
+customers_controller.go/CreateCustomer <- Database: saved customer record
+
+RegisterComponent.ts <- customers_controller.go/CreateCustomer: "201" customer account created
+
+User <- RegisterComponent.ts: Redirects user to login page on success

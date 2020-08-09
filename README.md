@@ -70,6 +70,8 @@ Architecture diagrams.
 - **Option 1** : **Deployed service**
 
   - I have deployed this application on [Google cloud run](https://cloud.google.com/run) and to access the service enter the following URL into browser(incognito mode) and register as a new user to  login to the website. Website URL : https://fruitshop-p5kl2n3awa-nn.a.run.app
+  
+  Container in Google cloud run takes only **69 milliseconds to start( which includes both frontend and backend )**
   - ![](https://res.cloudinary.com/rockey5520/image/upload/v1596896322/fruitstore/couldrun-fruitshop_ro5mtr.jpg)
 
 - **Option 2 : Running prebuild docker image on your computer**

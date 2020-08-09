@@ -39,4 +39,35 @@ export class CartService {
     }
     return this.http.post(`/server/cartitem`, body, httpOptions)
   }
+
+  public subtractFromCart(ID: Number, fruit: FruitModel, count: number) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }
+
+    const body = {
+      "cartid": ID,
+      "name": fruit.name,
+      "quantity": count
+    }
+    return this.http.put(`/server/cartitem`, body, httpOptions)
+  }
+
+  public deleteFromCart(ID: Number, fruit: FruitModel, count: number) {
+    
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }
+
+    const body = {
+      "cartid": ID,
+      "name": fruit.name
+    }
+    return this.http.delete(`/server/cartitem/${ID}/${fruit.name}`)
+  }
 }

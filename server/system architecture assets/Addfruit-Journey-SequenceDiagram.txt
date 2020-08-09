@@ -1,13 +1,18 @@
 title Add item to the cart
 
-User->CartComponent.ts:Add fruit to the cart
+User->FruitcardComponent.ts:Add fruit to the cart
+activate User
+FruitcardComponent.ts -> cartitem_controller.go/CreateItemInCart:Makes a POST request to "/server/cartitem"
+activate FruitcardComponent.ts
+database Database
+cartitem_controller.go/CreateItemInCart->cartitem_controller.go/CreateItemInCart:Apply Discount and\nRecalculate payments
+activate cartitem_controller.go/CreateItemInCart
 
-CartComponent.ts -> cartitem_controller.go/CreateUpdateItemInCart:Makes a POST request to "/server/cartitem"
+cartitem_controller.go/CreateItemInCart -> Database: Save fruit entry to the DB for the respective cartid
 
-cartitem_controller.go/CreateUpdateItemInCart -> Database: Save fruit entry to the DB for the respective cartid
+cartitem_controller.go/CreateItemInCart <- Database: saved fruit record
 
-cartitem_controller.go/CreateUpdateItemInCart <- Database: saved fruit record
+activate Database
+FruitcardComponent.ts <- cartitem_controller.go/CreateItemInCart: "201" Created
 
-CartComponent.ts <- cartitem_controller.go/CreateUpdateItemInCart: "201" Created
-
-User <- CartComponent.ts: Updates the cart item table
+User <- FruitcardComponent.ts: Updates cart item in the table

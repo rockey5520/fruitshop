@@ -29,8 +29,8 @@ type CartItem struct {
 }
 
 // SaveOrUpdateCartItem saves the cart item entry to the DB if given quantity is > 0 or removes if quantity is 0
-func (input *CartItem) SaveOrUpdateCartItem(db *gorm.DB) (*CartItem, error) {
-
+func (input *CartItem) SaveCartItem(db *gorm.DB) (*CartItem, error) {
+	var err error
 	var fruit Fruit
 	db.Where("name = ?", input.Name).First(&fruit)
 
@@ -41,6 +41,7 @@ func (input *CartItem) SaveOrUpdateCartItem(db *gorm.DB) (*CartItem, error) {
 	cartItem := CartItem{
 		CartID:              input.CartID,
 		FruitID:             fruit.ID,
+		Name:                input.Name,
 		ItemTotal:           fruit.Price * float64(input.Quantity),
 		ItemDiscountedTotal: 0.0,
 		Quantity:            input.Quantity,
@@ -48,23 +49,63 @@ func (input *CartItem) SaveOrUpdateCartItem(db *gorm.DB) (*CartItem, error) {
 
 	if input.Quantity > 0 {
 		// Create/update fruit to the cart
-		if err := db.Model(&cartItem).Where("cart_id = ? AND fruit_id = ? ", input.CartID, fruit.ID).First(&cartItem).Error; err != nil {
+		if err = db.Model(&cartItem).Where("cart_id = ? AND fruit_id = ? ", input.CartID, fruit.ID).First(&cartItem).Error; err != nil {
+			if gorm.IsRecordNotFoundError(err) {
+				db.Create(&cartItem) // create new record from newUser
+			}
+		}
+	}
+
+	return &cartItem, nil
+}
+
+// UpdateCartItem saves the cart item entry to the DB if given quantity is > 0 or removes if quantity is 0
+func (input *CartItem) UpdateCartItem(db *gorm.DB) (*CartItem, error) {
+	var err error
+	var fruit Fruit
+	db.Where("name = ?", input.Name).First(&fruit)
+
+	input.ItemTotal = fruit.Price * float64(input.Quantity)
+	input.ItemDiscountedTotal = 0.0
+	input.FruitID = fruit.ID
+
+	cartItem := CartItem{
+		CartID:              input.CartID,
+		FruitID:             fruit.ID,
+		Name:                input.Name,
+		ItemTotal:           fruit.Price * float64(input.Quantity),
+		ItemDiscountedTotal: 0.0,
+		Quantity:            input.Quantity,
+	}
+
+	if input.Quantity > 0 {
+		// update fruit to the cart
+		if err = db.Model(&cartItem).Where("cart_id = ? AND fruit_id = ? ", input.CartID, fruit.ID).First(&cartItem).Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
 				db.Create(&cartItem) // create new record from newUser
 			}
 		} else {
-			fmt.Println(input.Quantity)
-			db.Model(&cartItem).Where("cart_id = ?  AND fruit_id = ? ", input.CartID, fruit.ID).
+			err = db.Model(&cartItem).Where("cart_id = ?  AND fruit_id = ? ", input.CartID, fruit.ID).
 				Update("quantity", input.Quantity).
 				Update("fruit_id", fruit.ID).
 				Update("item_total", float64(input.Quantity)*fruit.Price).
-				Update("item_discounted_total", 0.0)
+				Update("item_discounted_total", 0.0).Error
 		}
-	} else if input.Quantity == 0 {
-		db.Where("cart_id = ? AND fruit_id = ?", input.CartID, fruit.ID).Delete(&cartItem)
 
 	}
-	return &cartItem, nil
+	return &cartItem, err
+}
+
+// DeleteCartItem saves the cart item entry to the DB if given quantity is > 0 or removes if quantity is 0
+func (input *CartItem) DeleteCartItem(db *gorm.DB, cartid string, fruitName string) (*CartItem, error) {
+	var err error
+	cartItem := CartItem{}
+
+	if input.Quantity == 0 {
+		err = db.Where("cart_id = ? AND name = ?", cartid, fruitName).Delete(&cartItem).Error
+
+	}
+	return &cartItem, err
 }
 
 // FindAllCartItems returns all items present in a particular cart using cartID

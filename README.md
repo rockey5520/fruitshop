@@ -164,23 +164,25 @@ In Angular Observable is used to link the components so that changes are applied
 
 - **Registration Journey**
 
-  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978941/fruitstore/Registration-Journey-SequenceDiagram_md4ncf.png)
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1597003673/fruitstore/Registration-Journey-SequenceDiagram_ascmlw.png)
 
 - **Login Journey**
 
-  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978940/fruitstore/Login-Journey-SequenceDiagram_awbu5p.png)
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1597003673/fruitstore/Login-Journey-SequenceDiagram_rneb4n.png)
 
 
 
 - **Add Fruit Journey**
 
-  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978940/fruitstore/Add_Fruit-Journey-SequenceDiagram_n2eqai.png)
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1597003673/fruitstore/Add_Fruit-Journey-SequenceDiagram_tmsoge.png)
 
 - **Update Fruit**
 
-  ![](https://res.cloudinary.com/rockey5520/image/upload/v1596978940/fruitstore/Update_Fruit_Quantity-Journey-SequenceDiagram_jwq1ez.png)
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1597003673/fruitstore/Update_Fruit_Quantity-Journey-SequenceDiagram_yczg05.png)
 
+- **Delete Fruit**
 
+  ![](https://res.cloudinary.com/rockey5520/image/upload/v1597003673/fruitstore/Delete_Fruit_sequence_diagram_tv5yz5.png)
 
 
 

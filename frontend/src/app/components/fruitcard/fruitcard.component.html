@@ -7,17 +7,17 @@
     <mat-card-actions>
 
         <button mat-mini-fab color="secondary" aria-label="Example icon button with a plus one icon"
-            (click)="addToCount()">
+            (click)="addToCart()">
             <mat-icon>exposure_plus_1</mat-icon>
         </button>
 
         <button mat-raised-button>{{count}}</button>
 
-        <button mat-mini-fab aria-label="Example icon button with a plus one icon" (click)="subToCount()"
+        <button mat-mini-fab aria-label="Example icon button with a plus one icon" (click)="reduceFromCart()"
             [disabled]="(count <= 0)">
             <mat-icon>exposure_neg_1</mat-icon>
         </button>
-        <button mat-raised-button color="primary" (click)="addToCart()">Update Cart</button>
+        <button mat-raised-button color="primary" (click)="deleteFromCart()">Delete</button>
 
     </mat-card-actions>
 </mat-card>

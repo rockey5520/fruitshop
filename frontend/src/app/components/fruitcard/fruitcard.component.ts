@@ -52,8 +52,42 @@ export class FruitcardComponent implements OnInit {
   }
 
   addToCart(): void {
-    this.cartService.addToCart(this.currentUser.Cart.ID, this.fruit, this.count).subscribe(() => {
-      
+    console.log(this.count)
+    if(this.count == 0){
+      this.count++;
+      this.cartService.addToCart(this.currentUser.Cart.ID, this.fruit, this.count).subscribe(() => {
+        this.cartService.update.next(true)
+        this.discountService.update.next(true)
+      })
+    }else {
+      this.count++;
+      this.cartService.subtractFromCart(this.currentUser.Cart.ID, this.fruit, this.count).subscribe(() => {
+        this.cartService.update.next(true)
+        this.discountService.update.next(true)
+      })
+    }
+    console.log(this.count)
+  }
+
+  reduceFromCart(): void{
+    this.count--;
+    if(this.count == 0 ){
+      this.cartService.deleteFromCart(this.currentUser.Cart.ID, this.fruit, this.count).subscribe(() => {
+        this.cartService.update.next(true)
+        this.discountService.update.next(true)
+      })
+    }else{
+      this.cartService.subtractFromCart(this.currentUser.Cart.ID, this.fruit, this.count).subscribe(() => {
+        this.cartService.update.next(true)
+        this.discountService.update.next(true)
+      })
+    }
+
+  }
+
+  deleteFromCart(): void{
+    this.count = 0;
+    this.cartService.deleteFromCart(this.currentUser.Cart.ID, this.fruit, this.count).subscribe(() => {
       this.cartService.update.next(true)
       this.discountService.update.next(true)
     })

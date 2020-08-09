@@ -26,7 +26,7 @@ func TestSaveCartItem(t *testing.T) {
 		ItemDiscountedTotal: 0.0,
 	}
 
-	savedCartItem, err := newCartItem.SaveOrUpdateCartItem(server.DB)
+	savedCartItem, err := newCartItem.SaveCartItem(server.DB)
 	if err != nil {
 		t.Errorf("Error while saving a user: %v\n", err)
 		return
@@ -60,7 +60,7 @@ func TestUpdateCartItem(t *testing.T) {
 		ItemDiscountedTotal: 0.0,
 	}
 
-	savedCartItem, err := newCartItem.SaveOrUpdateCartItem(server.DB)
+	savedCartItem, err := newCartItem.UpdateCartItem(server.DB)
 	if err != nil {
 		t.Errorf("Error while saving a user: %v\n", err)
 		return

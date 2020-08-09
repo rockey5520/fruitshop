@@ -14,8 +14,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// CreateUpdateItemInCart will either create an item in the cart or remove based the quantity provided in the payload
-func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Request) {
+// CreateItemInCart will create an item in the cart based the quantity provided in the payload
+func (server *Server) CreateItemInCart(w http.ResponseWriter, r *http.Request) {
 	// Reading the request body from http request
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -35,7 +35,83 @@ func (server *Server) CreateUpdateItemInCart(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	// Save the cart item entry into the database
-	createdCartItem, err := cartItem.SaveOrUpdateCartItem(server.DB)
+	createdCartItem, err := cartItem.SaveCartItem(server.DB)
+	if err != nil {
+		formattedError := formaterror.FormatError(err.Error())
+		responses.ERROR(w, http.StatusInternalServerError, formattedError)
+		return
+	}
+	// Applying business rules( such as single item discounts for Apple, and dual item discounts for Pear and Banana)
+	ApplySingleItemDiscounts(*createdCartItem, server.DB)
+	ApplyDualItemDiscounts(cartItem, server.DB)
+
+	// Recalculate Cart value , Discounts post adding/deleting item from cart and applying business rules
+	RecalcualtePayments(server.DB, cartItem.CartID)
+
+	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdCartItem.ID))
+	responses.JSON(w, http.StatusCreated, createdCartItem)
+}
+
+// UpdateItemInCart will update  item in the cart based the quantity provided in the payload
+func (server *Server) UpdateItemInCart(w http.ResponseWriter, r *http.Request) {
+	// Reading the request body from http request
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+	}
+	// Creating cartItem struct mapped from the request payloads
+	cartItem := models.CartItem{}
+	err = json.Unmarshal(body, &cartItem)
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	// Customer validation
+	err = cartItem.Validate("")
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	// Save the cart item entry into the database
+	createdCartItem, err := cartItem.UpdateCartItem(server.DB)
+	if err != nil {
+		formattedError := formaterror.FormatError(err.Error())
+		responses.ERROR(w, http.StatusInternalServerError, formattedError)
+		return
+	}
+	// Applying business rules( such as single item discounts for Apple, and dual item discounts for Pear and Banana)
+	ApplySingleItemDiscounts(*createdCartItem, server.DB)
+	ApplyDualItemDiscounts(cartItem, server.DB)
+
+	// Recalculate Cart value , Discounts post adding/deleting item from cart and applying business rules
+	RecalcualtePayments(server.DB, cartItem.CartID)
+
+	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdCartItem.ID))
+	responses.JSON(w, http.StatusCreated, createdCartItem)
+}
+
+// DeleteItemInCart will remove based the quantity provided in the payload
+func (server *Server) DeleteItemInCart(w http.ResponseWriter, r *http.Request) {
+	// Reading the request body from http request
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+	}
+	// Creating cartItem struct mapped from the request payloads
+	cartItem := models.CartItem{}
+	err = json.Unmarshal(body, &cartItem)
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	// Customer validation
+	err = cartItem.Validate("")
+	if err != nil {
+		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	// Save the cart item entry into the database
+	createdCartItem, err := cartItem.DeleteCartItem(server.DB)
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)

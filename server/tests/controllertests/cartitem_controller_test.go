@@ -52,7 +52,7 @@ func TestCreateCartItem(t *testing.T) {
 			t.Errorf("this is the error: %v", err)
 		}
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.CreateUpdateItemInCart)
+		handler := http.HandlerFunc(server.CreateItemInCart)
 		handler.ServeHTTP(rr, req)
 
 		responseMap := make(map[string]interface{})
@@ -111,12 +111,12 @@ func TestUpdateCartItem(t *testing.T) {
 
 	for _, v := range samples {
 
-		req, err := http.NewRequest("POST", "/cartitem", bytes.NewBufferString(v.inputJSON))
+		req, err := http.NewRequest("PUT", "/cartitem", bytes.NewBufferString(v.inputJSON))
 		if err != nil {
 			t.Errorf("this is the error: %v", err)
 		}
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.CreateUpdateItemInCart)
+		handler := http.HandlerFunc(server.UpdateItemInCart)
 		handler.ServeHTTP(rr, req)
 
 		responseMap := make(map[string]interface{})
@@ -175,12 +175,12 @@ func TestDeleteCartItem(t *testing.T) {
 
 	for _, v := range samples {
 
-		req, err := http.NewRequest("POST", "/cartitem", bytes.NewBufferString(v.inputJSON))
+		req, err := http.NewRequest("DELETE", "/cartitem", bytes.NewBufferString(v.inputJSON))
 		if err != nil {
 			t.Errorf("this is the error: %v", err)
 		}
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.CreateUpdateItemInCart)
+		handler := http.HandlerFunc(server.DeleteItemInCart)
 		handler.ServeHTTP(rr, req)
 
 		responseMap := make(map[string]interface{})

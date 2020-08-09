@@ -25,6 +25,7 @@ import { DOCUMENT } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CartItem } from 'src/app/models/cartitem.model';
+import { FruitcardComponent } from '../fruitcard/fruitcard.component';
 
 
 @Component({
@@ -108,13 +109,17 @@ export class CartComponent implements OnInit {
   }
 
   pay(): void {
+    
     this.paymentService.pay(this.currentUser.ID, this.currentUser.Cart.ID, this.total).subscribe(() => {
       this.authenticationService.update.next(true)
+      
     },error => {
       console.error(error)
     })
     
   }
+
+
 
   applyDiscount(): void {
   

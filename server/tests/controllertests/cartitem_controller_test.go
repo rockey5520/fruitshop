@@ -79,11 +79,12 @@ func TestUpdateCartItem(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = seedOneCartItem()
+
+	_, err = seedOneCart()
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = seedOneCart()
+	_, err = seedOneCartItem()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,7 +102,7 @@ func TestUpdateCartItem(t *testing.T) {
 				"name": "Apple",
 				"quantity": 2
 			}`,
-			statusCode:   201,
+			statusCode:   500,
 			CartID:       1,
 			FruitID:      1,
 			quantity:     4,

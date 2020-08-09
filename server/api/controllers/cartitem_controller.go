@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"fruitshop/api/models"
 	"fruitshop/api/responses"
@@ -92,26 +93,23 @@ func (server *Server) UpdateItemInCart(w http.ResponseWriter, r *http.Request) {
 
 // DeleteItemInCart will remove based the quantity provided in the payload
 func (server *Server) DeleteItemInCart(w http.ResponseWriter, r *http.Request) {
-	// Reading the request body from http request
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+	vars := mux.Vars(r)
+	cart_id := vars["cart_id"]
+	fruitname := vars["fruitname"]
+	fmt.Println("fruit_name ", fruitname)
+	cartID, _ := strconv.Atoi(cart_id)
+	//fruitID, _ := strconv.Atoi(fruit_id)
+	cartItem := models.CartItem{
+		CartID: uint(cartID),
+		//FruitID:             uint(fruitID),
+		Name:                fruitname,
+		Quantity:            0,
+		ItemTotal:           0,
+		ItemDiscountedTotal: 0,
 	}
-	// Creating cartItem struct mapped from the request payloads
-	cartItem := models.CartItem{}
-	err = json.Unmarshal(body, &cartItem)
-	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
-		return
-	}
-	// Customer validation
-	err = cartItem.Validate("")
-	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
-		return
-	}
+
 	// Save the cart item entry into the database
-	createdCartItem, err := cartItem.DeleteCartItem(server.DB)
+	createdCartItem, err := cartItem.DeleteCartItem(server.DB, cart_id, fruitname)
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)

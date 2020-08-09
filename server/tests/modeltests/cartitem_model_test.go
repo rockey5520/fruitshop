@@ -43,11 +43,18 @@ func TestUpdateCartItem(t *testing.T) {
 		log.Fatalf("Error refreshCartItemTable %v\n", err)
 	}
 
-	_, err = seedOneCartItem()
+	refreshFruitTable()
+
+	err = seedFruits()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	_, err = seedOneCart()
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = seedOneCartItem()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,7 +69,7 @@ func TestUpdateCartItem(t *testing.T) {
 
 	savedCartItem, err := newCartItem.UpdateCartItem(server.DB)
 	if err != nil {
-		t.Errorf("Error while saving a user: %v\n", err)
+		t.Errorf("Error while saving a cart: %v\n", err)
 		return
 	}
 	assert.Equal(t, savedCartItem.FruitID, newCartItem.FruitID)

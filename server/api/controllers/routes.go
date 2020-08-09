@@ -11,29 +11,29 @@ import (
 func (s *Server) initializeRoutes() {
 
 	// Customer routes
-	s.Router.HandleFunc("/server/customers", SetMiddlewareJSON(s.CreateCustomer)).Methods("POST")
-	s.Router.HandleFunc("/server/customers/{loginid}", SetMiddlewareJSON(s.GetCustomer)).Methods("GET")
+	s.Router.HandleFunc("/customers", SetMiddlewareJSON(s.CreateCustomer)).Methods("POST")
+	s.Router.HandleFunc("/customers/{loginid}", SetMiddlewareJSON(s.GetCustomer)).Methods("GET")
 
 	// Fruit routes
-	s.Router.HandleFunc("/server/fruits", SetMiddlewareJSON(s.GetFruits)).Methods("GET")
+	s.Router.HandleFunc("/fruits", SetMiddlewareJSON(s.GetFruits)).Methods("GET")
 
 	// CartItem routes
-	s.Router.HandleFunc("/server/cartitem", SetMiddlewareJSON(s.CreateItemInCart)).Methods("POST")
-	s.Router.HandleFunc("/server/cartitem", SetMiddlewareJSON(s.UpdateItemInCart)).Methods("PUT")
-	s.Router.HandleFunc("/server/cartitem", SetMiddlewareJSON(s.DeleteItemInCart)).Methods("DELETE")
-	s.Router.HandleFunc("/server/cartitems/{cart_id}", SetMiddlewareJSON(s.GetCartItems)).Methods("GET")
+	s.Router.HandleFunc("/cartitem", SetMiddlewareJSON(s.CreateItemInCart)).Methods("POST")
+	s.Router.HandleFunc("/cartitem", SetMiddlewareJSON(s.UpdateItemInCart)).Methods("PUT")
+	s.Router.HandleFunc("/cartitem/{cart_id}/{fruitname}", SetMiddlewareJSON(s.DeleteItemInCart)).Methods("DELETE")
+	s.Router.HandleFunc("/cartitems/{cart_id}", SetMiddlewareJSON(s.GetCartItems)).Methods("GET")
 
 	// Cart route
-	s.Router.HandleFunc("/server/cart/{cart_id}", SetMiddlewareJSON(s.GetCart)).Methods("GET")
+	s.Router.HandleFunc("/cart/{cart_id}", SetMiddlewareJSON(s.GetCart)).Methods("GET")
 
 	// Discounts routes
-	s.Router.HandleFunc("/server/discounts/{cart_id}", SetMiddlewareJSON(s.GetAppliedDiscounts)).Methods("GET")
+	s.Router.HandleFunc("/discounts/{cart_id}", SetMiddlewareJSON(s.GetAppliedDiscounts)).Methods("GET")
 
 	// Coupon route
-	s.Router.HandleFunc("/server/orangecoupon/{cart_id}/{fruit_id}", SetMiddlewareJSON(s.ApplyTimeSensitiveCoupon)).Methods("GET")
+	s.Router.HandleFunc("/orangecoupon/{cart_id}/{fruit_id}", SetMiddlewareJSON(s.ApplyTimeSensitiveCoupon)).Methods("GET")
 
 	// Pay route
-	s.Router.HandleFunc("/server/pay", SetMiddlewareJSON(s.Pay)).Methods("POST")
+	s.Router.HandleFunc("/pay", SetMiddlewareJSON(s.Pay)).Methods("POST")
 
 	// Serves angular application on / endpoint
 	s.Router.PathPrefix("/").Handler(http.FileServer(http.Dir("frontend/dist/fruitshop-ui"))) // for docker

@@ -77,8 +77,8 @@ Architecture diagrams.
   - You can download the docker image I have prebuilt to your computer and run below command to the start the application and navigate to URL  http://localhost:8080 in your browser(incognito mode).
 
     - ```shell
-      dockepull docker.pkg.github.com/rockey5520/fruitshop/fruitshop:4
-      docker run -p 8080:8080 -it docker.pkg.github.com/rockey5520/fruitshop/fruitshop:4
+      dockepull docker.pkg.github.com/rockey5520/fruitshop/fruitshop:5
+      docker run -p 8080:8080 -it docker.pkg.github.com/rockey5520/fruitshop/fruitshop:5
       ```
 
 - **Option 3 : Build and Run the image from the source code** (lengthier process)
@@ -118,17 +118,23 @@ go test -v ./...
 
 
 
+**Registration/Login Page**
+
 To see the application, launch incognito mode in a browser you like and go to `http://localhost:8080`and this should present you a login form as below
 
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594849128/fruitstore/loginform_tzxsg1.jpg)
 
 If you have not created an account earlier you can use the login id you choose (preferred you name without spaces or mobile number) and click login. But if you try to register with an id exists in database form with throw error saying `userid already exists`
 
+**Shopping cart home page**
+
 Upon login you should see a shopping cart something like below
 
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594849520/fruitstore/home_page_uugebm.jpg)
 
 
+
+**Cart table and Discount table sample**
 
 ![](https://res.cloudinary.com/rockey5520/image/upload/v1594851723/fruitstore/discounts_applied_zvonn5.jpg)
 

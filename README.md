@@ -108,7 +108,7 @@ go test -v ./...
 | GET    | /server/customers/{loginid}               | Returns customer record                                      |
 | GET    | /server/fruits                            | Fetched fruits available in the inventory                    |
 | POST   | /server/cartitem                          | Adds new fruit entry to the cart                             |
-| PUT    | /server/cartitem                          | Updated the Quantity of the fruit item in the cart if available |
+| PUT    | /server/cartitem                          | Updates quantity of the fruit item in the cart if available |
 | DELETE | /server/cartitem/{cart_id}/{fruitname}    | Deletes fruit entry in the cart                              |
 | GET    | /server/cartitems/{cart_id}               | Fetched all items in a given cart                            |
 | GET    | /server/cart/{cart_id}                    | Fectes cart details                                          |
